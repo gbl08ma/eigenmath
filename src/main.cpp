@@ -42,7 +42,10 @@ int
 main()
 {
   Bdisp_AllClr_VRAM();
-  Bdisp_EnableColor(1); 
+  Bdisp_EnableColor(1);
+  // disable Catalog function throughout the add-in, as we don't know how to make use of it:
+  Bkey_SetAllFlags(0x80);
+  
   printf("Welcome to Eigenmath\n");
   printf("To see version information,\npress Shift then Menu.\n");
   run_startup_script(); 
