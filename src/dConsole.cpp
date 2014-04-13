@@ -211,7 +211,7 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
         x = l + 1;
         y = line_count;
         width = LINE_COL_MAX - l;
-
+        int firstLoopRun = 1;
         while (1)
         {
                 if (refresh)
@@ -250,7 +250,7 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
                   }
                 } else if (key==KEY_CHAR_PLUS) {
                   if ((int)strlen(s)>=max) continue;
-                  if(strlen(s)==0) {
+                  if(strlen(s)==0 && firstLoopRun) {
                     strcat(s, (char*)"last+");
                     pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
                   } else {
@@ -259,7 +259,7 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
                   }
                 } else if (key==KEY_CHAR_MINUS) {
                   if ((int)strlen(s)>=max) continue;
-                  if(strlen(s)==0) {
+                  if(strlen(s)==0 && firstLoopRun) {
                     strcat(s, (char*)"last-");
                     pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
                   } else {
@@ -268,7 +268,7 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
                   }
                 } else if (key==KEY_CHAR_MULT) {
                   if ((int)strlen(s)>=max) continue;
-                  if(strlen(s)==0) {
+                  if(strlen(s)==0 && firstLoopRun) {
                     strcat(s, (char*)"last*");
                     pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
                   } else {
@@ -277,7 +277,7 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
                   }
                 } else if (key==KEY_CHAR_DIV) {
                   if ((int)strlen(s)>=max) continue;
-                  if(strlen(s)==0) {
+                  if(strlen(s)==0 && firstLoopRun) {
                     strcat(s, (char*)"last/");
                     pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
                   } else {
@@ -286,7 +286,7 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
                   }
                 } else if (key==KEY_CHAR_POW) {
                   if ((int)strlen(s)>=max) continue;
-                  if(strlen(s)==0) {
+                  if(strlen(s)==0 && firstLoopRun) {
                     strcat(s, (char*)"last^");
                     pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
                   } else {
@@ -295,7 +295,7 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
                   }
                 } else if (key==KEY_CHAR_SQUARE) {
                   if ((int)strlen(s)+1>=max) continue;
-                  if(strlen(s)==0) {
+                  if(strlen(s)==0 && firstLoopRun) {
                     strcat(s, (char*)"last^2");
                     pos=pos+6; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
                   } else {
@@ -457,7 +457,7 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
                 else if (key!=KEY_CTRL_SHIFT && key!=KEY_CTRL_ALPHA && get_custom_key_handler_state()==1) {
                   custom_key_to_handle = key; custom_key_to_handle_modifier = keyflag; return 3;
                 }
-                
+                firstLoopRun = 0;
         }
         return 0;
 }
