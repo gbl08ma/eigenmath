@@ -188,278 +188,231 @@ void do_down_arrow(void);
 extern int custom_key_to_handle;
 extern int custom_key_to_handle_modifier;
 int get_custom_key_handler_state();
+
+void addStringToInput(char* dest, char* src, int* pos, int max, int* refresh) {
+  int srclen = strlen(src);
+  if ((int)strlen(dest)+srclen-1>=max) return;
+  append(dest, src, *pos);
+  *pos+=srclen; *refresh = 1;
+}
 int dGetLine (char * s,int max) // This function is depended on dConsole
                                                                 // And this function is not allowed to abolish
 {
-        int             pos = strlen(s);
-        int             refresh = 1;
-        int             x,y,l,width;
-        int    key;
-        char    c;
+  int pos = strlen(s);
+  int refresh = 1;
+  int x,y,l,width;
+  int key;
+  char c;
 
 
-        l = strlen (line_buf[line_index]);
+  l = strlen (line_buf[line_index]);
 
-        if (l>=LINE_COL_MAX)
-        {
-                dConsolePut("\n");
-                l = 0;
+  if (l>=LINE_COL_MAX) {
+    dConsolePut("\n");
+    l = 0;
+  } else dConsoleRedraw();
+
+  x = l + 1;
+  y = line_count;
+  width = LINE_COL_MAX - l;
+  int firstLoopRun = 1;
+  while (1) {
+    if (refresh) {
+      int i;
+      for (i=x;i<=LINE_COL_MAX;++i)
+      {
+              locate(i,y);print((uchar*)" ");
+      }
+      if (pos<width-1)
+      {
+              locate(x,y);            print((uchar*)s);
+              locate(x+pos,y);        printCursor();
+      }
+      else
+      {
+              locate(x,y);                    print((uchar*)s+pos-width+1);
+              locate(x+width-1,y);    printCursor(); //cursor
+      }
+      refresh = 0;
+    }
+    int keyflag = GetSetupSetting( (unsigned int)0x14);
+    GetKey(&key);
+    if(key == KEY_CTRL_F5) {
+      if (keyflag == 0x04 || keyflag == 0x08 || keyflag == 0x84 || keyflag == 0x88) {
+        // ^only applies if some sort of alpha (not locked) is already on
+        if (keyflag == 0x08 || keyflag == 0x88) { //if lowercase
+          SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
+          DisplayStatusArea();
+          continue; //do not process the key, because otherwise we will leave alpha status
+        } else {
+          SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
+          DisplayStatusArea();
+          continue; //do not process the key, because otherwise we will leave alpha status
         }
-        else
-                dConsoleRedraw();
-
-        x = l + 1;
-        y = line_count;
-        width = LINE_COL_MAX - l;
-        int firstLoopRun = 1;
-        while (1)
-        {
-                if (refresh)
-                {
-                        int i;
-                        for (i=x;i<=LINE_COL_MAX;++i)
-                        {
-                                locate(i,y);print((uchar*)" ");
-                        }
-                        if (pos<width-1)
-                        {
-                                locate(x,y);            print((uchar*)s);
-                                locate(x+pos,y);        printCursor();
-                        }
-                        else
-                        {
-                                locate(x,y);                    print((uchar*)s+pos-width+1);
-                                locate(x+width-1,y);    printCursor(); //cursor
-                        }
-                        refresh = 0;
-                }
-                int keyflag = GetSetupSetting( (unsigned int)0x14);
-                GetKey(&key);
-                if(key == KEY_CTRL_F5) {
-                  if (keyflag == 0x04 || keyflag == 0x08 || keyflag == 0x84 || keyflag == 0x88) {
-                    // ^only applies if some sort of alpha (not locked) is already on
-                    if (keyflag == 0x08 || keyflag == 0x88) { //if lowercase
-                      SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
-                      DisplayStatusArea();
-                      continue; //do not process the key, because otherwise we will leave alpha status
-                    } else {
-                      SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
-                      DisplayStatusArea();
-                      continue; //do not process the key, because otherwise we will leave alpha status
-                    }
-                  }
-                } else if (key==KEY_CHAR_PLUS) {
-                  if ((int)strlen(s)>=max) continue;
-                  if(strlen(s)==0 && firstLoopRun) {
-                    strcat(s, (char*)"last+");
-                    pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-                  } else {
-                    append(s, (char*)"+", pos);
-                    pos=pos+1; refresh = 1;
-                  }
-                } else if (key==KEY_CHAR_MINUS) {
-                  if ((int)strlen(s)>=max) continue;
-                  if(strlen(s)==0 && firstLoopRun) {
-                    strcat(s, (char*)"last-");
-                    pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-                  } else {
-                    append(s, (char*)"-", pos);
-                    pos=pos+1; refresh = 1;
-                  }
-                } else if (key==KEY_CHAR_MULT) {
-                  if ((int)strlen(s)>=max) continue;
-                  if(strlen(s)==0 && firstLoopRun) {
-                    strcat(s, (char*)"last*");
-                    pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-                  } else {
-                    append(s, (char*)"*", pos);
-                    pos=pos+1; refresh = 1;
-                  }
-                } else if (key==KEY_CHAR_DIV) {
-                  if ((int)strlen(s)>=max) continue;
-                  if(strlen(s)==0 && firstLoopRun) {
-                    strcat(s, (char*)"last/");
-                    pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-                  } else {
-                    append(s, (char*)"/", pos);
-                    pos=pos+1; refresh = 1;
-                  }
-                } else if (key==KEY_CHAR_POW) {
-                  if ((int)strlen(s)>=max) continue;
-                  if(strlen(s)==0 && firstLoopRun) {
-                    strcat(s, (char*)"last^");
-                    pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-                  } else {
-                    append(s, (char*)"^", pos);
-                    pos=pos+1; refresh = 1;
-                  }
-                } else if (key==KEY_CHAR_SQUARE) {
-                  if ((int)strlen(s)+1>=max) continue;
-                  if(strlen(s)==0 && firstLoopRun) {
-                    strcat(s, (char*)"last^2");
-                    pos=pos+6; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-                  } else {
-                    append(s, (char*)"^2", pos);
-                    pos=pos+2; refresh = 1;
-                  }
-                } else if (key==KEY_CHAR_ROOT) {
-                  if ((int)strlen(s)+4>=max) continue;
-                  append(s, (char*)"sqrt(", pos);
-                  pos=pos+5; refresh = 1;
-                } else if (key==KEY_CHAR_CUBEROOT) {
-                  if ((int)strlen(s)+5>=max) continue;
-                  append(s, (char*)"^(1/3)", pos); // example: to get cubic root of 27, do 27^(1/3)
-                  pos=pos+6; refresh = 1;
-                } else if (key==KEY_CHAR_POWROOT) {
-                  if ((int)strlen(s)+3>=max) continue;
-                  append(s, (char*)"^(1/", pos); // example: to get cubic root of 27, do 27^(1/3)
-                  pos=pos+4; refresh = 1;
-                } else if (key==KEY_CHAR_THETA) {
-                  if ((int)strlen(s)+4>=max) continue;
-                  append(s, (char*)"theta", pos);
-                  pos=pos+5; refresh = 1;
-                } else if (key==KEY_CTRL_XTT) {
-                  if ((int)strlen(s)>=max) continue;
-                  append(s, (char*)"x", pos);
-                  pos=pos+1; refresh = 1;
-                } else if (key==KEY_CHAR_LN) { // the log() function in eigenmath is the natural log (Casio's ln)
-                  if ((int)strlen(s)+3>=max) continue;
-                  append(s, (char*)"log(", pos);
-                  pos=pos+4; refresh = 1;
-                } else if (key==KEY_CHAR_EXPN) { // the exp() function in eigenmath is the natural expnonent (Casio's e^x)
-                  if ((int)strlen(s)+3>=max) continue;
-                  append(s, (char*)"exp(", pos);
-                  pos=pos+4; refresh = 1;
-                } else if (key==KEY_CHAR_SIN) {
-                  if ((int)strlen(s)+3>=max) continue;
-                  append(s, (char*)"sin(", pos);
-                  pos=pos+4; refresh = 1;
-                } else if (key==KEY_CHAR_ASIN) {
-                  if ((int)strlen(s)+6>=max) continue;
-                  append(s, (char*)"arcsin(", pos);
-                  pos=pos+7; refresh = 1;
-                } else if (key==KEY_CHAR_COS) {
-                  if ((int)strlen(s)+3>=max) continue;
-                  append(s, (char*)"cos(", pos);
-                  pos=pos+4; refresh = 1;
-                } else if (key==KEY_CHAR_ACOS) {
-                  if ((int)strlen(s)+6>=max) continue;
-                  append(s, (char*)"arccos(", pos);
-                  pos=pos+7; refresh = 1;
-                } else if (key==KEY_CHAR_TAN) {
-                  if ((int)strlen(s)+3>=max) continue;
-                  append(s, (char*)"tan(", pos);
-                  pos=pos+4; refresh = 1;
-                } else if (key==KEY_CHAR_ATAN) {
-                  if ((int)strlen(s)+6>=max) continue;
-                  append(s, (char*)"arctan(", pos);
-                  pos=pos+7; refresh = 1;
-                } else if (key==KEY_CHAR_FRAC) {
-                  if ((int)strlen(s)>=max) continue;
-                  append(s, (char*)"/", pos);
-                  pos=pos+1; refresh = 1;
-                } else if (key==KEY_CTRL_FD) {
-                  if ((int)strlen(s)+4>=max) continue;
-                  append(s, (char*)"float", pos); // no ( at the end because this is often used to manipulate the last result
-                  pos=pos+5; refresh = 1;
-                } else if (key==KEY_CHAR_STORE) {
-                  if ((int)strlen(s)>=max) continue;
-                  append(s, (char*)"!", pos); // this really has nothing to do with the key label, but it's useful
-                  pos=pos+1; refresh = 1;
-                } else if (key==KEY_CHAR_IMGNRY) {
-                  if ((int)strlen(s)>=max) continue;
-                  append(s, (char*)"i", pos);
-                  pos=pos+1; refresh = 1;
-                } else if (key==KEY_CHAR_PI) {
-                  if ((int)strlen(s)+1>=max) continue;
-                  append(s, (char*)"pi", pos);
-                  pos=pos+2; refresh = 1;
-                } else if (key==KEY_CHAR_EXP) {
-                  if ((int)strlen(s)+4>=max) continue;
-                  append(s, (char*)"*10^(", pos);
-                  pos=pos+5; refresh = 1;
-                } else if (key==KEY_CHAR_PMINUS) {
-                  if ((int)strlen(s)+1>=max) continue;
-                  append(s, (char*)"(-", pos);
-                  pos=pos+2; refresh = 1;
-                } else if (key==KEY_CHAR_ANS) {
-                  if ((int)strlen(s)+3>=max) continue;
-                  append(s, (char*)"last", pos);
-                  pos=pos+4; refresh = 1;
-                } else if (key==KEY_CTRL_F1) {
-                  // open functions catalog
-                  char text[20] = "";
-                  if(showCatalog(text)) {
-                    int len = strlen(text);
-                    if(pos+len>max) continue;
-                    else {
-                      append(s, text, pos);
-                      pos=pos+len; refresh = 1;
-                    }
-                  }
-                } else if (key==KEY_CTRL_F2) {
-                  // select script and run
-                  return 2;
-                } else if (key==KEY_CTRL_PRGM) {
-                  // set script to run on strip open (only when running inside eAct)
-                  return 4;
-                } else if (key==KEY_CTRL_SETUP) {
-                  showAbout();
-                  Bdisp_AllClr_VRAM();
-                  dConsoleRedraw();
-                  refresh = 1;
-                } else if (key==KEY_CTRL_UP) {
-                  // go up in command history
-                  do_up_arrow();
-                  pos=strlen(s);
-                  refresh = 1;
-                } else if (key==KEY_CTRL_DOWN) {
-                  // go down in command history
-                  do_down_arrow();
-                  pos=strlen(s);
-                  refresh = 1;
-                } else if (key==KEY_CTRL_LEFT) {
-                  // move cursor left
-                  if(pos<=0) pos=strlen(s); //cycle
-                  else pos--;
-                  refresh = 1;
-                } else if (key==KEY_CTRL_RIGHT) {
-                  // move cursor right
-                  if(pos>=(int)strlen(s)) pos=0; //cycle
-                  else pos++;
-                  refresh = 1;
-                } else if ((c=dGetKeyChar(key))!=0) {
-                        if ((int)strlen(s)>=max) continue;
-                        char ns[2] = "";
-                        ns[0] = c; ns[1]='\0';
-                        append(s, ns, pos);
-                        pos++;
-                        refresh = 1;
-                }
-                else if (key==KEY_CTRL_DEL)
-                {
-                        if (pos<=0) continue;
-                        pos--;
-                        int i = pos;
-                        do {
-                                s[i] = s[i+1];
-                                i++;
-                        } while (s[i] != '\0');
-                        refresh = 1;
-                }
-                else if (key==KEY_CTRL_AC)
-                {
-                        *s              = 0;
-                        pos             = 0;
-                        refresh = 1;
-                }
-                else if (key==KEY_CTRL_EXE) return 1;
-                else if (key!=KEY_CTRL_SHIFT && key!=KEY_CTRL_ALPHA && get_custom_key_handler_state()==1) {
-                  custom_key_to_handle = key; custom_key_to_handle_modifier = keyflag; return 3;
-                }
-                firstLoopRun = 0;
-        }
-        return 0;
+      }
+    } else if (key==KEY_CHAR_PLUS) {
+      if ((int)strlen(s)>=max) continue;
+      if(strlen(s)==0 && firstLoopRun) {
+        strcat(s, (char*)"last+");
+        pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
+      } else {
+        append(s, (char*)"+", pos);
+        pos=pos+1; refresh = 1;
+      }
+    } else if (key==KEY_CHAR_MINUS) {
+      if ((int)strlen(s)>=max) continue;
+      if(strlen(s)==0 && firstLoopRun) {
+        strcat(s, (char*)"last-");
+        pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
+      } else {
+        append(s, (char*)"-", pos);
+        pos=pos+1; refresh = 1;
+      }
+    } else if (key==KEY_CHAR_MULT) {
+      if ((int)strlen(s)>=max) continue;
+      if(strlen(s)==0 && firstLoopRun) {
+        strcat(s, (char*)"last*");
+        pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
+      } else {
+        append(s, (char*)"*", pos);
+        pos=pos+1; refresh = 1;
+      }
+    } else if (key==KEY_CHAR_DIV) {
+      if ((int)strlen(s)>=max) continue;
+      if(strlen(s)==0 && firstLoopRun) {
+        strcat(s, (char*)"last/");
+        pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
+      } else {
+        append(s, (char*)"/", pos);
+        pos=pos+1; refresh = 1;
+      }
+    } else if (key==KEY_CHAR_POW) {
+      if ((int)strlen(s)>=max) continue;
+      if(strlen(s)==0 && firstLoopRun) {
+        strcat(s, (char*)"last^");
+        pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
+      } else {
+        append(s, (char*)"^", pos);
+        pos=pos+1; refresh = 1;
+      }
+    } else if (key==KEY_CHAR_SQUARE) {
+      if ((int)strlen(s)+1>=max) continue;
+      if(strlen(s)==0 && firstLoopRun) {
+        strcat(s, (char*)"last^2");
+        pos=pos+6; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
+      } else {
+        append(s, (char*)"^2", pos);
+        pos=pos+2; refresh = 1;
+      }
+    } else if (key==KEY_CHAR_ROOT) {
+      addStringToInput(s, "sqrt(", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_CUBEROOT) {
+      addStringToInput(s, "^(1/3)", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_POWROOT) {
+      addStringToInput(s, "^(1/", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_THETA) {
+      addStringToInput(s, "theta", &pos, max, &refresh);
+    } else if (key==KEY_CTRL_XTT) {
+      addStringToInput(s, "x", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_LN) { // the log() function in eigenmath is the natural log (Casio's ln)
+      addStringToInput(s, "log(", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_EXPN) { // the exp() function in eigenmath is the natural expnonent (Casio's e^x)
+      addStringToInput(s, "exp(", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_SIN) {
+      addStringToInput(s, "sin(", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_ASIN) {
+      addStringToInput(s, "arcsin(", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_COS) {
+      addStringToInput(s, "cos(", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_ACOS) {
+      addStringToInput(s, "arccos(", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_TAN) {
+      addStringToInput(s, "tan(", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_ATAN) {
+      addStringToInput(s, "arctan(", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_FRAC) {
+      addStringToInput(s, "/", &pos, max, &refresh);
+    } else if (key==KEY_CTRL_FD) {
+      addStringToInput(s, "float", &pos, max, &refresh); // no ( at the end because this is often used to manipulate the last result
+    } else if (key==KEY_CHAR_STORE) {
+      addStringToInput(s, "!", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_IMGNRY) {
+      addStringToInput(s, "i", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_PI) {
+      addStringToInput(s, "pi", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_EXP) {
+      addStringToInput(s, "*10^(", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_PMINUS) {
+      addStringToInput(s, "(-", &pos, max, &refresh);
+    } else if (key==KEY_CHAR_ANS) {
+      addStringToInput(s, "last", &pos, max, &refresh);
+    } else if (key==KEY_CTRL_F1) {
+      // open functions catalog
+      char text[20] = "";
+      if(showCatalog(text)) {
+        addStringToInput(s, text, &pos, max, &refresh);
+      }
+    } else if (key==KEY_CTRL_F2) {
+      // select script and run
+      return 2;
+    } else if (key==KEY_CTRL_PRGM) {
+      // set script to run on strip open (only when running inside eAct)
+      return 4;
+    } else if (key==KEY_CTRL_SETUP) {
+      showAbout();
+      Bdisp_AllClr_VRAM();
+      dConsoleRedraw();
+      refresh = 1;
+    } else if (key==KEY_CTRL_UP) {
+      // go up in command history
+      do_up_arrow();
+      pos=strlen(s);
+      refresh = 1;
+    } else if (key==KEY_CTRL_DOWN) {
+      // go down in command history
+      do_down_arrow();
+      pos=strlen(s);
+      refresh = 1;
+    } else if (key==KEY_CTRL_LEFT) {
+      // move cursor left
+      if(pos<=0) pos=strlen(s); //cycle
+      else pos--;
+      refresh = 1;
+    } else if (key==KEY_CTRL_RIGHT) {
+      // move cursor right
+      if(pos>=(int)strlen(s)) pos=0; //cycle
+      else pos++;
+      refresh = 1;
+    } else if ((c=dGetKeyChar(key))!=0) {
+      if ((int)strlen(s)>=max) continue;
+      char ns[2] = "";
+      ns[0] = c; ns[1]='\0';
+      append(s, ns, pos);
+      pos++;
+      refresh = 1;
+    }
+    else if (key==KEY_CTRL_DEL) {
+      if (pos<=0) continue;
+      pos--;
+      int i = pos;
+      do {
+              s[i] = s[i+1];
+              i++;
+      } while (s[i] != '\0');
+      refresh = 1;
+    }
+    else if (key==KEY_CTRL_AC) {
+      *s              = 0;
+      pos             = 0;
+      refresh = 1;
+    }
+    else if (key==KEY_CTRL_EXE) return 1;
+    else if (key!=KEY_CTRL_SHIFT && key!=KEY_CTRL_ALPHA && get_custom_key_handler_state()==1) {
+      custom_key_to_handle = key; custom_key_to_handle_modifier = keyflag; return 3;
+    }
+    firstLoopRun = 0;
+  }
+  return 0;
 }
 
 int get_custom_fkey_label(int key);
