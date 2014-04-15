@@ -24,11 +24,11 @@ extern "C" {
 typedef unsigned int    uint;
 typedef unsigned char   uchar;
 
-char    line_buf[LINE_ROW_MAX][LINE_COL_MAX+1];
-int             line_index      = 0;
-int             line_x          = 0;
-int             line_start      = 0;
-int             line_count      = 0;
+char line_buf[LINE_ROW_MAX][LINE_COL_MAX+1];
+int line_index = 0;
+int line_x     = 0;
+int line_start = 0;
+int line_count = 0;
 
 int myconsolex = 0;
 int myconsoley = 0;
@@ -41,61 +41,36 @@ void print(unsigned char* msg) {
   PrintMiniFix( myconsolex*12, myconsoley*17, (char*)msg, 0, COLOR_BLACK, COLOR_WHITE );
   myconsolex = myconsolex + strlen((char*)msg);
 }
-/*
-void dAreaClear (int left,int top,int right,int bottom,int sel) 
-{ 
-        DISPBOX box; 
-        box.left = left;box.top = top;box.right = right;box.bottom = bottom; 
-        if (sel != 1) 
-                Bdisp_AreaClr_VRAM (&box); 
-        if (sel != 0){ 
-                Bdisp_DrawLineVRAM (box.left,box.top,box.right,box.top); 
-                Bdisp_DrawLineVRAM (box.left,box.bottom,box.right,box.bottom); 
-                Bdisp_DrawLineVRAM (box.left,box.top,box.left,box.bottom); 
-                Bdisp_DrawLineVRAM (box.right,box.top,box.right,box.bottom); 
-    } 
-}
-*/
-uint WaitKey ()
-{
-        int key;GetKey(&key);return key;
-}
 
 char dGetKeyChar (uint key)
 {
-        if (key>=KEY_CHAR_A && key<=KEY_CHAR_Z)
-                return key;
-        if (key>=KEY_CHAR_LOWER_A && key<=KEY_CHAR_LOWER_Z)
-                return key;
-        else if (key>=KEY_CHAR_0 && key<= KEY_CHAR_9)
-                return key;
-        else if (key>=' ' && key<='~')
-                return key;
-        switch(key)
-        {
-                /*case KEY_CHAR_PLUS:             return '+';
-                case KEY_CHAR_MINUS:    return '-';
-                case KEY_CHAR_MULT:             return '*';
-                case KEY_CHAR_DIV:              return '/';
-                case KEY_CHAR_POW:              return '^';*/
-                case KEY_CHAR_PLUS:             return key;
-                case KEY_CHAR_MINUS:    return key;
-                case KEY_CHAR_MULT:             return key;
-                case KEY_CHAR_DIV:              return key;
-                case KEY_CHAR_POW:              return key;
-        }
+  if (key>=KEY_CHAR_A && key<=KEY_CHAR_Z)
+          return key;
+  if (key>=KEY_CHAR_LOWER_A && key<=KEY_CHAR_LOWER_Z)
+          return key;
+  else if (key>=KEY_CHAR_0 && key<= KEY_CHAR_9)
+          return key;
+  else if (key>=' ' && key<='~')
+          return key;
+  switch(key)
+  {
+    case KEY_CHAR_PLUS:             return key;
+    case KEY_CHAR_MINUS:    return key;
+    case KEY_CHAR_MULT:             return key;
+    case KEY_CHAR_DIV:              return key;
+    case KEY_CHAR_POW:              return key;
+  }
 
-        return 0;
+  return 0;
 }
 
 void dConsoleCls ()
 {
-        line_index      = 0;
-        line_x          = 0;
-        line_start      = 0;
-        line_count      = 0;
-        //Bdisp_AllClr_VRAM();
-        dConsoleRedraw();
+  line_index      = 0;
+  line_x          = 0;
+  line_start      = 0;
+  line_count      = 0;
+  dConsoleRedraw();
 }
 
 /*int dGetLineBox (char * s,int max,int width,int x,int y)
@@ -195,9 +170,7 @@ void addStringToInput(char* dest, char* src, int* pos, int max, int* refresh) {
   append(dest, src, *pos);
   *pos+=srclen; *refresh = 1;
 }
-int dGetLine (char * s,int max) // This function is depended on dConsole
-                                                                // And this function is not allowed to abolish
-{
+int dGetLine (char * s,int max) {
   int pos = strlen(s);
   int refresh = 1;
   int x,y,l,width;
@@ -221,17 +194,17 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
       int i;
       for (i=x;i<=LINE_COL_MAX;++i)
       {
-              locate(i,y);print((uchar*)" ");
+        locate(i,y);print((uchar*)" ");
       }
       if (pos<width-1)
       {
-              locate(x,y);            print((uchar*)s);
-              locate(x+pos,y);        printCursor();
+        locate(x,y);            print((uchar*)s);
+        locate(x+pos,y);        printCursor();
       }
       else
       {
-              locate(x,y);                    print((uchar*)s+pos-width+1);
-              locate(x+width-1,y);    printCursor(); //cursor
+        locate(x,y);                    print((uchar*)s+pos-width+1);
+        locate(x+width-1,y);    printCursor(); //cursor
       }
       refresh = 0;
     }
@@ -416,8 +389,7 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
 }
 
 int get_custom_fkey_label(int key);
-void dConsoleRedraw ()
-{
+void dConsoleRedraw() {
   int i,j, iresult;
   Bdisp_AllClr_VRAM();
   GetFKeyPtr(0x046e, &iresult); // Catalog
@@ -450,12 +422,11 @@ void dConsoleRedraw ()
 void dConsolePutChar (char c)
 {
   if (line_count == 0) line_count = 1;
-  if (c != '\n')
-          line_buf[line_index][line_x++] = c;
+  if (c != '\n') line_buf[line_index][line_x++] = c;
   else
   {
-          line_buf[line_index][line_x] = '\0';
-          line_x = LINE_COL_MAX;
+    line_buf[line_index][line_x] = '\0';
+    line_x = LINE_COL_MAX;
   }
   if (line_x>=LINE_COL_MAX)
   {
@@ -482,7 +453,8 @@ void dConsolePut(const char * str)
   if (line_count == 0) line_count = 1;
   for (;*str;++str)
   {
-    if (*str != '\n') line_buf[line_index][line_x++] = *str;
+    dConsolePutChar(*str);
+    /*if (*str != '\n') line_buf[line_index][line_x++] = *str;
     else {
       line_buf[line_index][line_x] = '\0';
       line_x = LINE_COL_MAX;
@@ -503,7 +475,7 @@ void dConsolePut(const char * str)
       }
       line_index++;
       if (line_index>=LINE_ROW_MAX) line_index = 0;
-    }
+    }*/
   }
   line_buf[line_index][line_x] = '\0';
 }
