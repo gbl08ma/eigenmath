@@ -463,14 +463,14 @@ extern void eval_print(void);
 void
 eval_display(void)
 {
-        eval_print();
+  eval_print();
 }
 
 void
 printstr(char *s)
 {
-        while (*s)
-                printchar(*s++);
+  while (*s)
+    printchar(*s++);
 }
 
 extern int test_flag;
@@ -478,13 +478,13 @@ extern int test_flag;
 void
 printchar(int c)
 {
-        dConsolePutChar(c);
+  dConsolePutChar(c);
 }
 
 void
 printchar_nowrap(int c)
 {
-        printchar(c);
+  printchar(c);
 }
 
 void set_has_drawn(int val) {
@@ -500,26 +500,24 @@ eval_sample(void)
 char *
 get_curr_cmd(void)
 {
-        int i, len;
-        char *s;
+  int i, len;
+  char *s;
 
-        len=strlen(expr);
-        s = (char*)malloc(len+1);
-        strcpy(s, expr);
+  len=strlen(expr);
+  s = (char*)malloc(len+1);
+  strcpy(s, expr);
 
-        // trim trailing spaces
+  // trim trailing spaces
 
-        for (i = len - 1; i >= 0; i--) {
-                if (isspace(s[i]))
-                        s[i] = 0;
-                else
-                        break;
-        }
+  for (i = len - 1; i >= 0; i--) {
+    if (isspace(s[i])) s[i] = 0;
+    else break;
+  }
 
-        return s;
+  return s;
 }
 void
 update_curr_cmd(char *s)
 {
-        strcpy(expr, s);
+  strcpy(expr, s);
 }

@@ -418,117 +418,113 @@ int dGetLine (char * s,int max) // This function is depended on dConsole
 int get_custom_fkey_label(int key);
 void dConsoleRedraw ()
 {
-        int i,j, iresult;
-        Bdisp_AllClr_VRAM();
-        GetFKeyPtr(0x046e, &iresult); // Catalog
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x03b7, &iresult); // LOAD
-        FKey_Display(1, (int*)iresult);
-        
-        int l = get_custom_fkey_label(2);
-        GetFKeyPtr(l, &iresult);
-        FKey_Display(2, (int*)iresult);
-        l = get_custom_fkey_label(3);
-        GetFKeyPtr(l, &iresult);
-        FKey_Display(3, (int*)iresult);
-        
-        GetFKeyPtr(0x0307, &iresult); // A<>a
-        FKey_Display(4, (int*)iresult);
-        
-        l = get_custom_fkey_label(5);
-        GetFKeyPtr(l, &iresult);
-        FKey_Display(5, (int*)iresult);
-        
-        DisplayStatusArea();
-        for(i=0,j=line_start;i<line_count;++i)
-        {
-                locate(1,i+1);print((uchar*)line_buf[j]);
-                if (++j>=LINE_ROW_MAX) j = 0;
-        }
+  int i,j, iresult;
+  Bdisp_AllClr_VRAM();
+  GetFKeyPtr(0x046e, &iresult); // Catalog
+  FKey_Display(0, (int*)iresult);
+  GetFKeyPtr(0x03b7, &iresult); // LOAD
+  FKey_Display(1, (int*)iresult);
+  
+  int l = get_custom_fkey_label(2);
+  GetFKeyPtr(l, &iresult);
+  FKey_Display(2, (int*)iresult);
+  l = get_custom_fkey_label(3);
+  GetFKeyPtr(l, &iresult);
+  FKey_Display(3, (int*)iresult);
+  
+  GetFKeyPtr(0x0307, &iresult); // A<>a
+  FKey_Display(4, (int*)iresult);
+  
+  l = get_custom_fkey_label(5);
+  GetFKeyPtr(l, &iresult);
+  FKey_Display(5, (int*)iresult);
+  
+  DisplayStatusArea();
+  for(i=0,j=line_start;i<line_count;++i)
+  {
+          locate(1,i+1);print((uchar*)line_buf[j]);
+          if (++j>=LINE_ROW_MAX) j = 0;
+  }
 
 }
 void dConsolePutChar (char c)
 {
-        if (line_count == 0) line_count = 1;
-        if (c != '\n')
-                line_buf[line_index][line_x++] = c;
-        else
-        {
-                line_buf[line_index][line_x] = '\0';
-                line_x = LINE_COL_MAX;
-        }
-        if (line_x>=LINE_COL_MAX)
-        {
-                line_buf[line_index][line_x] = '\0';
+  if (line_count == 0) line_count = 1;
+  if (c != '\n')
+          line_buf[line_index][line_x++] = c;
+  else
+  {
+          line_buf[line_index][line_x] = '\0';
+          line_x = LINE_COL_MAX;
+  }
+  if (line_x>=LINE_COL_MAX)
+  {
+    line_buf[line_index][line_x] = '\0';
 
-                line_x = 0;
-                if (line_count<LINE_ROW_MAX)
-                {
-                        ++line_count;
-                }
-                else
-                {
-                        line_start++;
-                        if (line_start>=LINE_ROW_MAX) line_start = 0;
-                }
-                line_index++;
-                if (line_index>=LINE_ROW_MAX) line_index = 0;
-        }
-        line_buf[line_index][line_x] = '\0';
-        //dConsoleRedraw();
+    line_x = 0;
+    if (line_count<LINE_ROW_MAX)
+    {
+            ++line_count;
+    }
+    else
+    {
+            line_start++;
+            if (line_start>=LINE_ROW_MAX) line_start = 0;
+    }
+    line_index++;
+    if (line_index>=LINE_ROW_MAX) line_index = 0;
+  }
+  line_buf[line_index][line_x] = '\0';
 }
 
 void dConsolePut(const char * str)
 {
-        if (line_count == 0) line_count = 1;
-        for (;*str;++str)
-        {
-                if (*str != '\n')
-                        line_buf[line_index][line_x++] = *str;
-                else
-                {
-                        line_buf[line_index][line_x] = '\0';
-                        line_x = LINE_COL_MAX;
-                }
-                if (line_x>=LINE_COL_MAX)
-                {
-                        line_buf[line_index][line_x] = '\0';
+  if (line_count == 0) line_count = 1;
+  for (;*str;++str)
+  {
+    if (*str != '\n') line_buf[line_index][line_x++] = *str;
+    else {
+      line_buf[line_index][line_x] = '\0';
+      line_x = LINE_COL_MAX;
+    }
+    if (line_x>=LINE_COL_MAX)
+    {
+      line_buf[line_index][line_x] = '\0';
 
-                        line_x = 0;
-                        if (line_count<LINE_ROW_MAX)
-                        {
-                                ++line_count;
-                        }
-                        else
-                        {
-                                line_start++;
-                                if (line_start>=LINE_ROW_MAX) line_start = 0;
-                        }
-                        line_index++;
-                        if (line_index>=LINE_ROW_MAX) line_index = 0;
-                }
-        }
-        line_buf[line_index][line_x] = '\0';
-        //dConsoleRedraw();
+      line_x = 0;
+      if (line_count<LINE_ROW_MAX)
+      {
+              ++line_count;
+      }
+      else
+      {
+              line_start++;
+              if (line_start>=LINE_ROW_MAX) line_start = 0;
+      }
+      line_index++;
+      if (line_index>=LINE_ROW_MAX) line_index = 0;
+    }
+  }
+  line_buf[line_index][line_x] = '\0';
 }
 
 void dPuts(const char * s)
 {
-        dConsolePut(s);
-        dConsolePut("\n");
+  dConsolePut(s);
+  dConsolePut("\n");
 }
 
 int dPrintf (const char * format,...)
 {
-        char    buf[256];
-        int             length;
-        va_list arg_list;
+  char    buf[256];
+  int             length;
+  va_list arg_list;
 
-        va_start(arg_list,format);
-        length = vsprintf(buf,format,arg_list);
-        va_end(arg_list);
+  va_start(arg_list,format);
+  length = vsprintf(buf,format,arg_list);
+  va_end(arg_list);
 
-        dConsolePut (buf);
-        
-        return length;
+  dConsolePut (buf);
+  
+  return length;
 } 
