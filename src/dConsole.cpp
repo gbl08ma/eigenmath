@@ -54,11 +54,12 @@ char dGetKeyChar (uint key)
           return key;
   switch(key)
   {
-    case KEY_CHAR_PLUS:             return key;
-    case KEY_CHAR_MINUS:    return key;
-    case KEY_CHAR_MULT:             return key;
-    case KEY_CHAR_DIV:              return key;
-    case KEY_CHAR_POW:              return key;
+    case KEY_CHAR_PLUS:
+    case KEY_CHAR_MINUS:
+    case KEY_CHAR_MULT:
+    case KEY_CHAR_DIV:
+    case KEY_CHAR_POW:
+      return key;
   }
 
   return 0;
@@ -177,7 +178,6 @@ int dGetLine (char * s,int max) {
   int key;
   char c;
 
-
   l = strlen (line_buf[line_index]);
 
   if (l>=LINE_COL_MAX) {
@@ -192,19 +192,15 @@ int dGetLine (char * s,int max) {
   while (1) {
     if (refresh) {
       int i;
-      for (i=x;i<=LINE_COL_MAX;++i)
-      {
-        locate(i,y);print((uchar*)" ");
+      for (i=x;i<=LINE_COL_MAX;++i) {
+        locate(i,y); print((uchar*)" ");
       }
-      if (pos<width-1)
-      {
-        locate(x,y);            print((uchar*)s);
-        locate(x+pos,y);        printCursor();
-      }
-      else
-      {
-        locate(x,y);                    print((uchar*)s+pos-width+1);
-        locate(x+width-1,y);    printCursor(); //cursor
+      if (pos<width-1) {
+        locate(x,y);          print((uchar*)s);
+        locate(x+pos,y);      printCursor();
+      } else {
+        locate(x,y);          print((uchar*)s+pos-width+1);
+        locate(x+width-1,y);  printCursor(); //cursor
       }
       refresh = 0;
     }
@@ -418,6 +414,10 @@ void dConsoleRedraw() {
           if (++j>=LINE_ROW_MAX) j = 0;
   }
 
+  char statmessage[50];
+  sprintf(statmessage, "%i,%i,%i,%i", line_index,line_x,line_start,line_count);
+  DefineStatusMessage((char*)statmessage, 1, 0, 0);
+  DisplayStatusArea();
 }
 void dConsolePutChar (char c)
 {
@@ -433,14 +433,10 @@ void dConsolePutChar (char c)
     line_buf[line_index][line_x] = '\0';
 
     line_x = 0;
-    if (line_count<LINE_ROW_MAX)
-    {
-            ++line_count;
-    }
-    else
-    {
-            line_start++;
-            if (line_start>=LINE_ROW_MAX) line_start = 0;
+    if (line_count<LINE_ROW_MAX) ++line_count;
+    else {
+      line_start++;
+      if (line_start>=LINE_ROW_MAX) line_start = 0;
     }
     line_index++;
     if (line_index>=LINE_ROW_MAX) line_index = 0;
@@ -451,32 +447,7 @@ void dConsolePutChar (char c)
 void dConsolePut(const char * str)
 {
   if (line_count == 0) line_count = 1;
-  for (;*str;++str)
-  {
-    dConsolePutChar(*str);
-    /*if (*str != '\n') line_buf[line_index][line_x++] = *str;
-    else {
-      line_buf[line_index][line_x] = '\0';
-      line_x = LINE_COL_MAX;
-    }
-    if (line_x>=LINE_COL_MAX)
-    {
-      line_buf[line_index][line_x] = '\0';
-
-      line_x = 0;
-      if (line_count<LINE_ROW_MAX)
-      {
-              ++line_count;
-      }
-      else
-      {
-              line_start++;
-              if (line_start>=LINE_ROW_MAX) line_start = 0;
-      }
-      line_index++;
-      if (line_index>=LINE_ROW_MAX) line_index = 0;
-    }*/
-  }
+  for (;*str;++str) dConsolePutChar(*str);
   line_buf[line_index][line_x] = '\0';
 }
 

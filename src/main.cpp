@@ -43,6 +43,7 @@ main()
 {
   Bdisp_AllClr_VRAM();
   Bdisp_EnableColor(1);
+  DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
   
@@ -71,7 +72,7 @@ void input_eval_loop(int isRecording) {
   char** recHistory = NULL; int curRecHistEntry = 0;
   if(isRecording) recHistory = (char**)alloca(200); // space for 200 pointers to history entries
   while (1) {
-    DefineStatusMessage((char*)"", 1, 0, 0);
+    //DefineStatusMessage((char*)"", 1, 0, 0);
     strcpy(expr, (char*)"");
     printf(">");
     dConsoleRedraw();
