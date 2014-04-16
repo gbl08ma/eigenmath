@@ -72,7 +72,7 @@ void input_eval_loop(int isRecording) {
   char** recHistory = NULL; int curRecHistEntry = 0;
   if(isRecording) recHistory = (char**)alloca(200); // space for 200 pointers to history entries
   while (1) {
-    //DefineStatusMessage((char*)"", 1, 0, 0);
+    DefineStatusMessage((char*)"", 1, 0, 0);
     strcpy(expr, (char*)"");
     printf(">");
     dConsoleRedraw();

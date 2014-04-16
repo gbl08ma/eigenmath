@@ -408,15 +408,10 @@ void dConsoleRedraw() {
   FKey_Display(5, (int*)iresult);
   
   DisplayStatusArea();
-  for(i=0,j=line_start;i<line_count;++i)
-  {
-          locate(1,i+1);print((uchar*)line_buf[j]);
-          if (++j>=LINE_ROW_MAX) j = 0;
+  for(i=0,j=line_start;i<line_count;++i) {
+    locate(1,i+1);print((uchar*)line_buf[j]);
+    if (++j>=LINE_ROW_MAX) j = 0;
   }
-
-  char statmessage[50];
-  sprintf(statmessage, "%i,%i,%i,%i", line_index,line_x,line_start,line_count);
-  DefineStatusMessage((char*)statmessage, 1, 0, 0);
   DisplayStatusArea();
 }
 void dConsolePutChar (char c)
