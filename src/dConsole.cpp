@@ -18,7 +18,7 @@ extern "C" {
 #include "aboutGUI.hpp"
 
 #include "graphicsProvider.hpp"
-#define LINE_ROW_MAX    10
+#define LINE_ROW_MAX    /*10*/ 100
 #define LINE_COL_MAX    32
 
 typedef unsigned int    uint;
@@ -32,13 +32,16 @@ int line_count = 0;
 
 int myconsolex = 0;
 int myconsoley = 0;
+int myconsolescroll = 0;
 
 void locate(int x, int y) {
   myconsolex = x-1;
   myconsoley = y-1;
 }
 void print(unsigned char* msg) {
-  PrintMiniFix( myconsolex*12, myconsoley*17, (char*)msg, 0, COLOR_BLACK, COLOR_WHITE );
+  int linestart = line_count-10+myconsolescroll;
+  if(linestart < 0) linestart = 0;
+  if(myconsoley - linestart >= 0 && myconsoley - linestart < 10) PrintMiniFix( myconsolex*12, (myconsoley - linestart)*17, (char*)msg, 0, COLOR_BLACK, COLOR_WHITE );
   myconsolex = myconsolex + strlen((char*)msg);
 }
 
@@ -71,68 +74,16 @@ void dConsoleCls ()
   line_x          = 0;
   line_start      = 0;
   line_count      = 0;
+  myconsolescroll = 0;
   dConsoleRedraw();
 }
 
-/*int dGetLineBox (char * s,int max,int width,int x,int y)
-{
-        int             pos = strlen(s);
-        int             refresh = 1;
-        uint    key;
-        char    c;
-
-        while(1)
-        {
-                if (refresh)
-                {
-                        dAreaClear(x,y,x+width*6+2,y+10,2);
-
-                        if (pos<width-1)
-                        {
-                                printXY (x+1,y+2,(uchar*)s,0);
-                                printXY (x+1+pos*6,y+2,(uchar*)"_",0);
-                        }
-                        else
-                        {
-                                printXY (x+1,y+2,(uchar*)(s+pos-width+1),0);
-                                printXY (x+1+(width-1)*6,y+2,(uchar*)"_",0);
-                        }
-                        refresh = 0;
-                }
-
-                GetKey(&key);
-
-                if ((c=dGetKeyChar(key))!=0)
-                {
-                        if (pos>=max) continue;
-
-                        s[pos++] = c;s[pos] = '\0';
-                        refresh = 1;
-                }
-                else
-                {
-                        if (key==KEY_CTRL_DEL)
-                        {
-                                if (pos<=0) continue;
-                                s[--pos] = '\0';
-                                refresh  = 1;
-                        }
-                        else if (key==KEY_CTRL_AC)
-                        {
-                                *s              = 0;
-                                pos             = 0;
-                                refresh = 1;
-                        }
-                        else if (key==KEY_CTRL_EXE) return 1;
-                        else if (key==KEY_CTRL_EXIT) return 0;
-
-                }
-
-        }
-}*/
 void printCursor() {
   int x = myconsolex*12;
-  int y = myconsoley*17+24;
+  int linestart = line_count-10+myconsolescroll;
+  if(linestart < 0) linestart = 0;
+  if(!(myconsoley - linestart >= 0 && myconsoley - linestart < 10)) return;
+  int y = (myconsoley-linestart)*17+24;
   // vertical cursor...
   drawLine(x, y+14, x, y, COLOR_BLACK);
   drawLine(x+1, y+14, x+1, y, COLOR_BLACK); 
@@ -189,7 +140,12 @@ int dGetLine (char * s,int max) {
   y = line_count;
   width = LINE_COL_MAX - l;
   int firstLoopRun = 1;
+  int isscrolling = 0;
   while (1) {
+    if(isscrolling) {
+      DefineStatusMessage((char*)"Scrolling enabled (up/down)", 1, 0, 0);
+      DisplayStatusArea();
+    }
     if (refresh) {
       int i;
       for (i=x;i<=LINE_COL_MAX;++i) {
@@ -206,6 +162,13 @@ int dGetLine (char * s,int max) {
     }
     int keyflag = GetSetupSetting( (unsigned int)0x14);
     GetKey(&key);
+    if(isscrolling && !(key==KEY_CTRL_PAGEUP || key==KEY_CTRL_PAGEDOWN || key==KEY_CTRL_UP || key==KEY_CTRL_DOWN)) {
+      isscrolling = 0;
+      myconsolescroll = 0;
+      DefineStatusMessage((char*)"", 1, 0, 0);
+      dConsoleRedraw();
+      refresh = 1;
+    }
     if(key == KEY_CTRL_F5) {
       if (keyflag == 0x04 || keyflag == 0x08 || keyflag == 0x84 || keyflag == 0x88) {
         // ^only applies if some sort of alpha (not locked) is already on
@@ -333,15 +296,29 @@ int dGetLine (char * s,int max) {
       dConsoleRedraw();
       refresh = 1;
     } else if (key==KEY_CTRL_UP) {
-      // go up in command history
-      do_up_arrow();
-      pos=strlen(s);
+      if(isscrolling) {
+        myconsolescroll--;
+        if(line_count-10+myconsolescroll < 0) myconsolescroll++;
+        dConsoleRedraw();
+      } else {
+        // go up in command history
+        do_up_arrow();
+        pos=strlen(s);
+      }
       refresh = 1;
     } else if (key==KEY_CTRL_DOWN) {
       // go down in command history
-      do_down_arrow();
-      pos=strlen(s);
+      if(isscrolling) {
+        myconsolescroll++;
+        if(myconsolescroll>0) myconsolescroll = 0;
+        dConsoleRedraw();
+      } else {
+        do_down_arrow();
+        pos=strlen(s);
+      }
       refresh = 1;
+    } else if (key==KEY_CTRL_PAGEUP || key==KEY_CTRL_PAGEDOWN) {
+      isscrolling = 1;
     } else if (key==KEY_CTRL_LEFT) {
       // move cursor left
       if(pos<=0) pos=strlen(s); //cycle
@@ -406,8 +383,7 @@ void dConsoleRedraw() {
   l = get_custom_fkey_label(5);
   GetFKeyPtr(l, &iresult);
   FKey_Display(5, (int*)iresult);
-  
-  DisplayStatusArea();
+  drawRectangle(0, 9*17+24, LCD_WIDTH_PX, 18, COLOR_WHITE);
   for(i=0,j=line_start;i<line_count;++i) {
     locate(1,i+1);print((uchar*)line_buf[j]);
     if (++j>=LINE_ROW_MAX) j = 0;
