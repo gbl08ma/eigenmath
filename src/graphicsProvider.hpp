@@ -29,5 +29,9 @@ void drawtnyimLogo( int x, int y);
 //int textColorToFullColor(int textcolor);
 //void progressMessage(char* message, int cur, int total);
 void printCentered(unsigned char* text, int y, int FGC, int BGC);
+void clearLine(int x, int y, color_t color=COLOR_WHITE);
+void mPrintXY(int x, int y, char*msg, int mode, int color);
+void drawScreenTitle(char* title, char* subtitle = NULL);
+void drawFkeyLabels(int f1=-1, int f2=-1, int f3=-1, int f4=-1, int f5=-1, int f6=-1);
 
 #endif

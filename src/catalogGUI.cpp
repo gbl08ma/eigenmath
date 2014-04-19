@@ -122,27 +122,24 @@ int showCatalog(char* insertText) {
   int ret;
   // returns 0 on failure (user exit) and 1 on success (user chose a option)
   MenuItem menuitems[9];
-  strcpy(menuitems[0].text, "All");
-  strcpy(menuitems[1].text, "Complex number");
-  strcpy(menuitems[2].text, "Linear algebra");
-  strcpy(menuitems[3].text, "Calculus");
-  strcpy(menuitems[4].text, "Polynomial");
-  strcpy(menuitems[5].text, "Special");
-  strcpy(menuitems[6].text, "Program and logic");
-  strcpy(menuitems[7].text, "Trigonometry");
-  strcpy(menuitems[8].text, "Other");
+  menuitems[0].text = (char*)"All";
+  menuitems[1].text = (char*)"Complex number";
+  menuitems[2].text = (char*)"Linear algebra";
+  menuitems[3].text = (char*)"Calculus";
+  menuitems[4].text = (char*)"Polynomial";
+  menuitems[5].text = (char*)"Special";
+  menuitems[6].text = (char*)"Program and logic";
+  menuitems[7].text = (char*)"Trigonometry";
+  menuitems[8].text = (char*)"Other";
   
   Menu menu;
   menu.items=menuitems;
   menu.numitems=9;
   menu.scrollbar=1;
   menu.scrollout=1;
-  menu.showtitle=1;
   menu.selection=1;
   menu.scroll=0;
-  strcpy(menu.nodatamsg, "");
-  strcpy(menu.title, "Function Catalog");
-  strcpy(menu.statusText, "");
+  menu.title = (char*)"Function Catalog";
   
   int incat = 1;
   while(incat) {
@@ -222,7 +219,7 @@ int doCatalogMenu(char* insertText, char* title, int category) {
       menuitems[curmi].type = MENUITEM_NORMAL;
       menuitems[curmi].color = TEXT_COLOR_BLACK;
       menuitems[curmi].isfolder = cur; // little hack: store index of the command in the full list in the isfolder property (unused by the menu system in this case)
-      strcpy(menuitems[curmi].text, completeCat[cur].name);
+      menuitems[curmi].text = completeCat[cur].name;
       curmi++;
     }
     cur++;
@@ -233,12 +230,9 @@ int doCatalogMenu(char* insertText, char* title, int category) {
   menu.numitems=curmi;
   menu.scrollbar=1;
   menu.scrollout=1;
-  menu.showtitle=1;
   menu.selection=1;
   menu.scroll=0;
-  strcpy(menu.nodatamsg, "");
-  strcpy(menu.title, title);
-  strcpy(menu.statusText, "");
+  menu.title = title;
   int sres = doMenu(&menu);
   if(sres == MENU_RETURN_SELECTION) {
     strcpy(insertText, completeCat[menuitems[menu.selection-1].isfolder].insert);

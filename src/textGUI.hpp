@@ -21,22 +21,29 @@ typedef struct
   color_t color=COLOR_BLACK;
   int spaceAtEnd=0;
   int lineSpacing=0;
+  int minimini=0;
 } textElement;
 
+#define TEXTAREATYPE_NORMAL 0
+#define TEXTAREATYPE_INSTANT_RETURN 1
 typedef struct
 {
   int x=0;
   int y=0;
   int width=LCD_WIDTH_PX;
-  //int height=LCD_HEIGHT_PX-24;
   int lineHeight=17;
   textElement* elements;
   int numelements;
-  char title[42];
-  int showtitle = 1;
+  char* title = NULL;
   int scrollbar=1;
+  int allowEXE=0; //whether to allow EXE to exit the screen
+  int allowF1=0; //whether to allow F1 to exit the screen
+  int type=TEXTAREATYPE_NORMAL;
 } textArea;
 
-void doTextArea(textArea* text);
+#define TEXTAREA_RETURN_EXIT 0
+#define TEXTAREA_RETURN_EXE 1
+#define TEXTAREA_RETURN_F1 2
+int doTextArea(textArea* text); //returns 0 when user EXITs, 1 when allowEXE is true and user presses EXE, 2 when allowF1 is true and user presses F1.
 
 #endif 

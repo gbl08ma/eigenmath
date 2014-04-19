@@ -13,129 +13,123 @@
 #include <math.h>
 
 #include "textGUI.hpp"
+#include "stringsProvider.hpp"
 #include "graphicsProvider.hpp"
 
-/* copy over the next token from an input string, after
-skipping leading blanks (or other whitespace?). The
-token is terminated by the first appearance of tokchar,
-or by the end of the source string.
-
-The caller must supply sufficient space in token to
-receive any token, Otherwise tokens will be truncated.
-
-Returns: a pointer past the terminating tokchar.
-
-This will happily return an infinity of empty tokens if
-called with src pointing to the end of a string. Tokens
-will never include a copy of tokchar.
-
-A better name would be "strtkn", except that is reserved
-for the system namespace. Change to that at your risk.
-
-released to Public Domain, by C.B. Falconer.
-Published 2006-02-20. Attribution appreciated.
-*/
-
-unsigned char *toksplit(unsigned char *src, /* Source of tokens */
-char tokchar, /* token delimiting char */
-unsigned char *token, /* receiver of parsed token */
-int lgh) /* length token can receive */
-/* not including final '\0' */
-{
-  if (src) {
-    //while (' ' == *src) *src++;
-    while (' ' == *src) *src=*src+1; // avoids a compiler warning
-
-    while (*src && (tokchar != *src)) {
-      if (lgh) {
-        *token++ = *src;
-        --lgh;
-      }
-      src++;
-    }
-    if (*src && (tokchar == *src)) src++;
-  }
-  *token = '\0';
-  return src;
-} /* toksplit */
-
-
-void doTextArea(textArea* text) {
+int doTextArea(textArea* text) {
   int scroll = 0;
+  int isFirstDraw = 1;
+  int totalTextY = 0;
   int key;
+  int showtitle = text->title != NULL;
   while(1) {
     drawRectangle(text->x, text->y+24, text->width, LCD_HEIGHT_PX-24, COLOR_WHITE);
     int cur = 0;
     int textX = text->x;
-    int textY = scroll+(text->showtitle ? 24 : 0); // 24 pixels for title (or not)
+    int textY = scroll+(showtitle ? 24 : 0)+text->y; // 24 pixels for title (or not)
     int temptextY = 0;
     int temptextX = 0;
-    while(cur <= text->numelements-1) {
+    while(cur < text->numelements) {
       if(text->elements[cur].newLine) {
         textX=text->x;
         textY=textY+text->lineHeight+text->elements[cur].lineSpacing; 
       }
-      unsigned char* singleword = (unsigned char*)malloc(strlen(text->elements[cur].text)); // because of this, a single text element can't have more bytes than malloc can provide
+      int tlen = strlen(text->elements[cur].text);
+      unsigned char* singleword = (unsigned char*)malloc(tlen); // because of this, a single text element can't have more bytes than malloc can provide
       unsigned char* src = (unsigned char*)text->elements[cur].text;
       while(*src)
       {
         temptextX = 0;
-        src = toksplit(src, ' ', (unsigned char*)singleword, strlen(text->elements[cur].text)); //break into words; next word
+        src = toksplit(src, ' ', (unsigned char*)singleword, tlen); //break into words; next word
         //check if printing this word would go off the screen, with fake PrintMini drawing:
-        PrintMini(&temptextX, &temptextY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 0, 0);
+        if(text->elements[cur].minimini) {
+          PrintMiniMini( &temptextX, &temptextY, (unsigned char*)singleword, 0, text->elements[cur].color, 1 );
+        } else {
+          PrintMini(&temptextX, &temptextY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 0, 0);
+        }
         if(temptextX + textX > text->width-6) {
           //time for a new line
           textX=text->x;
           textY=textY+text->lineHeight;
-          PrintMini(&textX, &textY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 1, 0);
+        } //else still fits, print new word normally (or just increment textX, if we are not "on stage" yet)
+        if(textY >= -24 && textY < LCD_HEIGHT_PX) {
+          if(text->elements[cur].minimini) {
+            PrintMiniMini( &textX, &textY, (unsigned char*)singleword, 0, text->elements[cur].color, 0 );
+          } else {
+            PrintMini(&textX, &textY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 1, 0);
+          }
+          //add a space, since it was removed from token
+          if(*src || text->elements[cur].spaceAtEnd) PrintMini(&textX, &textY, (unsigned char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
         } else {
-          //still fits, print new word normally
-          PrintMini(&textX, &textY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 1, 0);
+          textX += temptextX;
+          if(*src || text->elements[cur].spaceAtEnd) textX += 7; // size of a PrintMini space
         }
-        //add a space, since it was removed from token
-        if(*src || text->elements[cur].spaceAtEnd) PrintMini(&textX, &textY, (unsigned char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
       }
       free(singleword);
+      if(isFirstDraw) {
+        totalTextY = textY+(showtitle ? 0 : 24);
+      } else if(textY>LCD_HEIGHT_PX) {
+        break;
+      }
       cur++;
     }
-    if(text->showtitle) {
-      unsigned char buffer[50] = "";
-      unsigned char buffer2[50] = "";
-      strcpy((char*)buffer, "  ");
-      strcpy((char*)buffer2, "");
-      strcat((char*)buffer, (char*)text->title);
-      PrintXY(1, 1, (char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
-      PrintXY(1, 1, (char*)buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+    isFirstDraw=0;
+    if(showtitle) {
+      clearLine(1,1);
+      drawScreenTitle((char*)text->title);
     }
+    int scrollableHeight = LCD_HEIGHT_PX-24*(showtitle ? 2 : 1)-text->y;
     //draw a scrollbar:
     if(text->scrollbar) {
       TScrollbar sb;
       sb.I1 = 0;
       sb.I5 = 0;
-      sb.indicatormaximum = (textY-scroll);
-      sb.indicatorheight = 10*17;
+      sb.indicatormaximum = totalTextY;
+      sb.indicatorheight = scrollableHeight;
       sb.indicatorpos = -scroll;
-      sb.barheight = LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1);
-      sb.bartop = (text->showtitle ? 24 : 0);
+      sb.barheight = scrollableHeight;
+      sb.bartop = (showtitle ? 24 : 0)+text->y;
       sb.barleft = text->width - 6;
       sb.barwidth = 6;
 
       Scrollbar(&sb);
     }
+    if(text->type == TEXTAREATYPE_INSTANT_RETURN) return 0;
     GetKey(&key);
+    
     switch(key)
     {
       case KEY_CTRL_UP:
         if (scroll < 0) {
           scroll = scroll + 17;
+          if(scroll > 0) scroll = 0;
         }
         break;
       case KEY_CTRL_DOWN:
-        if (textY > LCD_HEIGHT_PX-24*2) {
+        if (textY > scrollableHeight-(showtitle ? 0 : 17)) {
           scroll = scroll - 17;
+          if(scroll < -totalTextY+scrollableHeight-(showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(showtitle ? 0 : 17);
         }
         break;
-      case KEY_CTRL_EXIT: return; break;
+      case KEY_CTRL_PAGEDOWN:
+        if (textY > scrollableHeight-(showtitle ? 0 : 17)) {
+          scroll = scroll - scrollableHeight;
+          if(scroll < -totalTextY+scrollableHeight-(showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(showtitle ? 0 : 17);
+        }
+        break;
+      case KEY_CTRL_PAGEUP:
+        if (scroll < 0) {
+          scroll = scroll + scrollableHeight;
+          if(scroll > 0) scroll = 0;
+        }
+        break;
+      case KEY_CTRL_EXE:
+        if(text->allowEXE) return TEXTAREA_RETURN_EXE;
+        break;
+      case KEY_CTRL_F1:
+        if(text->allowF1) return TEXTAREA_RETURN_F1;
+        break;
+      case KEY_CTRL_EXIT: return TEXTAREA_RETURN_EXIT; break;
     }
   }
 }

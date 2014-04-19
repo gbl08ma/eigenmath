@@ -249,3 +249,54 @@ void printCentered(unsigned char* text, int y, int FGC, int BGC) {
     cur++;
   }
 }
+
+void clearLine(int x, int y, color_t color) {
+  // clear text line. x and y are text cursor coordinates
+  // this is meant to achieve the same effect as using PrintXY with a line full of spaces (except it doesn't waste strings).
+  int width=LCD_WIDTH_PX;
+  if(x>1) width = 24*(21-x);
+  drawRectangle((x-1)*18, y*24, width, 24, color);
+}
+
+void mPrintXY(int x, int y, char*msg, int mode, int color) {
+  char nmsg[50];
+  nmsg[0] = 0x20;
+  nmsg[1] = 0x20;
+  nmsg[2] = '\0';
+  strncat(nmsg, msg, 48);
+  PrintXY(x, y, nmsg, mode, color );
+}
+
+void drawScreenTitle(char* title, char* subtitle) {
+  if(title != NULL) mPrintXY(1, 1, title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  if(subtitle != NULL) mPrintXY(1, 2, subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+}
+
+void drawFkeyLabels(int f1, int f2, int f3, int f4, int f5, int f6) {
+  // set arguments to negative numbers if that fkey is not to be affected.
+  int iresult;
+  if(f1>=0) {
+    GetFKeyPtr(f1, &iresult);
+    FKey_Display(0, (int*)iresult);
+  }
+  if(f2>=0) {
+    GetFKeyPtr(f2, &iresult);
+    FKey_Display(1, (int*)iresult);
+  }
+  if(f3>=0) {
+    GetFKeyPtr(f3, &iresult);
+    FKey_Display(2, (int*)iresult);
+  }
+  if(f4>=0) {
+    GetFKeyPtr(f4, &iresult);
+    FKey_Display(3, (int*)iresult);
+  }
+  if(f5>=0) {
+    GetFKeyPtr(f5, &iresult);
+    FKey_Display(4, (int*)iresult);
+  }
+  if(f6>=0) {
+    GetFKeyPtr(f6, &iresult);
+    FKey_Display(5, (int*)iresult);
+  }
+}

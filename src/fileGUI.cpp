@@ -31,6 +31,8 @@ int fileBrowser(char* filename, unsigned char* filter, char* title) {
 int fileBrowserSub(char* browserbasepath, char* filename, unsigned char* filter, char* title) {
   int inscreen = 1;
   Menu menu;
+  MenuItemIcon icontable[12];
+  buildIconTable(icontable);
   
   // first get file count so we know how much to alloc
   GetFiles(NULL, NULL, browserbasepath, &menu.numitems, filter);
@@ -44,47 +46,48 @@ int fileBrowserSub(char* browserbasepath, char* filename, unsigned char* filter,
     menu.items = menuitems;
   }
   
-  char titleBuffer[23] = ""; 
+  char titleBuffer[120];
+  char titleBufferBuf[120];
   int smemfree;
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
   
-  char friendlypath[MAX_FILENAME_SIZE] = "";
+  char friendlypath[MAX_FILENAME_SIZE];
   strcpy(friendlypath, browserbasepath+6);
   friendlypath[strlen(friendlypath)-1] = '\0'; //remove ending slash like OS does
+  // test to see if friendlypath is too big
+  int jump4=0;
+  while(1) {
+    int temptextX=7*18+10; // px length of menu title + 10, like menuGUI goes.
+    int temptextY=0;
+    PrintMini(&temptextX, &temptextY, (unsigned char*)friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); // fake draw
+    if(temptextX>LCD_WIDTH_PX-6) {
+      char newfriendlypath[MAX_FILENAME_SIZE];
+      shortenDisplayPath(friendlypath, newfriendlypath, (jump4 ? 4 : 1));
+      if(strlen(friendlypath) > strlen(newfriendlypath) && strlen(newfriendlypath) > 3) { // check if len > 3 because shortenDisplayPath may return just "..." when the folder name is too big
+        // shortenDisplayPath still managed to shorten, copy and continue
+        jump4 = 1; //it has been shortened already, so next time jump the first four characters
+        strcpy(friendlypath, newfriendlypath);
+      } else {
+        // shortenDisplayPath can't shorten any more even if it still
+        // doesn't fit in the screen, so give up.
+        break;
+      }
+    } else break;
+  }
   menu.subtitle = friendlypath;
-  menu.showsubtitle = 1;
   menu.type = MENUTYPE_MULTISELECT;
-  menu.height = 8;
+  menu.height = 7;
   menu.scrollout=1;
-  strcpy(menu.nodatamsg, "No Data");
-  strcpy(menu.title, title);
-  menu.showtitle=1;
+  menu.nodatamsg = (char*)"No Data";
+  menu.title = title;
   while(inscreen) {
     Bdisp_AllClr_VRAM();
-    itoa(smemfree, (unsigned char*)menu.statusText);
-    LocalizeMessage1( 340, titleBuffer ); //"bytes free"
-    strcat((char*)menu.statusText, (char*)titleBuffer);
-    /*int iresult;
-    if(menu.fkeypage == 0) {
-      if(menu.numitems>0) {
-        GetFKeyPtr(0x0188, &iresult); // RENAME
-        FKey_Display(4, (int*)iresult);
-      }
-      if(menu.numselitems>0) {
-        GetFKeyPtr(0x0069, &iresult); // CUT (white)
-        FKey_Display(1, (int*)iresult);
-        if(GetSetting(SETTING_SHOW_ADVANCED)) {
-          GetFKeyPtr(0x0034, &iresult); // COPY (white)
-          FKey_Display(2, (int*)iresult);
-        }
-        GetFKeyPtr(0x0038, &iresult); // DELETE
-        FKey_Display(5, (int*)iresult);
-      }
-      GetFKeyPtr(0x038E, &iresult); // MKFLDR
-      FKey_Display(3, (int*)iresult);
-    }*/
-    int res = doMenu(&menu);
+    itoa(smemfree, (unsigned char*)titleBuffer);
+    LocalizeMessage1( 340, titleBufferBuf ); //"bytes free"
+    strncat((char*)titleBuffer, (char*)titleBufferBuf, 65);
+    menu.statusText = (char*)titleBuffer;
+    int res = doMenu(&menu, icontable);
     switch(res) {
       case MENU_RETURN_EXIT:
         if(!strcmp(browserbasepath,"\\\\fls0\\")) { //check that we aren't already in the root folder
@@ -113,88 +116,43 @@ int fileBrowserSub(char* browserbasepath, char* filename, unsigned char* filter,
           return 2;
         }
         break;
-      /*case KEY_CTRL_F2:
-      case KEY_CTRL_F3:
-        if(!GetSetting(SETTING_SHOW_ADVANCED) && res == KEY_CTRL_F3) break; //user didn't enable copy tool
-        if (menu.numselitems > 0 && menu.fkeypage==0) {
-          if((!(*itemsinclip >= MAX_ITEMS_IN_CLIPBOARD)) && menu.numselitems <= MAX_ITEMS_IN_CLIPBOARD-*itemsinclip) {
-            int ifile = 0; int hasShownFolderCopyWarning = 0;
-            while(ifile < menu.numitems) {  
-              if (menu.items[ifile].isselected) {
-                if(res == KEY_CTRL_F2) {
-                  strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
-                  //0=cut file; 1=copy file:
-                  clipboard[*itemsinclip].action = 0;
-                  *itemsinclip = *itemsinclip + 1;
-                } else {
-                  if (!menu.items[ifile].isfolder) {
-                    strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
-                    //0=cut file; 1=copy file:
-                    clipboard[*itemsinclip].action = 1;
-                    *itemsinclip = *itemsinclip + 1;
-                  } else {
-                    if (!hasShownFolderCopyWarning) {
-                      MsgBoxPush(4);
-                      PrintXY(3, 2, (char*)"  Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-                      PrintXY(3, 3, (char*)"  not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-                      PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-                      int inscreen=1, key;
-                      while(inscreen) {
-                        mGetKey(&key);
-                        switch(key)
-                        {
-                    case KEY_CTRL_EXIT:
-                          case KEY_CTRL_AC:
-                            inscreen=0;
-                            break;
-                        }
-                      }
-                      MsgBoxPop();
-                      hasShownFolderCopyWarning = 1;
-                    }
-                  }
-                }
-                menu.items[ifile].isselected = 0; // clear selection
-                menu.numselitems--;
-              }
-              ifile++;
-            }
-          } else {
-            MsgBoxPush(4);
-            PrintXY(3, 2, (char*)"  Can't add", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 3, (char*)"  selected items to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 4, (char*)"  clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-            int inscreen=1, key;
-            while(inscreen) {
-              mGetKey(&key);
-              switch(key)
-              {
-                case KEY_CTRL_EXIT:
-                case KEY_CTRL_AC:
-                  inscreen=0;
-                  break;
-              }
-            }
-            MsgBoxPop();
-          }
-        }
-        break;
-      case KEY_CTRL_F4:
-        if(makeFolderGUI(browserbasepath)) return 1; // if user said yes and files were deleted, reload file list
-        break;
-      case KEY_CTRL_F5:
-        if(renameFileGUI(files, &menu, browserbasepath)) return 1;
-        break;
-      case KEY_CTRL_F6:
-        if(menu.numselitems>0) if(deleteFilesGUI(files, &menu)) return 1; // if user said yes and files were deleted, reload file list
-        break;
-      case KEY_CTRL_PASTE:
-        filePasteClipboardItems(clipboard, browserbasepath, *itemsinclip);
-        *itemsinclip = 0;
-        return 1;
-        break;*/
+
     }
   }
   return 1;
+}
+
+void shortenDisplayPath(char* longpath, char* shortpath, int jump) {
+  //this function takes a long path for display, like \myfolder\long\display\path
+  //and shortens it one level, like this: ...\long\display\path
+  //putting the result in shortpath
+  strcpy(shortpath, (char*)"...");
+  int i = jump; // jump the specified amount of characters... by default it jumps the first /
+  // but it can also be made to jump e.g. 4 characters, which would jump ".../" (useful for when the text has been through this function already)
+  int max = strlen(longpath);
+  while (i<max && longpath[i] != '\\')
+          i++;
+  if (longpath[i] == '\\') {
+    strcat(shortpath, longpath+i);
+  }
+}
+
+void buildIconTable(MenuItemIcon* icontable) {
+  unsigned int msgno;
+  unsigned short folder[7]={'\\','\\','f','l','s','0',0};
+
+  const char *bogusFiles[] = {"t", // for folder
+                              "t.g3m",
+                              "t.g3e",
+                              "t.g3a",
+                              "t.g3p",
+                              "t.g3b",
+                              "t.bmp",
+                              "t.txt",
+                              "t.csv",
+                              "t.abc" //for "unsupported" files
+                             };
+
+  for(int i = 0; i < 10; i++)
+    SMEM_MapIconToExt( (unsigned char*)bogusFiles[i], (i==0 ? folder : (unsigned short*)"\x000\x000"), &msgno, icontable[i].data );
 }

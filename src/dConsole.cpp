@@ -365,7 +365,8 @@ int get_custom_fkey_label(int key);
 void dConsoleRedraw() {
   int i,j, iresult;
   Bdisp_AllClr_VRAM();
-  GetFKeyPtr(0x046e, &iresult); // Catalog
+  drawFkeyLabels(0x046e, 0x03b7, get_custom_fkey_label(2), get_custom_fkey_label(3), 0x0307, get_custom_fkey_label(5)); // Catalog, LOAD, user-defined, user-defined,  A<>a, user-defined
+  /*GetFKeyPtr(0x046e, &iresult); // Catalog
   FKey_Display(0, (int*)iresult);
   GetFKeyPtr(0x03b7, &iresult); // LOAD
   FKey_Display(1, (int*)iresult);
@@ -382,7 +383,7 @@ void dConsoleRedraw() {
   
   l = get_custom_fkey_label(5);
   GetFKeyPtr(l, &iresult);
-  FKey_Display(5, (int*)iresult);
+  FKey_Display(5, (int*)iresult);*/
   drawRectangle(0, 9*17+24, LCD_WIDTH_PX, 18, COLOR_WHITE);
   for(i=0,j=line_start;i<line_count;++i) {
     locate(1,i+1);print((uchar*)line_buf[j]);

@@ -18,6 +18,7 @@ extern "C" {
 }
 #include "fileGUI.hpp"
 #include "textGUI.hpp"
+#include "graphicsProvider.hpp"
 extern int esc_flag;
 extern int run_startup_script_again;
 int execution_in_progress = 0;
@@ -188,15 +189,7 @@ void check_do_graph() {
     int fkeymenu = 0;
     while(1) {
       DisplayStatusArea();
-      if(fkeymenu == 1) {
-        int iresult;
-        GetFKeyPtr(0x005F, &iresult); // INITIAL
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x0060, &iresult); // TRIG
-        FKey_Display(1, (int*)iresult);
-        GetFKeyPtr(0x0061, &iresult); // STANDRD
-        FKey_Display(2, (int*)iresult);
-      }
+      if(fkeymenu == 1) drawFkeyLabels(0x005F, 0x0060, 0x0061); // INITIAL, TRIG, STANDRD
       GetKey(&key);
       double xmin, xmax, ymin, ymax, xrange, yrange;
       get_xyminmax(&xmin, &xmax, &ymin, &ymax);
@@ -342,8 +335,6 @@ void select_strip_script() {
   }
   
   textArea text;
-  strcpy(text.title, (char*)"aa");
-  text.showtitle=0;
 
   textElement elem[10];
   text.elements = elem;
