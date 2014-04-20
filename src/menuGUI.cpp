@@ -95,7 +95,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         sb.barwidth = 6;
         Scrollbar(&sb);
       }
-      if(menu->type==MENUTYPE_MULTISELECT && menu->fkeypage == 0) drawFkeyLabels(0x0037); // SELECT (white)
+      //if(menu->type==MENUTYPE_MULTISELECT && menu->fkeypage == 0) drawFkeyLabels(0x0037); // SELECT (white)
     } else {
       printCentered((unsigned char*)menu->nodatamsg, (itemsStartY*24)+(itemsHeight*24)/2-12, COLOR_BLACK, COLOR_WHITE);
     }
@@ -155,14 +155,14 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         break;
       case KEY_CTRL_F1:
         if(menu->type==MENUTYPE_MULTISELECT && menu->fkeypage == 0 && menu->numitems > 0) {
-          if(menu->items[menu->selection-1].isselected) {
+          /*if(menu->items[menu->selection-1].isselected) {
             menu->items[menu->selection-1].isselected=0;
             menu->numselitems = menu->numselitems-1;
           } else {
             menu->items[menu->selection-1].isselected=1;
             menu->numselitems = menu->numselitems+1;
           }
-          return key; //return on F1 too so that parent subroutines have a chance to e.g. redraw fkeys
+          return key; //return on F1 too so that parent subroutines have a chance to e.g. redraw fkeys*/
         } else if (menu->type == MENUTYPE_FKEYS) {
           return key;
         }

@@ -77,7 +77,7 @@ int fileBrowserSub(char* browserbasepath, char* filename, unsigned char* filter,
   }
   menu.subtitle = friendlypath;
   menu.type = MENUTYPE_MULTISELECT;
-  menu.height = 7;
+  menu.height = 8;
   menu.scrollout=1;
   menu.nodatamsg = (char*)"No Data";
   menu.title = title;
