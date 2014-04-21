@@ -118,7 +118,6 @@ catalogFunc completeCat[CAT_COMPLETE_COUNT] = { // list of all functions (includ
 };
 
 int showCatalog(char* insertText) {
-  SaveVRAM_1();
   int ret;
   // returns 0 on failure (user exit) and 1 on success (user chose a option)
   MenuItem menuitems[9];
@@ -206,7 +205,6 @@ int showCatalog(char* insertText) {
       incat = 0;
     }
   }
-  LoadVRAM_1();
   return ret;
 }
 

@@ -283,7 +283,8 @@ int dGetLine (char * s,int max) {
       char text[20] = "";
       if(showCatalog(text)) {
         addStringToInput(s, text, &pos, max, &refresh);
-      }
+      } else refresh = 1;
+      dConsoleRedraw();
     } else if (key==KEY_CTRL_F2) {
       // select script and run
       return 2;
@@ -292,7 +293,6 @@ int dGetLine (char * s,int max) {
       return 4;
     } else if (key==KEY_CTRL_SETUP) {
       showAbout();
-      Bdisp_AllClr_VRAM();
       dConsoleRedraw();
       refresh = 1;
     } else if (key==KEY_CTRL_UP) {
@@ -363,29 +363,11 @@ int dGetLine (char * s,int max) {
 
 int get_custom_fkey_label(int key);
 void dConsoleRedraw() {
-  int i,j, iresult;
   Bdisp_AllClr_VRAM();
   drawFkeyLabels(0x046e, 0x03b7, get_custom_fkey_label(2), get_custom_fkey_label(3), 0x0307, get_custom_fkey_label(5)); // Catalog, LOAD, user-defined, user-defined,  A<>a, user-defined
-  /*GetFKeyPtr(0x046e, &iresult); // Catalog
-  FKey_Display(0, (int*)iresult);
-  GetFKeyPtr(0x03b7, &iresult); // LOAD
-  FKey_Display(1, (int*)iresult);
-  
-  int l = get_custom_fkey_label(2);
-  GetFKeyPtr(l, &iresult);
-  FKey_Display(2, (int*)iresult);
-  l = get_custom_fkey_label(3);
-  GetFKeyPtr(l, &iresult);
-  FKey_Display(3, (int*)iresult);
-  
-  GetFKeyPtr(0x0307, &iresult); // A<>a
-  FKey_Display(4, (int*)iresult);
-  
-  l = get_custom_fkey_label(5);
-  GetFKeyPtr(l, &iresult);
-  FKey_Display(5, (int*)iresult);*/
+
   drawRectangle(0, 9*17+24, LCD_WIDTH_PX, 18, COLOR_WHITE);
-  for(i=0,j=line_start;i<line_count;++i) {
+  for(int i=0,j=line_start;i<line_count;++i) {
     locate(1,i+1);print((uchar*)line_buf[j]);
     if (++j>=LINE_ROW_MAX) j = 0;
   }
