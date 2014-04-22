@@ -161,6 +161,11 @@ int dGetLine (char * s,int max) {
       refresh = 0;
     }
     int keyflag = GetSetupSetting( (unsigned int)0x14);
+    DirectDrawRectangle(LCD_WIDTH_PX+6, 24, LCD_WIDTH_PX+6+5, 210, COLOR_WHITE); // clear scroll indicator
+    if(isscrolling) {
+      int starty = (line_count == 0 ? 0 : ((line_count+myconsolescroll-(line_count < 10 ? line_count : 10))*162)/(line_count < 10 ? line_count : line_count-10));
+      DirectDrawRectangle(LCD_WIDTH_PX+6, 24+starty, LCD_WIDTH_PX+6+5, 24+starty+8, COLOR_BLACK);
+    }
     GetKey(&key);
     if(isscrolling && !(key==KEY_CTRL_PAGEUP || key==KEY_CTRL_PAGEDOWN || key==KEY_CTRL_UP || key==KEY_CTRL_DOWN)) {
       isscrolling = 0;
