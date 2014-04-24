@@ -498,11 +498,13 @@ static void get_yzero(void);
 
 static int xzero, yzero;
 
+extern int has_drawn_graph;
+
 void
 emit_graph(void)
 {
   int i, x, y;
-  Bdisp_AllClr_VRAM();
+  if(!has_drawn_graph) Bdisp_AllClr_VRAM();
   get_xzero();
   get_yzero();
   emit_xaxis();
@@ -519,7 +521,7 @@ emit_graph(void)
                   continue;
           plot(x+XOFF, y+YOFF, COLOR_BLUE);
   }
-  set_has_drawn(1);
+  has_drawn_graph = 1;
 }
 
 static void

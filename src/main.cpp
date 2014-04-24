@@ -24,7 +24,7 @@ extern int run_startup_script_again;
 int execution_in_progress = 0;
 int custom_key_to_handle;
 int custom_key_to_handle_modifier;
-int has_drawn = 0;
+int has_drawn_graph = 0;
 static char expr[INPUTBUFLEN];
 
 void check_do_graph();
@@ -164,6 +164,7 @@ void input_eval_loop(int isRecording) {
       }
     } else {
       execution_in_progress = 1;
+      has_drawn_graph = 0;
       run(expr);
       // run_startup_script cannot run from inside eval_clear because then it would be a run() inside a run()
       if(run_startup_script_again) { run_startup_script_again = 0; run_startup_script(); }
@@ -181,7 +182,8 @@ void input_eval_loop(int isRecording) {
 }
 
 void check_do_graph() {
-  if(has_drawn) {
+  if(has_drawn_graph) {
+    has_drawn_graph = 0;
     int key;
     int fkeymenu = 0;
     while(1) {
@@ -205,6 +207,7 @@ void check_do_graph() {
           static char command[100];
           sprintf(command, "xrange=(%g,%g)", xmin, xmax);
           execution_in_progress = 1;
+          has_drawn_graph = 0;
           run(command);
           run(expr);
           execution_in_progress = 0;
@@ -220,6 +223,7 @@ void check_do_graph() {
           static char command[100];
           sprintf(command, "yrange=(%g,%g)", ymin, ymax);
           execution_in_progress = 1;
+          has_drawn_graph = 0;
           run(command);
           run(expr);
           execution_in_progress = 0;
@@ -243,6 +247,7 @@ void check_do_graph() {
           execution_in_progress = 1;
           run(command);
           sprintf(command, "xrange=(%g,%g)", xmin, xmax);
+          has_drawn_graph = 0;
           run(command);
           run(expr);
           execution_in_progress = 0;
@@ -256,6 +261,7 @@ void check_do_graph() {
           execution_in_progress = 1;
           run("xrange=(-10,10)");
           run("yrange=(-10,10)");
+          has_drawn_graph = 0;
           run(expr);
           execution_in_progress = 0;
         } else if(key == KEY_CTRL_F2) {
@@ -264,23 +270,25 @@ void check_do_graph() {
           sprintf(command, "xrange=(%g,%g)", -3.0*M_PI, 3.0*M_PI);
           run(command);
           run("yrange=(-1.6, 1.6)");
+          has_drawn_graph = 0;
           run(expr);
           execution_in_progress = 0;
         } else if(key == KEY_CTRL_F3) {
           execution_in_progress = 1;
           run("xrange=(-10,10)");
           run("yrange=(-5,5)");
+          has_drawn_graph = 0;
           run(expr);
           execution_in_progress = 0;
         } else if(key == KEY_CTRL_EXIT) {
           fkeymenu = 0;
           execution_in_progress = 1;
+          has_drawn_graph = 0;
           run(expr);
           execution_in_progress = 0;
         }
       }
     }
-    has_drawn = 0;
   }
 }
 
@@ -472,10 +480,6 @@ void
 printchar_nowrap(int c)
 {
   printchar(c);
-}
-
-void set_has_drawn(int val) {
-  has_drawn = val;
 }
 
 void
