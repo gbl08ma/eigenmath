@@ -499,18 +499,33 @@ static void get_yzero(void);
 static int xzero, yzero;
 
 extern int has_drawn_graph;
+int num_graphs = 0;
 
 void
 emit_graph(void)
 {
   int i, x, y;
-  if(!has_drawn_graph) Bdisp_AllClr_VRAM();
+  if(!has_drawn_graph) {
+  	Bdisp_AllClr_VRAM();
+  	num_graphs = 0;
+  } else num_graphs++;
   get_xzero();
   get_yzero();
   emit_xaxis();
   emit_yaxis();
   emit_xscale();
   emit_yscale();
+
+	int curcolor = COLOR_BLUE;
+  for(int i=0; i < num_graphs; i++) {
+    switch(curcolor) {
+      case COLOR_BLUE: curcolor = COLOR_RED; break;
+      case COLOR_RED: curcolor = COLOR_LIME; break;
+      case COLOR_LIME: curcolor = COLOR_MAGENTA; break;
+      case COLOR_MAGENTA: curcolor = COLOR_BLACK; break;
+      case COLOR_BLACK: curcolor = COLOR_BLUE; break;
+    }
+  }
         
   for (i = 0; i < draw_count; i++) {
           x = draw_buf[i].x;
@@ -519,7 +534,7 @@ emit_graph(void)
                   continue;
           if (y < 0 || y > DIMY)
                   continue;
-          plot(x+XOFF, y+YOFF, COLOR_BLUE);
+          plot(x+XOFF, y+YOFF, curcolor);
   }
   has_drawn_graph = 1;
 }
