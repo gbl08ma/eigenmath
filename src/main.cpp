@@ -75,7 +75,7 @@ void input_eval_loop(int isRecording) {
   while (1) {
     DefineStatusMessage((char*)"", 1, 0, 0);
     strcpy(expr, (char*)"");
-    printf(">");
+    printf("\x1e");
     dConsoleRedraw();
     int res = gets(expr,INPUTBUFLEN);
     if(res == 2) {

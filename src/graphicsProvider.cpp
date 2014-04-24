@@ -29,6 +29,13 @@ int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short col
       x+=12;
       i++;
       continue;
+    } else if( Msg[i] == 30) {
+      // getline start indicator
+      int tx = x+2, ty=y;
+      PrintMini(&tx, &ty, (unsigned char*)"\xe6\x9e", 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
+      x+=12;
+      i++;
+      continue;
     } else if( Msg[i] == 31) {
       // small dot for multiply
       int tx = x+2, ty=y;

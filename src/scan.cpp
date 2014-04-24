@@ -15,7 +15,6 @@
 
 #include "stdafx.h"
 #include "defs.h"
-#include <fxcg/system.h> // NOTE WARNING /// REMOVE, for debugging gbl08ma
 
 #define T_INTEGER 1001
 #define T_DOUBLE 1002
