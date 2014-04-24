@@ -120,12 +120,11 @@ void input_eval_loop(int isRecording) {
         }
         printf("Recording stopped.\n");
         printf("Type a name for the script, or\n");
-        printf("leave empty to discard.\n");
-        printf(":");
+        printf("leave empty to discard.\n:");
         char inputname[MAX_FILENAME_SIZE+1] = "";
         gets(inputname,MAX_FILENAME_SIZE-50);
         puts(inputname);
-        if(strcmp(inputname, (char*)"") == 0) {
+        if(!strlen(inputname)) {
           // user aborted
           printf("Recording discarded.\n");
           return;
@@ -135,9 +134,7 @@ void input_eval_loop(int isRecording) {
           Timer_Deinstall(aborttimer);
         }
         char filename[MAX_FILENAME_SIZE+1] = "";
-        strcpy(filename, "\\\\fls0\\");
-        strcat(filename, inputname);
-        strcat(filename, ".txt");
+        sprintf(filename, "\\\\fls0\\%s.txt", inputname);
         unsigned short pFile[MAX_FILENAME_SIZE+1];
         Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
         // calculate size
@@ -315,9 +312,7 @@ void run_script(char* filename) {
   }
 }
 void run_startup_script() {
-  char filename[128] = "";
-  strcpy(filename, (char*)"\\\\fls0\\eigensup.txt");
-  run_script(filename);
+  run_script("\\\\fls0\\eigensup.txt");
 }
 void select_script_and_run() {
   char filename[MAX_FILENAME_SIZE+1] = "";
@@ -391,7 +386,7 @@ char curRecordingBuffer[MAX_TEXTVIEWER_FILESIZE+5];
 
 void script_recorder() {
   printf("Recording started: every\n");
-  printf("command you enter from on now\n");
+  printf("command you enter from now on\n");
   printf("will be recorded, so that you\n");
   printf("can create a script.\n");
   printf("When you're done recording,\n");
