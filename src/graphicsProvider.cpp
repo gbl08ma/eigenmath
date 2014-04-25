@@ -15,6 +15,10 @@
 #include "graphicsProvider.hpp"
 
 const short empty[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+extern int enable_bracket_coloring;
+extern int last_bracket_color;
+extern int bracket_level;
+// the following routine is very heavily hacked, er, modified to accomodate this add-in's needs
 int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short color, const short bcolor )
 {
   int i = 0, dx;
@@ -51,7 +55,19 @@ int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short col
     }
    
     else dx = 0;
-    PrintMiniGlyph( x + dx, y, p, flags, width, 0, 0, 0, 0, color, bcolor, 0 );
+    int actualcolor = color;
+    if(enable_bracket_coloring) {
+      if(Msg[ i ] == '(') {
+        bracket_level++;
+        actualcolor = last_bracket_color;
+        last_bracket_color = getNextColorInSequence(last_bracket_color);
+      } else if(Msg[ i ] == ')' && bracket_level > 0) {
+        last_bracket_color = getPreviousColorInSequence(last_bracket_color);
+        actualcolor = last_bracket_color;
+        bracket_level--;
+      }
+    }
+    PrintMiniGlyph( x + dx, y, p, flags, width, 0, 0, 0, 0, actualcolor, bcolor, 0 );
     if ( width + dx < 12 )
     {
       PrintMiniGlyph( x + width + dx, y, (void*)empty, flags, 12 - width - dx, 0, 0, 0, 0, color, bcolor, 0 );
@@ -305,5 +321,29 @@ void drawFkeyLabels(int f1, int f2, int f3, int f4, int f5, int f6) {
   if(f6>=0) {
     GetFKeyPtr(f6, &iresult);
     FKey_Display(5, (int*)iresult);
+  }
+}
+
+int getNextColorInSequence(int curcolor) {
+  switch(curcolor) {
+    case COLOR_BLUE: return COLOR_RED;
+    case COLOR_RED: return COLOR_LIME;
+    case COLOR_LIME: return COLOR_MAGENTA;
+    case COLOR_MAGENTA: return COLOR_BLACK;
+    case COLOR_BLACK:
+    default:
+      return COLOR_BLUE;
+  }
+}
+
+int getPreviousColorInSequence(int curcolor) {
+  switch(curcolor) {
+    case COLOR_BLUE: return COLOR_BLACK;
+    case COLOR_RED: return COLOR_BLUE;
+    case COLOR_LIME: return COLOR_RED;
+    case COLOR_MAGENTA: return COLOR_LIME;
+    case COLOR_BLACK:
+    default:
+      return COLOR_MAGENTA;
   }
 }

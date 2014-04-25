@@ -50,7 +50,7 @@ main()
   
   printf("Welcome to Eigenmath\n");
   printf("To see version information,\npress Shift then Menu.\n");
-  run_startup_script(); 
+  run_startup_script();
   aborttimer = Timer_Install(0, check_execution_abort, 100);
   if (aborttimer > 0) { Timer_Start(aborttimer); }
   //in case we're running in a strip, check if this strip has a script to run.

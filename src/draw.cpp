@@ -518,13 +518,7 @@ emit_graph(void)
 
 	int curcolor = COLOR_BLUE;
   for(int i=0; i < num_graphs; i++) {
-    switch(curcolor) {
-      case COLOR_BLUE: curcolor = COLOR_RED; break;
-      case COLOR_RED: curcolor = COLOR_LIME; break;
-      case COLOR_LIME: curcolor = COLOR_MAGENTA; break;
-      case COLOR_MAGENTA: curcolor = COLOR_BLACK; break;
-      case COLOR_BLACK: curcolor = COLOR_BLUE; break;
-    }
+    curcolor = getNextColorInSequence(curcolor);
   }
         
   for (i = 0; i < draw_count; i++) {

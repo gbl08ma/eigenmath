@@ -38,6 +38,9 @@ void locate(int x, int y) {
   myconsolex = x-1;
   myconsoley = y-1;
 }
+int enable_bracket_coloring = 0;
+int last_bracket_color = COLOR_BLUE;
+int bracket_level = 0;
 void print(unsigned char* msg) {
   int linestart = line_count-10+myconsolescroll;
   if(linestart < 0) linestart = 0;
@@ -151,11 +154,26 @@ int dGetLine (char * s,int max) {
       for (i=x;i<=LINE_COL_MAX;++i) {
         locate(i,y); print((uchar*)" ");
       }
+      last_bracket_color = COLOR_BLUE;
+      bracket_level = 0;
       if (pos<width-1) {
+        enable_bracket_coloring = 1;
         locate(x,y);          print((uchar*)s);
+        enable_bracket_coloring = 0;
         locate(x+pos,y);      printCursor();
       } else {
+        for(int i = 0; i < pos-width+1; i++) {
+          if(s[i] == '(') {
+            bracket_level++;
+            last_bracket_color = getNextColorInSequence(last_bracket_color);
+          } else if(s[i] == ')' && bracket_level > 0) {
+            last_bracket_color = getPreviousColorInSequence(last_bracket_color);
+            bracket_level--;
+          }
+        }
+        enable_bracket_coloring = 1;
         locate(x,y);          print((uchar*)s+pos-width+1);
+        enable_bracket_coloring = 0;
         locate(x+width-1,y);  printCursor(); //cursor
       }
       refresh = 0;
