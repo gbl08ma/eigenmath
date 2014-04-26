@@ -2,21 +2,32 @@
 #include "stdafx.h"
 #include "defs.h"
 
-#include <fxcg/rtc.h>
-
 void
 eval_random(void)
 {
 	randomnum();
 }
 
-void
-randomnum(void)
-{
-	save();
-    
-  unsigned int rv = ( 0x41C64E6D*RTC_GetTicks() ) + 0x3039;
-	push_integer(rv >> 16);
+static int rnd_seed;
 
-	restore();
+void set_rnd_seed(int new_seed)
+{
+    rnd_seed = new_seed;
+}
+
+void randomnum(void)
+{
+  save();
+  int k1;
+  int ix = rnd_seed;
+
+  k1 = ix / 127773;
+  ix = 16807 * (ix - k1 * 127773) - k1 * 2836;
+  if (ix < 0)
+      ix += 2147483647;
+  rnd_seed = ix;
+
+  push_integer(rnd_seed);
+
+  restore();
 }

@@ -21,6 +21,7 @@ extern "C" {
 #include "graphicsProvider.hpp"
 extern int esc_flag;
 extern int run_startup_script_again;
+extern void set_rnd_seed(int);
 int execution_in_progress = 0;
 int custom_key_to_handle;
 int custom_key_to_handle_modifier;
@@ -47,7 +48,7 @@ main()
   DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
-  
+  set_rnd_seed(RTC_GetTicks());
   printf("Welcome to Eigenmath\n");
   printf("To see version information,\npress Shift then Menu.\n");
   run_startup_script();
