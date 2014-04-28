@@ -18,6 +18,7 @@ void set_rnd_seed(int new_seed)
 void randomnum(void)
 {
   save();
+  
   int k1;
   int ix = rnd_seed;
 

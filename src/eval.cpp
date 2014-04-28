@@ -124,6 +124,7 @@ eval_cons(void)
 	case FACTORIAL:		eval_factorial();	break;
 	case FACTORPOLY:	eval_factorpoly();	break;
 	case FILTER:		eval_filter();		break;
+	case FINETIMING:		eval_finetiming();		break; // by gbl08ma
 	case FLOATF:		eval_float();		break;
 	case FLOOR:		eval_floor();		break;
 	case FOR:		eval_for();		break;

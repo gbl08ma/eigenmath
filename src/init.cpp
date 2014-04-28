@@ -91,6 +91,7 @@ init(void)
 	std_symbol("factorial", FACTORIAL);
 	std_symbol("factorpoly", FACTORPOLY);
 	std_symbol("filter", FILTER);
+	std_symbol("finetiming", FINETIMING);
 	std_symbol("float", FLOATF);
 	std_symbol("floor", FLOOR);
 	std_symbol("for", FOR);

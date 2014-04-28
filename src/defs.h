@@ -114,6 +114,7 @@ enum {
 	FACTORIAL,
 	FACTORPOLY,
 	FILTER,
+	FINETIMING, // by gbl08ma
 	FLOATF,
 	FLOOR,
 	FOR,

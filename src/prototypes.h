@@ -427,6 +427,10 @@ void filter_tensor(void);
 // find.cpp
 int find(U *p, U *q);
 
+// finetiming.cpp
+void eval_finetiming();
+void finetiming();
+
 // float.cpp
 void eval_float(void);
 void yyfloat(void);
