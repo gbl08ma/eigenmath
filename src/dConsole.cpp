@@ -301,7 +301,7 @@ int dGetLine (char * s,int max) {
       addStringToInput(s, "(-", &pos, max, &refresh);
     } else if (key==KEY_CHAR_ANS) {
       addStringToInput(s, "last", &pos, max, &refresh);
-    } else if (key==KEY_CTRL_F1) {
+    } else if (key==KEY_CTRL_F1 || key==KEY_CTRL_CATALOG) {
       // open functions catalog
       char text[20] = "";
       if(showCatalog(text)) {
