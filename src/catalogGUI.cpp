@@ -145,61 +145,9 @@ int showCatalog(char* insertText) {
     int sres = doMenu(&menu);
     ret=0;
     if(sres == MENU_RETURN_SELECTION) {
-      switch(menu.selection) {
-        case 1:
-          if(doCatalogMenu(insertText, menuitems[0].text, CAT_CATEGORY_ALL)) {
-            ret=1;
-            incat = 0;
-          }
-          break;
-        case 2:
-          if(doCatalogMenu(insertText, menuitems[1].text, CAT_CATEGORY_COMPLEXNUM)) {
-            ret=1;
-            incat = 0;
-          }
-          break;
-        case 3:
-          if(doCatalogMenu(insertText, menuitems[2].text, CAT_CATEGORY_LINEARALG)) {
-            ret=1;
-            incat = 0;
-          }
-          break;
-        case 4:
-          if(doCatalogMenu(insertText, menuitems[3].text, CAT_CATEGORY_CALCULUS)) {
-            ret=1;
-            incat = 0;
-          }
-          break;
-        case 5:
-          if(doCatalogMenu(insertText, menuitems[4].text, CAT_CATEGORY_POLYNOMIAL)) {
-            ret=1;
-            incat = 0;
-          }
-          break;
-        case 6:
-          if(doCatalogMenu(insertText, menuitems[5].text, CAT_CATEGORY_SPECIAL)) {
-            ret=1;
-            incat = 0;
-          }
-          break;
-        case 7:
-          if(doCatalogMenu(insertText, menuitems[6].text, CAT_CATEGORY_PROG)) {
-            ret=1;
-            incat = 0;
-          }
-          break;
-        case 8:
-          if(doCatalogMenu(insertText, menuitems[7].text, CAT_CATEGORY_TRIG)) {
-            ret=1;
-            incat = 0;
-          }
-          break;
-        case 9:
-          if(doCatalogMenu(insertText, menuitems[8].text, CAT_CATEGORY_OTHER)) {
-            ret=1;
-            incat = 0;
-          }
-          break;
+      if(doCatalogMenu(insertText, menuitems[menu.selection-1].text, menu.selection-1)) {
+        ret=1;
+        incat = 0;
       }
     } else {
       incat = 0;
