@@ -84,7 +84,7 @@ void showAbout() {
   elem[5].text = (char*)"Eigenmath, Copyright (C) 2004-2013 George Weigt";
 
   elem[6].newLine = 1;
-  elem[6].text = (char*)"This port, Copyright (C) 2013 Gabriel 'gbl08ma' Maia";
+  elem[6].text = (char*)"This port, Copyright (C) 2013-2014 Gabriel 'gbl08ma' Maia";
   
   elem[7].newLine = 1;
   elem[7].text = (char*)"This program is free software; you can redistribute it and/or modify it under the terms of the second version of the GNU General Public License as published by the Free Software Foundation; you are not allowed to choose another version.";
