@@ -49,8 +49,7 @@ main()
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
   set_rnd_seed(RTC_GetTicks());
-  printf("Welcome to Eigenmath\n");
-  printf("To see version information,\npress Shift then Menu.\n");
+  printf("Welcome to Eigenmath\nTo see version information,\npress Shift then Menu.\n");
   run_startup_script();
   aborttimer = Timer_Install(0, check_execution_abort, 100);
   if (aborttimer > 0) { Timer_Start(aborttimer); }
@@ -119,9 +118,7 @@ void input_eval_loop(int isRecording) {
           printf("Nothing to record.\n");
           return;
         }
-        printf("Recording stopped.\n");
-        printf("Type a name for the script, or\n");
-        printf("leave empty to discard.\n:");
+        printf("Recording stopped.\nType a name for the script, or\nleave empty to discard.\n:");
         char inputname[MAX_FILENAME_SIZE+1] = "";
         gets(inputname,MAX_FILENAME_SIZE-50);
         puts(inputname);
@@ -332,9 +329,7 @@ void select_script_and_run() {
 
 void select_strip_script() {
   if(!is_running_in_strip()) {
-    printf("This function is only available\n");
-    printf("when running as an eActivity\n");
-    printf("strip.\n");
+    printf("This function is only available\nwhen running as an eActivity\nstrip.\n");
     return;
   }
   
@@ -382,8 +377,7 @@ void select_strip_script() {
         MCSPutVar2(DIRNAME, SCRIPTFILE, rsize, scontents);
         printf("Script set successfully.\n");
       } else {
-        printf("The script is too big to be\n");
-        printf("included in the eActivity.\n");
+        printf("The script is too big to be\nincluded in the eActivity.\n");
       }
       Bfile_CloseFile_OS(hFile);
       return; // don't get to the error message
@@ -394,12 +388,7 @@ void select_strip_script() {
 char curRecordingBuffer[MAX_TEXTVIEWER_FILESIZE+5];
 
 void script_recorder() {
-  printf("Recording started: every\n");
-  printf("command you enter from now on\n");
-  printf("will be recorded, so that you\n");
-  printf("can create a script.\n");
-  printf("When you're done recording,\n");
-  printf("call \"record\" again.\n");
+  printf("Recording started: every\ncommand you enter from now on\nwill be recorded, so that you\ncan create a script.\nWhen you're done recording,\ncall \"record\" again.\n");
   input_eval_loop(1);
 }
 
