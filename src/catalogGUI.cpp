@@ -134,10 +134,7 @@ int showCatalog(char* insertText) {
   Menu menu;
   menu.items=menuitems;
   menu.numitems=9;
-  menu.scrollbar=1;
   menu.scrollout=1;
-  menu.selection=1;
-  menu.scroll=0;
   menu.title = (char*)"Function Catalog";
   
   int incat = 1;
@@ -174,10 +171,7 @@ int doCatalogMenu(char* insertText, char* title, int category) {
   Menu menu;
   menu.items=menuitems;
   menu.numitems=curmi;
-  menu.scrollbar=1;
   menu.scrollout=1;
-  menu.selection=1;
-  menu.scroll=0;
   menu.title = title;
   int sres = doMenu(&menu);
   if(sres == MENU_RETURN_SELECTION) {
