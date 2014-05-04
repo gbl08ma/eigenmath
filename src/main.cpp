@@ -76,7 +76,6 @@ void input_eval_loop(int isRecording) {
     DefineStatusMessage((char*)"", 1, 0, 0);
     strcpy(expr, (char*)"");
     printf("\x1e");
-    dConsoleRedraw();
     int res = gets(expr,INPUTBUFLEN);
     if(res == 2) {
       dConsolePut("\n");
@@ -102,7 +101,6 @@ void input_eval_loop(int isRecording) {
     }
     puts(expr);
     update_cmd_history(expr);
-    dConsoleRedraw();
     if(strcmp(expr, "testmode") == 0) {
       TestMode(1);
     } else if(strcmp(expr, "meminfo") == 0) {
