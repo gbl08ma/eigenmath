@@ -333,7 +333,7 @@ void select_strip_script() {
   
   textArea text;
 
-  textElement elem[10];
+  textElement elem[4];
   text.elements = elem;
   
   elem[0].text = (char*)"This function lets you run a script when this eActivity strip is opened.";
