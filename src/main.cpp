@@ -344,6 +344,7 @@ void select_strip_script() {
   elem[3].newLine = 1;
   elem[3].text = (char*)"Press EXIT now to continue and select a script.";
   text.numelements = 4;
+  text.scrollbar = 0;
   doTextArea(&text);
   
   char filename[MAX_FILENAME_SIZE+1] = "";
