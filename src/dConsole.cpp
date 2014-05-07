@@ -18,7 +18,7 @@ extern "C" {
 #include "aboutGUI.hpp"
 
 #include "graphicsProvider.hpp"
-#define LINE_ROW_MAX    /*10*/ 100
+#define LINE_ROW_MAX    /*10*/ 200
 #define LINE_COL_MAX    32
 
 typedef unsigned int    uint;
