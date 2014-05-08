@@ -167,7 +167,7 @@ void input_eval_loop(int isRecording) {
       execution_in_progress = 0;
       
       // if recording, add input to record
-      if(isRecording && curRecHistEntry <= 200) {
+      if(isRecording && curRecHistEntry < 200) {
         recHistory[curRecHistEntry] = (char*)alloca(strlen(expr)+2); // 2 bytes for security
         strcpy(recHistory[curRecHistEntry], expr);
         curRecHistEntry++;
