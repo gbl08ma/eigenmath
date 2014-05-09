@@ -431,7 +431,7 @@ void dConsolePut(const char * str)
 void dPuts(const char * s)
 {
   dConsolePut(s);
-  dConsolePut("\n");
+  dConsolePutChar('\n');
 }
 
 int dPrintf (const char * format,...)

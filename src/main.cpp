@@ -75,20 +75,20 @@ void input_eval_loop(int isRecording) {
   while (1) {
     DefineStatusMessage((char*)"", 1, 0, 0);
     strcpy(expr, (char*)"");
-    printf("\x1e");
+    dConsolePutChar('\x1e');
     int res = gets(expr,INPUTBUFLEN);
     if(res == 2) {
-      dConsolePut("\n");
+      dConsolePutChar('\n');
       select_script_and_run();
       continue;
     }
     if(res == 4) {
-      dConsolePut("\n");
+      dConsolePutChar('\n');
       select_strip_script();
       continue;
     }
     if(res == 3) {
-      dConsolePut("\n");
+      dConsolePutChar('\n');
       char buf[100] = "";
       sprintf(buf, "prizmUIkeyHandler(%d,%d)", custom_key_to_handle, custom_key_to_handle_modifier);
       strcpy(expr, (char*)buf);
