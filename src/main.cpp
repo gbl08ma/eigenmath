@@ -49,7 +49,7 @@ main()
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
   set_rnd_seed(RTC_GetTicks());
-  printf("Welcome to Eigenmath\nTo see version information,\npress Shift then Menu.\n");
+  puts("Welcome to Eigenmath\nTo see version information,\npress Shift then Menu.");
   run_startup_script();
   aborttimer = Timer_Install(0, check_execution_abort, 100);
   if (aborttimer > 0) { Timer_Start(aborttimer); }
@@ -113,16 +113,16 @@ void input_eval_loop(int isRecording) {
         // create and save a script. this must be done here, because we used alloca
         // the "clean" way would be using malloc&free, but on the Prizm the heap is already being heavily used by the Eigenmath core.
         if(curRecHistEntry == 0) {
-          printf("Nothing to record.\n");
+          puts("Nothing to record.");
           return;
         }
-        printf("Recording stopped.\nType a name for the script, or\nleave empty to discard.\n:");
+        dConsolePut("Recording stopped.\nType a name for the script, or\nleave empty to discard.\n:");
         char inputname[MAX_FILENAME_SIZE+1] = "";
         gets(inputname,MAX_FILENAME_SIZE-50);
         puts(inputname);
         if(!strlen(inputname)) {
           // user aborted
-          printf("Recording discarded.\n");
+          puts("Recording discarded.");
           return;
         }
         if (aborttimer > 0) {
@@ -150,9 +150,9 @@ void input_eval_loop(int isRecording) {
             Bfile_WriteFile_OS(BCEres, buf, strlen(recHistory[i])+1);
           }
           Bfile_CloseFile_OS(BCEres);
-          printf("Script created.\n");
+          puts("Script created.");
         } else {
-          printf("An error occurred when creating the script for recording.\n");
+          puts("An error occurred when creating the script for recording.");
         }
         aborttimer = Timer_Install(0, check_execution_abort, 100);
         if (aborttimer > 0) Timer_Start(aborttimer);
@@ -302,7 +302,7 @@ void run_script(char* filename) {
     // Read file into a buffer
     if ((unsigned int)size > MAX_TEXTVIEWER_FILESIZE) {
       Bfile_CloseFile_OS(hFile);
-      printf("Stop: script too big\n");
+      puts("Stop: script too big");
       return; //file too big, return
     }
     unsigned char* asrc = (unsigned char*)alloca(size*sizeof(unsigned char)+5); // 5 more bytes to make sure it fits...
@@ -327,7 +327,7 @@ void select_script_and_run() {
 
 void select_strip_script() {
   if(!is_running_in_strip()) {
-    printf("This function is only available\nwhen running as an eActivity\nstrip.\n");
+    puts("This function is only available\nwhen running as an eActivity\nstrip.");
     return;
   }
   
@@ -374,20 +374,20 @@ void select_strip_script() {
           MCSDelVar2(DIRNAME, SCRIPTFILE);
         }
         MCSPutVar2(DIRNAME, SCRIPTFILE, rsize, scontents);
-        printf("Script set successfully.\n");
+        puts("Script set successfully.");
       } else {
-        printf("The script is too big to be\nincluded in the eActivity.\n");
+        puts("The script is too big to be\nincluded in the eActivity.");
       }
       Bfile_CloseFile_OS(hFile);
       return; // don't get to the error message
     }
   }
-  printf("There was a problem setting the script for this strip.\n");
+  puts("There was a problem setting the script for this strip.");
 }
 char curRecordingBuffer[MAX_TEXTVIEWER_FILESIZE+5];
 
 void script_recorder() {
-  printf("Recording started: every\ncommand you enter from now on\nwill be recorded, so that you\ncan create a script.\nWhen you're done recording,\ncall \"record\" again.\n");
+  puts("Recording started: every\ncommand you enter from now on\nwill be recorded, so that you\ncan create a script.\nWhen you're done recording,\ncall \"record\" again.");
   input_eval_loop(1);
 }
 
