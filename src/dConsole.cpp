@@ -301,6 +301,16 @@ int dGetLine (char * s,int max) {
       addStringToInput(s, "(-", &pos, max, &refresh);
     } else if (key==KEY_CHAR_ANS) {
       addStringToInput(s, "last", &pos, max, &refresh);
+    } else if (key==KEY_CTRL_PASTE) {
+      // paste contents to buffer using system syscalls, then append buffer to console input
+      char buffer[INPUTBUFLEN] = "";
+      int start = 0;
+      int cursor = 0;
+      int ekey = KEY_CTRL_PASTE;
+      EditMBStringCtrl2( (unsigned char*)buffer, max, &start, &cursor, &ekey, 1, 1*24-24, 1, 20 );
+      Cursor_SetFlashOff();
+      addStringToInput(s, buffer, &pos, max, &refresh);
+      dConsoleRedraw();
     } else if (key==KEY_CTRL_F1 || key==KEY_CTRL_CATALOG) {
       // open functions catalog
       char text[20] = "";
