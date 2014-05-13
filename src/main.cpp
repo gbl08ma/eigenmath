@@ -81,13 +81,7 @@ void input_eval_loop(int isRecording) {
       dConsolePutChar('\n');
       select_script_and_run();
       continue;
-    }
-    if(res == 4) {
-      dConsolePutChar('\n');
-      select_strip_script();
-      continue;
-    }
-    if(res == 3) {
+    } else if(res == 3) {
       dConsolePutChar('\n');
       char buf[100] = "";
       sprintf(buf, "prizmUIkeyHandler(%d,%d)", custom_key_to_handle, custom_key_to_handle_modifier);
@@ -97,6 +91,10 @@ void input_eval_loop(int isRecording) {
       execution_in_progress = 0;
       check_do_graph();
       if(run_startup_script_again) { run_startup_script_again = 0; run_startup_script(); }
+      continue;
+    } else if(res == 4) {
+      dConsolePutChar('\n');
+      select_strip_script();
       continue;
     }
     puts(expr);

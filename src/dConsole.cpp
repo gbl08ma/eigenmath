@@ -16,6 +16,9 @@ extern "C" {
 }
 #include "catalogGUI.hpp"
 #include "aboutGUI.hpp"
+#include "menuGUI.hpp"
+#include "inputGUI.hpp"
+#include "defs.h"
 
 #include "graphicsProvider.hpp"
 #define LINE_ROW_MAX    /*10*/ 200
@@ -33,6 +36,9 @@ int line_count = 0;
 int myconsolex = 0;
 int myconsoley = 0;
 int myconsolescroll = 0;
+
+char* outputRedirectBuffer = NULL; // if not null, console output will be redirected to the buffer this char* points to.
+int remainingBytesInRedirect = 0; // bytes remaining in the redirect buffer, respect to avoid overflows
 
 void locate(int x, int y) {
   myconsolex = x-1;
@@ -310,6 +316,61 @@ int dGetLine (char * s,int max) {
       EditMBStringCtrl2( (unsigned char*)buffer, max, &start, &cursor, &ekey, 1, 1*24-24, 1, 20 );
       Cursor_SetFlashOff();
       addStringToInput(s, buffer, &pos, max, &refresh);
+      refresh = 1; // to redraw input even if pasted content is too long to be inserted
+      dConsoleRedraw();
+    } else if (key==KEY_CTRL_CLIP) {
+      // allow for copying last result or current write buffer
+      MsgBoxPush(4);
+      MenuItem smallmenuitems[5];
+      smallmenuitems[0].text = (char*)"Last result";
+      smallmenuitems[1].text = (char*)"Current command";
+      
+      Menu smallmenu;
+      smallmenu.items=smallmenuitems;
+      smallmenu.numitems=2;
+      smallmenu.width=17;
+      smallmenu.height=4;
+      smallmenu.startX=3;
+      smallmenu.startY=2;
+      smallmenu.scrollbar=0;
+      smallmenu.title = (char*)"Clip on:";
+      int sres = doMenu(&smallmenu);
+      MsgBoxPop();
+      
+      if(sres == MENU_RETURN_SELECTION) {
+        if(smallmenu.selection == 1) {
+          int was_tty = 0;
+          if (equaln(get_binding(symbol(TTY)), 1)) was_tty = 1;
+          else run("tty=1");
+          char buffer[INPUTBUFLEN] = "";
+          outputRedirectBuffer = buffer;
+          remainingBytesInRedirect = INPUTBUFLEN-1;
+          run("eval(last)");
+          outputRedirectBuffer = NULL;
+          if(!was_tty) run("tty=0");
+          int len = strlen(buffer);
+          if(len) buffer[len-1] = '\0'; // remove newline at end
+          // string copying UI:
+          Bdisp_AllClr_VRAM();
+          DisplayStatusArea();
+          drawScreenTitle((char*)"Copy last result", (char*)"Shift+8 to start");
+          textInput input;
+          input.charlimit=INPUTBUFLEN;
+          input.buffer = (char*)buffer;
+          doTextInput(&input);
+        } else if(smallmenu.selection == 2) {
+          Bdisp_AllClr_VRAM();
+          DisplayStatusArea();
+          drawScreenTitle((char*)"Edit current command", (char*)"Shift+8 to clip");
+          textInput input;
+          input.charlimit=max;
+          input.buffer = (char*)s;
+          input.cursor = pos;
+          doTextInput(&input);
+          pos=input.cursor;
+        }
+      }
+      refresh = 1;
       dConsoleRedraw();
     } else if (key==KEY_CTRL_F1 || key==KEY_CTRL_CATALOG) {
       // open functions catalog
@@ -408,6 +469,12 @@ void dConsoleRedraw() {
 }
 void dConsolePutChar (char c)
 {
+  if(outputRedirectBuffer != NULL && remainingBytesInRedirect) {
+    *outputRedirectBuffer = c;
+    outputRedirectBuffer++;
+    remainingBytesInRedirect--;
+    return; // mute real console
+  }
   if (line_count == 0) line_count = 1;
   if (c != '\n') line_buf[line_index][line_x++] = c;
   else
