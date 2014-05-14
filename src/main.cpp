@@ -49,7 +49,7 @@ main()
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
   set_rnd_seed(RTC_GetTicks());
-  puts("Welcome to Eigenmath\nTo see version information,\npress Shift then Menu.");
+  puts("Welcome to Eigenmath\nTo see more options, press\nShift then Menu.");
   run_startup_script();
   aborttimer = Timer_Install(0, check_execution_abort, 100);
   if (aborttimer > 0) { Timer_Start(aborttimer); }
@@ -76,7 +76,7 @@ void input_eval_loop(int isRecording) {
     DefineStatusMessage((char*)(isRecording ? "Recording ('record' to stop)" : ""), 1, 0, 0);
     strcpy(expr, (char*)"");
     dConsolePutChar('\x1e');
-    int res = gets(expr,INPUTBUFLEN);
+    int res = gets(expr,INPUTBUFLEN, isRecording); // isRecording is provided for UI changes, no behavior changes.
     if(res == 2) {
       dConsolePutChar('\n');
       select_script_and_run();
@@ -323,12 +323,7 @@ void select_script_and_run() {
   }
 }
 
-void select_strip_script() {
-  if(!is_running_in_strip()) {
-    puts("This function is only available\nwhen running as an eActivity\nstrip.");
-    return;
-  }
-  
+void select_strip_script() {  
   textArea text;
 
   textElement elem[4];

@@ -26,7 +26,7 @@ void dConsoleRedraw ();
 void dConsolePut(const char * str);
 void dConsolePutChar (char c);
 
-int dGetLine (char * s,int max);
+int dGetLine (char * s,int max, int isRecording=0);
 
 int dPrintf (const char * format,...);
 

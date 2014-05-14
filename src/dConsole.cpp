@@ -124,6 +124,7 @@ void do_down_arrow(void);
 extern int custom_key_to_handle;
 extern int custom_key_to_handle_modifier;
 int get_custom_key_handler_state();
+int is_running_in_strip();
 
 void addStringToInput(char* dest, char* src, int* pos, int max, int* refresh) {
   int srclen = strlen(src);
@@ -131,7 +132,8 @@ void addStringToInput(char* dest, char* src, int* pos, int max, int* refresh) {
   append(dest, src, *pos);
   *pos+=srclen; *refresh = 1;
 }
-int dGetLine (char * s,int max) {
+
+int dGetLine (char * s,int max, int isRecording) {
   int pos = strlen(s);
   int refresh = 1;
   int x,y,l,width;
@@ -372,6 +374,49 @@ int dGetLine (char * s,int max) {
       }
       refresh = 1;
       dConsoleRedraw();
+    } else if(key == KEY_CTRL_SETUP) {
+      MsgBoxPush(4);
+      Menu smallmenu;
+      MenuItem smallmenuitems[5];
+      smallmenu.numitems=0;
+      smallmenuitems[smallmenu.numitems++].text = (char*)"Function Catalog";
+      smallmenuitems[smallmenu.numitems++].text = (char*)"Load Script";
+      smallmenuitems[smallmenu.numitems++].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
+      if(is_running_in_strip()) smallmenuitems[smallmenu.numitems++].text = (char*)"Set Strip Script";
+      smallmenuitems[smallmenu.numitems++].text = (char*)"About Eigenmath";
+      
+      smallmenu.items=smallmenuitems;
+      smallmenu.width=17;
+      smallmenu.height=4;
+      smallmenu.startX=3;
+      smallmenu.startY=2;
+      smallmenu.scrollbar=0;
+      int sres = doMenu(&smallmenu);
+      MsgBoxPop();
+      
+      if(sres == MENU_RETURN_SELECTION) {
+        if(smallmenu.selection == 1) {
+          // open functions catalog
+          char text[20] = "";
+          if(showCatalog(text)) {
+            addStringToInput(s, text, &pos, max, &refresh);
+          } else refresh = 1;
+          dConsoleRedraw();
+        } else if(smallmenu.selection == 2) {
+          return 2;
+        } else if(smallmenu.selection == 3) {
+          strcpy(s, "record");
+          return 1;
+        } else if(smallmenu.selection == (is_running_in_strip() ? 4:0)) {
+          return 4;
+        } else if(smallmenu.selection == (is_running_in_strip() ? 5:4)) {
+          showAbout();
+          dConsoleRedraw();
+          refresh = 1;
+        }
+      }
+      refresh = 1;
+      dConsoleRedraw();
     } else if (key==KEY_CTRL_F1 || key==KEY_CTRL_CATALOG) {
       // open functions catalog
       char text[20] = "";
@@ -382,13 +427,6 @@ int dGetLine (char * s,int max) {
     } else if (key==KEY_CTRL_F2) {
       // select script and run
       return 2;
-    } else if (key==KEY_CTRL_PRGM) {
-      // set script to run on strip open (only when running inside eAct)
-      return 4;
-    } else if (key==KEY_CTRL_SETUP) {
-      showAbout();
-      dConsoleRedraw();
-      refresh = 1;
     } else if (key==KEY_CTRL_UP) {
       if(isscrolling) {
         myconsolescroll--;
