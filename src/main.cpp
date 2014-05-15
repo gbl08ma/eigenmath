@@ -401,7 +401,11 @@ int get_custom_key_handler_state() {
 }
 int get_custom_fkey_label(int fkey) {
   U* tmp;
-  if(fkey==2) {
+  if(fkey==0) {
+    tmp = usr_symbol("prizmUIfkey1label");
+  } else if(fkey==1) {
+    tmp = usr_symbol("prizmUIfkey2label");
+  } else if(fkey==2) {
     tmp = usr_symbol("prizmUIfkey3label");
   } else if (fkey==3) {
     tmp = usr_symbol("prizmUIfkey4label");

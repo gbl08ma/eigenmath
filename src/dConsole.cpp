@@ -417,16 +417,13 @@ int dGetLine (char * s,int max, int isRecording) {
       }
       refresh = 1;
       dConsoleRedraw();
-    } else if (key==KEY_CTRL_F1 || key==KEY_CTRL_CATALOG) {
+    } else if (key==KEY_CTRL_CATALOG) {
       // open functions catalog
       char text[20] = "";
       if(showCatalog(text)) {
         addStringToInput(s, text, &pos, max, &refresh);
       } else refresh = 1;
       dConsoleRedraw();
-    } else if (key==KEY_CTRL_F2) {
-      // select script and run
-      return 2;
     } else if (key==KEY_CTRL_UP) {
       if(isscrolling) {
         myconsolescroll--;
@@ -496,7 +493,7 @@ int dGetLine (char * s,int max, int isRecording) {
 int get_custom_fkey_label(int key);
 void dConsoleRedraw() {
   Bdisp_AllClr_VRAM();
-  drawFkeyLabels(0x046e, 0x03b7, get_custom_fkey_label(2), get_custom_fkey_label(3), 0x0307, get_custom_fkey_label(5)); // Catalog, LOAD, user-defined, user-defined,  A<>a, user-defined
+  drawFkeyLabels(get_custom_fkey_label(0), get_custom_fkey_label(1), get_custom_fkey_label(2), get_custom_fkey_label(3), 0x0307, get_custom_fkey_label(5)); // Catalog, LOAD, user-defined, user-defined,  A<>a, user-defined
 
   drawRectangle(0, 9*17+24, LCD_WIDTH_PX, 18, COLOR_WHITE);
   for(int i=0,j=line_start;i<line_count;++i) {
