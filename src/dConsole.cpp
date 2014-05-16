@@ -311,15 +311,18 @@ int dGetLine (char * s,int max, int isRecording) {
       addStringToInput(s, "last", &pos, max, &refresh);
     } else if (key==KEY_CTRL_PASTE) {
       // paste contents to buffer using system syscalls, then append buffer to console input
-      char buffer[INPUTBUFLEN] = "";
-      int start = 0;
-      int cursor = 0;
-      int ekey = KEY_CTRL_PASTE;
-      EditMBStringCtrl2( (unsigned char*)buffer, max, &start, &cursor, &ekey, 1, 1*24-24, 1, 20 );
-      Cursor_SetFlashOff();
-      addStringToInput(s, buffer, &pos, max, &refresh);
-      refresh = 1; // to redraw input even if pasted content is too long to be inserted
-      dConsoleRedraw();
+      int nmax = max - strlen(s);
+      if(nmax > 0) {
+        char buffer[INPUTBUFLEN] = "";
+        int start = 0;
+        int cursor = 0;
+        int ekey = KEY_CTRL_PASTE;
+        EditMBStringCtrl2( (unsigned char*)buffer, nmax, &start, &cursor, &ekey, 1, 1*24-24, 1, 20 );
+        Cursor_SetFlashOff();
+        addStringToInput(s, buffer, &pos, max, &refresh);
+        refresh = 1; // to redraw input even if pasted content is too long to be inserted
+        dConsoleRedraw();
+      }
     } else if (key==KEY_CTRL_CLIP) {
       // allow for copying last result or current write buffer
       MsgBoxPush(4);
