@@ -22,6 +22,7 @@ extern "C" {
 extern int esc_flag;
 extern int run_startup_script_again;
 extern void set_rnd_seed(int);
+extern void initialize_history_heap();
 int execution_in_progress = 0;
 int custom_key_to_handle;
 int custom_key_to_handle_modifier;
@@ -43,6 +44,7 @@ static int aborttimer = 0;
 int
 main()
 {
+  initialize_history_heap();
   Bdisp_AllClr_VRAM();
   Bdisp_EnableColor(1);
   DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
@@ -474,6 +476,7 @@ eval_sample(void)
 }
 
 // Command history related:
+extern char* history_malloc();
 char *
 get_curr_cmd(void)
 {
@@ -481,7 +484,7 @@ get_curr_cmd(void)
   char *s;
 
   len=strlen(expr);
-  s = (char*)malloc(len+1);
+  s = (char*)history_malloc(/*len+1*/);
   strcpy(s, expr);
 
   // trim trailing spaces

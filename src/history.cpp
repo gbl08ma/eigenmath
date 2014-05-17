@@ -1,5 +1,8 @@
 #include "stdafx.h"
-
+#include "defs.h"
+extern "C" {
+#include "dConsole.h"
+}
 #include <stdlib.h>
 #include <string.h>
 
@@ -8,9 +11,53 @@ extern void update_curr_cmd(char *);
 //extern char *get_cmd_str(int);
 
 #define N 21
+#define HISTORYHEAP_N 25
 
 static char *buf[N];
 static int i, j, k;
+
+char history_buf[HISTORYHEAP_N][1001];
+char is_index_busy[HISTORYHEAP_N];
+
+void initialize_history_heap() {
+	for(int k = 0; k<HISTORYHEAP_N; k++) {
+		is_index_busy[k] = 0;
+	}
+}
+
+char* history_malloc() {
+  for(int k = 0; k<HISTORYHEAP_N; k++) {
+    if(is_index_busy[k] == 0) {
+      is_index_busy[k] = 1;
+      strcpy(history_buf[k], (char*)"");
+      char bogus[20];
+      sprintf(bogus, "m%i;", k);
+      return history_buf[k];
+    }
+  }
+  return NULL;
+}
+
+void history_free(char* index_addr) {
+  for(int k = 0; k<HISTORYHEAP_N; k++) {
+    if(history_buf[k] == index_addr) {
+      is_index_busy[k] = 0;
+      char bogus[20];
+      sprintf(bogus, "f%i;", k);
+      return;
+    }
+  }
+  // oops...
+}
+
+char* history_strdup(const char* s) {
+	char *d = history_malloc(/*strlen (s) + 1*/);
+  if (d == NULL) return NULL;
+  strcpy (d,s);
+  char bogus[1005];
+  sprintf(bogus, "d: %s", d);
+  return d;
+}
 
 void
 update_cmd_history(char *s)
@@ -29,12 +76,12 @@ update_cmd_history(char *s)
 	if (i != j && strcmp(s, buf[(i + N - 1) % N]) == 0)
 		return;
 
-	buf[i] = strdup(s);
+	buf[i] = history_strdup(s);
 
 	i = (i + 1) % N;
 
 	if (i == j) {
-		free(buf[j]);
+		history_free(buf[j]);
 		buf[j] = 0;
 		j = (j + 1) % N;
 	}
@@ -60,7 +107,7 @@ do_up_arrow(void)
 		}
 	}
 
-	free(s);
+	history_free(s);
 
 	// retard history pointer
 
@@ -89,7 +136,7 @@ do_down_arrow(void)
 		}
 	}
 
-	free(s);
+	history_free(s);
 
 	// advance history pointer
 
@@ -117,7 +164,7 @@ get_cmd_history(void)
 		k = (k + 1) % N;
 	}
 
-	s = (char *) malloc(n + 1);
+	s = (char *) history_malloc(/*n + 1*/);
 
 	if (s == NULL)
 		return NULL;
