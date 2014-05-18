@@ -10,16 +10,15 @@ extern char *get_curr_cmd(void);
 extern void update_curr_cmd(char *);
 //extern char *get_cmd_str(int);
 
-#define N 21
-#define HISTORYHEAP_N 25
-
 static char *buf[N];
 static int i, j, k;
 
-char history_buf[HISTORYHEAP_N][1001];
+typedef char history_line[1001];
+history_line *history_buf;
 char is_index_busy[HISTORYHEAP_N];
 
-void initialize_history_heap() {
+void initialize_history_heap(history_line* area) {
+	history_buf = area;
 	for(int k = 0; k<HISTORYHEAP_N; k++) {
 		is_index_busy[k] = 0;
 	}

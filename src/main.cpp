@@ -22,7 +22,8 @@ extern "C" {
 extern int esc_flag;
 extern int run_startup_script_again;
 extern void set_rnd_seed(int);
-extern void initialize_history_heap();
+typedef char history_line[1001];
+extern void initialize_history_heap(history_line* area);
 int execution_in_progress = 0;
 int custom_key_to_handle;
 int custom_key_to_handle_modifier;
@@ -41,10 +42,14 @@ int is_running_in_strip();
 #define DIRNAME (unsigned char*)"@EIGEN"
 #define SCRIPTFILE (unsigned char*)"Script"
 static int aborttimer = 0;
+
 int
 main()
 {
-  initialize_history_heap();
+  line_row line_buf[LINE_ROW_MAX];
+  initializeConsoleMemory(line_buf);
+  history_line history_buf[HISTORYHEAP_N]; // so this goes on the stack and not on the static ram
+  initialize_history_heap(history_buf);
   Bdisp_AllClr_VRAM();
   Bdisp_EnableColor(1);
   DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);

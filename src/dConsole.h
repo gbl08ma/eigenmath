@@ -1,6 +1,13 @@
 #ifndef DCONSOLE_H
 #define DCONSOLE_H
 #define INPUTBUFLEN 1000
+#define LINE_ROW_MAX    /*10*/ 200
+#define LINE_COL_MAX    32
+//command history numbers:
+#define N 21
+#define HISTORYHEAP_N N+4
+typedef char line_row[LINE_COL_MAX+1];
+
 extern int     vsprintf(char *, const char *, char *);
 typedef char *va_list ;
 
@@ -18,6 +25,7 @@ typedef char *va_list ;
 
 #define va_end(ap)
 
+void initializeConsoleMemory(line_row* area);
 
 int dGetLineBox (char * s,int max,int width,int x,int y);
 

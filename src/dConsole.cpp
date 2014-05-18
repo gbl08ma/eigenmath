@@ -21,13 +21,12 @@ extern "C" {
 #include "defs.h"
 
 #include "graphicsProvider.hpp"
-#define LINE_ROW_MAX    /*10*/ 200
-#define LINE_COL_MAX    32
 
 typedef unsigned int    uint;
 typedef unsigned char   uchar;
 
-char line_buf[LINE_ROW_MAX][LINE_COL_MAX+1];
+typedef char line_row[LINE_COL_MAX+1];
+line_row *line_buf;
 int line_index = 0;
 int line_x     = 0;
 int line_start = 0;
@@ -39,6 +38,10 @@ int myconsolescroll = 0;
 
 char* outputRedirectBuffer = NULL; // if not null, console output will be redirected to the buffer this char* points to.
 int remainingBytesInRedirect = 0; // bytes remaining in the redirect buffer, respect to avoid overflows
+
+void initializeConsoleMemory(line_row* area) {
+  line_buf = area;
+}
 
 void locate(int x, int y) {
   myconsolex = x-1;
