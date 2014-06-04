@@ -134,7 +134,7 @@ void input_eval_loop(int isRecording) {
           Timer_Stop(aborttimer);
           Timer_Deinstall(aborttimer);
         }
-        char filename[MAX_FILENAME_SIZE+1] = "";
+        char filename[MAX_FILENAME_SIZE+1];
         sprintf(filename, "\\\\fls0\\%s.txt", inputname);
         unsigned short pFile[MAX_FILENAME_SIZE+1];
         Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
@@ -324,7 +324,7 @@ void run_startup_script() {
   run_script("\\\\fls0\\eigensup.txt");
 }
 void select_script_and_run() {
-  char filename[MAX_FILENAME_SIZE+1] = "";
+  char filename[MAX_FILENAME_SIZE+1];
   if(fileBrowser(filename, (unsigned char*)"*.txt", "Scripts")) {
     run_script(filename);
   }
@@ -347,7 +347,7 @@ void select_strip_script() {
   text.scrollbar = 0;
   doTextArea(&text);
   
-  char filename[MAX_FILENAME_SIZE+1] = "";
+  char filename[MAX_FILENAME_SIZE+1];
   if(fileBrowser(filename, (unsigned char*)"*.txt", "Scripts")) {
     // get the size of the selected script on SMEM.
     // get free size on the "MCS" of the strip we're running on and see if the script fits
