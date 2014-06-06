@@ -218,58 +218,28 @@ int dGetLine (char * s,int max, int isRecording) {
       }
     } else if (key==KEY_CHAR_PLUS) {
       if ((int)strlen(s)>=max) continue;
-      if(strlen(s)==0 && firstLoopRun) {
-        strcat(s, (char*)"last+");
-        pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-      } else {
-        append(s, (char*)"+", pos);
-        pos=pos+1; refresh = 1;
-      }
+      if(strlen(s)==0 && firstLoopRun) addStringToInput(s, "last+", &pos, max, &refresh); //start of line, append "last" as we're going to do a calculation on the previous value
+      else addStringToInput(s, "+", &pos, max, &refresh);
     } else if (key==KEY_CHAR_MINUS) {
       if ((int)strlen(s)>=max) continue;
-      if(strlen(s)==0 && firstLoopRun) {
-        strcat(s, (char*)"last-");
-        pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-      } else {
-        append(s, (char*)"-", pos);
-        pos=pos+1; refresh = 1;
-      }
+      if(strlen(s)==0 && firstLoopRun) addStringToInput(s, "last-", &pos, max, &refresh); //start of line, append "last" as we're going to do a calculation on the previous value
+      else addStringToInput(s, "-", &pos, max, &refresh);
     } else if (key==KEY_CHAR_MULT) {
       if ((int)strlen(s)>=max) continue;
-      if(strlen(s)==0 && firstLoopRun) {
-        strcat(s, (char*)"last*");
-        pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-      } else {
-        append(s, (char*)"*", pos);
-        pos=pos+1; refresh = 1;
-      }
+      if(strlen(s)==0 && firstLoopRun) addStringToInput(s, "last*", &pos, max, &refresh); //start of line, append "last" as we're going to do a calculation on the previous value
+      else addStringToInput(s, "*", &pos, max, &refresh);
     } else if (key==KEY_CHAR_DIV) {
       if ((int)strlen(s)>=max) continue;
-      if(strlen(s)==0 && firstLoopRun) {
-        strcat(s, (char*)"last/");
-        pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-      } else {
-        append(s, (char*)"/", pos);
-        pos=pos+1; refresh = 1;
-      }
+      if(strlen(s)==0 && firstLoopRun) addStringToInput(s, "last/", &pos, max, &refresh); //start of line, append "last" as we're going to do a calculation on the previous value
+      else addStringToInput(s, "/", &pos, max, &refresh);
     } else if (key==KEY_CHAR_POW) {
       if ((int)strlen(s)>=max) continue;
-      if(strlen(s)==0 && firstLoopRun) {
-        strcat(s, (char*)"last^");
-        pos=pos+5; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-      } else {
-        append(s, (char*)"^", pos);
-        pos=pos+1; refresh = 1;
-      }
+      if(strlen(s)==0 && firstLoopRun) addStringToInput(s, "last^", &pos, max, &refresh); //start of line, append "last" as we're going to do a calculation on the previous value
+      else addStringToInput(s, "^", &pos, max, &refresh);
     } else if (key==KEY_CHAR_SQUARE) {
       if ((int)strlen(s)+1>=max) continue;
-      if(strlen(s)==0 && firstLoopRun) {
-        strcat(s, (char*)"last^2");
-        pos=pos+6; refresh = 1; //start of line, append "last" as we're going to do a calculation on the previous value
-      } else {
-        append(s, (char*)"^2", pos);
-        pos=pos+2; refresh = 1;
-      }
+      if(strlen(s)==0 && firstLoopRun) addStringToInput(s, "last^2", &pos, max, &refresh); //start of line, append "last" as we're going to do a calculation on the previous value
+      else addStringToInput(s, "^2", &pos, max, &refresh);
     } else if (key==KEY_CHAR_ROOT) {
       addStringToInput(s, "sqrt(", &pos, max, &refresh);
     } else if (key==KEY_CHAR_CUBEROOT) {
