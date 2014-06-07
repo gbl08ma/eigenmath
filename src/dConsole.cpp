@@ -373,7 +373,7 @@ int dGetLine (char * s,int max, int isRecording) {
       if(sres == MENU_RETURN_SELECTION) {
         if(smallmenu.selection == 1) {
           // open functions catalog
-          char text[20] = "";
+          char text[20];
           if(showCatalog(text)) {
             addStringToInput(s, text, &pos, max, &refresh);
           } else refresh = 1;
@@ -395,7 +395,7 @@ int dGetLine (char * s,int max, int isRecording) {
       dConsoleRedraw();
     } else if (key==KEY_CTRL_CATALOG) {
       // open functions catalog
-      char text[20] = "";
+      char text[20];
       if(showCatalog(text)) {
         addStringToInput(s, text, &pos, max, &refresh);
       } else refresh = 1;
