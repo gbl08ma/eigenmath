@@ -14,10 +14,12 @@
 
 #include "menuGUI.hpp"
 #include "catalogGUI.hpp"
+#include "graphicsProvider.hpp"
+#include "textGUI.hpp"
 
 catalogFunc completeCat[CAT_COMPLETE_COUNT] = { // list of all functions (including some not in any category)
-  {"abs(x)", "abs(", "", CAT_CATEGORY_LINEARALG},
-  {"adj(m)", "adj(", "", CAT_CATEGORY_LINEARALG},
+  {"abs(x)", "abs(", "Returns the absolute value or vector length of x. The mag function should be used for complex x.", CAT_CATEGORY_LINEARALG},
+  {"adj(m)", "adj(", "Returns the adjunct of matrix m.", CAT_CATEGORY_LINEARALG},
   {"and(a,b,...)", "and(", "", CAT_CATEGORY_PROG},
   {"arccos(x)", "arccos(", "", CAT_CATEGORY_TRIG},
   {"arccosh(x)", "arccosh(", "", CAT_CATEGORY_TRIG},
@@ -173,10 +175,31 @@ int doCatalogMenu(char* insertText, char* title, int category) {
   menu.numitems=curmi;
   menu.scrollout=1;
   menu.title = title;
-  int sres = doMenu(&menu);
-  if(sres == MENU_RETURN_SELECTION) {
-    strcpy(insertText, completeCat[menuitems[menu.selection-1].isfolder].insert);
-    return 1;
+  menu.type = MENUTYPE_FKEYS;
+  menu.height = 7;
+  while(1) {
+    drawFkeyLabels(0x03FC, 0, 0, 0, 0, 0x03FD);
+    int sres = doMenu(&menu);
+    if(sres == MENU_RETURN_SELECTION || sres == KEY_CTRL_F1) {
+      strcpy(insertText, completeCat[menuitems[menu.selection-1].isfolder].insert);
+      return 1;
+    } else if(sres == KEY_CTRL_F6) {
+      textArea text;
+
+      textElement elem[5];
+      text.elements = elem;
+      text.title = (char*)"Command help";
+
+      elem[0].text = completeCat[menuitems[menu.selection-1].isfolder].name;
+      elem[0].color = COLOR_BLUE;
+
+      elem[1].newLine = 1;
+      elem[1].lineSpacing = 8;
+      elem[1].text = completeCat[menuitems[menu.selection-1].isfolder].desc;
+
+      text.numelements = 2;
+      doTextArea(&text);
+    } else if(sres == MENU_RETURN_EXIT) return 0;
   }
   return 0;
 }
