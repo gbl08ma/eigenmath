@@ -32,7 +32,7 @@ typedef struct {
 #define CAT_CATEGORY_TRIG 7
 #define CAT_CATEGORY_OTHER 8
 
-#define CAT_COMPLETE_COUNT 99
+#define CAT_COMPLETE_COUNT 103
 
 int showCatalog(char* insertText);
 int doCatalogMenu(char* insertText, char* title, int category);
