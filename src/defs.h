@@ -133,6 +133,7 @@ enum {
 	LAGUERRE,
 //	LAPLACE,
 	LCM,
+	LIMIT, // from smib
 	LEADING,
 	LEGENDRE,
 	LOG,
@@ -198,6 +199,8 @@ enum {
 	SECRETX,
 
 	PI,
+	INFTY,
+	MINFTY,
 	SYMBOL_A,
 	SYMBOL_B,
 	SYMBOL_C,

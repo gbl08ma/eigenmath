@@ -484,6 +484,11 @@ void eval_imag(void);
 void imag(void);
 void test_imag(void);
 
+// incrdivpoly.cpp
+void eval_incrdivpoly(void);
+void incrdivpoly(void);
+void yincrdivpoly(void);
+
 // index.cpp
 void index_function(int n);
 void set_component(int n);
@@ -567,6 +572,14 @@ void eval_lcm(void);
 void lcm(void);
 void yylcm(void);
 void test_lcm(void);
+
+// limit.cpp - from smib
+void eval_limit(void);
+void limit(void);
+void ylimit(void);
+void limit_infty(void);
+void limit_minfty(void);
+void limit_other(void);
 
 // leading.cpp
 void eval_leading(void);

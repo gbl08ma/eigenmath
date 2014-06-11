@@ -110,6 +110,7 @@ init(void)
 	std_symbol("laguerre", LAGUERRE);
 //	std_symbol("laplace", LAPLACE);
 	std_symbol("lcm", LCM);
+	std_symbol("limit", LIMIT); // from smib
 	std_symbol("leading", LEADING);
 	std_symbol("legendre", LEGENDRE);
 	std_symbol("log", LOG);
@@ -177,6 +178,8 @@ init(void)
 	std_symbol("$SECRETX", SECRETX);
 
 	std_symbol("pi", PI);
+	std_symbol("minfty", MINFTY);
+	std_symbol("infty", INFTY);
 	std_symbol("a", SYMBOL_A);
 	std_symbol("b", SYMBOL_B);
 	std_symbol("c", SYMBOL_C);
