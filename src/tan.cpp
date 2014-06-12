@@ -109,6 +109,10 @@ yytangent(void)
 		power();
 		negate();
 		break;
+	case 90:
+	case 270:
+		push_symbol(INFTY);
+		break;
 	default:
 		push(symbol(TAN));
 		push(p1);

@@ -64,6 +64,16 @@ yypower(void)
 		return;
 	}
 
+	if ((p1 == symbol(MINFTY) || p1 == symbol(INFTY)) && isnegativeterm(p2)) {
+		push_integer(0);
+		return;
+	}
+
+	if (iszero(p1) && isnegativeterm(p2)) {
+		push_symbol(INFTY);
+		return;
+	}
+
 	if (p1 == symbol(E) && isdouble(p2)) {
 		push_double(exp(p2->u.d));
 		return;

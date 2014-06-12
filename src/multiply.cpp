@@ -69,6 +69,26 @@ yymultiply(void)
 		return;
 	}
 
+	if (p1 ==  symbol(MINFTY) && isnegativeterm(p2)) {
+		push_symbol(INFTY);
+		return;
+	}
+
+	if (p1 ==  symbol(INFTY) && isnegativeterm(p2)) {
+		push_symbol(MINFTY);
+		return;
+	}
+
+	if (p1 ==  symbol(INFTY) && !isnegativeterm(p2)) {
+		push_symbol(INFTY);
+		return;
+	}
+
+	if (p1 ==  symbol(INFTY) && isnegativeterm(p2)) {
+		push_symbol(MINFTY);
+		return;
+	}
+
 	// scalar times tensor?
 
 	if (!istensor(p1) && istensor(p2)) {
