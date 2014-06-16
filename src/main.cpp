@@ -42,7 +42,7 @@ int is_running_in_strip();
 #define DIRNAME (unsigned char*)"@EIGEN"
 #define SCRIPTFILE (unsigned char*)"Script"
 static int aborttimer = 0;
-
+extern int eigenmathRanAtLeastOnce;
 int
 main()
 {
@@ -70,6 +70,7 @@ main()
       MCSGetData1(0, MCSsize, asrc); // read script from MCS
       execution_in_progress = 1;
       run((char*)asrc);
+      eigenmathRanAtLeastOnce = 1;
       execution_in_progress = 0;
     }
   }
@@ -95,6 +96,7 @@ void input_eval_loop(int isRecording) {
       strcpy(expr, (char*)buf);
       execution_in_progress = 1;
       run(buf);
+      eigenmathRanAtLeastOnce = 1;
       execution_in_progress = 0;
       check_do_graph();
       if(run_startup_script_again) { run_startup_script_again = 0; run_startup_script(); }
@@ -167,6 +169,7 @@ void input_eval_loop(int isRecording) {
       execution_in_progress = 1;
       has_drawn_graph = 0;
       run(expr);
+      eigenmathRanAtLeastOnce = 1;
       // run_startup_script cannot run from inside eval_clear because then it would be a run() inside a run()
       if(run_startup_script_again) { run_startup_script_again = 0; run_startup_script(); }
       execution_in_progress = 0;
@@ -317,6 +320,7 @@ void run_script(char* filename) {
     asrc[rsize]='\0';
     execution_in_progress = 1;
     run((char*)asrc);
+    eigenmathRanAtLeastOnce = 1;
     execution_in_progress = 0;
   }
 }

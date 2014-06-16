@@ -136,6 +136,7 @@ void addStringToInput(char* dest, char* src, int* pos, int max, int* refresh) {
   *pos+=srclen; *refresh = 1;
 }
 
+int eigenmathRanAtLeastOnce = 0;
 int dGetLine (char * s,int max, int isRecording) {
   int pos = strlen(s);
   int refresh = 1;
@@ -317,25 +318,27 @@ int dGetLine (char * s,int max, int isRecording) {
       
       if(sres == MENU_RETURN_SELECTION) {
         if(smallmenu.selection == 1) {
-          int was_tty = 0;
-          if (equaln(get_binding(symbol(TTY)), 1)) was_tty = 1;
-          else run("tty=1");
-          char buffer[INPUTBUFLEN] = "";
-          outputRedirectBuffer = buffer;
-          remainingBytesInRedirect = INPUTBUFLEN-1;
-          run("eval(last)");
-          outputRedirectBuffer = NULL;
-          if(!was_tty) run("tty=0");
-          int len = strlen(buffer);
-          if(len) buffer[len-1] = '\0'; // remove newline at end
-          // string copying UI:
-          Bdisp_AllClr_VRAM();
-          DisplayStatusArea();
-          drawScreenTitle((char*)"Copy last result", (char*)"Shift+8 to start");
-          textInput input;
-          input.charlimit=INPUTBUFLEN;
-          input.buffer = (char*)buffer;
-          doTextInput(&input);
+          if(eigenmathRanAtLeastOnce) {
+            int was_tty = 0;
+            if (equaln(get_binding(symbol(TTY)), 1)) was_tty = 1;
+            else run("tty=1");
+            char buffer[INPUTBUFLEN] = "";
+            outputRedirectBuffer = buffer;
+            remainingBytesInRedirect = INPUTBUFLEN-1;
+            run("eval(last)");
+            outputRedirectBuffer = NULL;
+            if(!was_tty) run("tty=0");
+            int len = strlen(buffer);
+            if(len) buffer[len-1] = '\0'; // remove newline at end
+            // string copying UI:
+            Bdisp_AllClr_VRAM();
+            DisplayStatusArea();
+            drawScreenTitle((char*)"Copy last result", (char*)"Shift+8 to start");
+            textInput input;
+            input.charlimit=INPUTBUFLEN;
+            input.buffer = (char*)buffer;
+            doTextInput(&input);
+          } else AUX_DisplayErrorMessage( 0x15 );
         } else if(smallmenu.selection == 2) {
           Bdisp_AllClr_VRAM();
           DisplayStatusArea();
