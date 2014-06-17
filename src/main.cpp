@@ -265,26 +265,21 @@ void check_do_graph() {
           execution_in_progress = 1;
           run("xrange=(-10,10)");
           run("yrange=(-10,10)");
-          has_drawn_graph = 0;
-          run(expr);
-          execution_in_progress = 0;
+          key = KEY_CTRL_EXIT; // redraw and close menu
         } else if(key == KEY_CTRL_F2) {
           execution_in_progress = 1;
           static char command[100];
           sprintf(command, "xrange=(%g,%g)", -3.0*M_PI, 3.0*M_PI);
           run(command);
           run("yrange=(-1.6, 1.6)");
-          has_drawn_graph = 0;
-          run(expr);
-          execution_in_progress = 0;
+          key = KEY_CTRL_EXIT; // redraw and close menu
         } else if(key == KEY_CTRL_F3) {
           execution_in_progress = 1;
           run("xrange=(-10,10)");
           run("yrange=(-5,5)");
-          has_drawn_graph = 0;
-          run(expr);
-          execution_in_progress = 0;
-        } else if(key == KEY_CTRL_EXIT) {
+          key = KEY_CTRL_EXIT; // redraw and close menu
+        }
+        if(key == KEY_CTRL_EXIT) { // must not be a "else if"
           fkeymenu = 0;
           execution_in_progress = 1;
           has_drawn_graph = 0;
