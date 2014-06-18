@@ -37,12 +37,16 @@ void check_execution_abort();
 void select_script_and_run();
 void select_strip_script();
 void script_recorder();
+void dump_eigenmath_symbols_smem();
 void input_eval_loop(int isRecording);
 int is_running_in_strip();
 #define DIRNAME (unsigned char*)"@EIGEN"
 #define SCRIPTFILE (unsigned char*)"Script"
 static int aborttimer = 0;
 extern int eigenmathRanAtLeastOnce;
+
+extern char* outputRedirectBuffer;
+extern int remainingBytesInRedirect;
 int
 main()
 {
@@ -114,6 +118,8 @@ void input_eval_loop(int isRecording) {
       print_mem_info();
     } else if(strcmp(expr, "memgc") == 0) {
       gc();
+    } else if(strcmp(expr, "dumpsym") == 0) {
+      dump_eigenmath_symbols_smem();
     } else if(strcmp(expr, "record") == 0) {
       if(!isRecording) script_recorder();
       else {
@@ -388,6 +394,47 @@ char curRecordingBuffer[MAX_TEXTVIEWER_FILESIZE+5];
 void script_recorder() {
   puts("Recording started: every\ncommand you enter from now on\nwill be recorded, so that you\ncan create a script.\nWhen you're done recording,\ncall \"record\" again.");
   input_eval_loop(1);
+}
+
+void dump_eigenmath_symbols_smem() {
+  if(!eigenmathRanAtLeastOnce) return;
+  if (aborttimer > 0) {
+    Timer_Stop(aborttimer);
+    Timer_Deinstall(aborttimer);
+  }
+  char filename[MAX_FILENAME_SIZE+1];
+  sprintf(filename, "\\\\fls0\\eigendump");
+  unsigned short pFile[MAX_FILENAME_SIZE+1];
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
+  int size = 1;
+  int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
+  if(BCEres >= 0) // Did it create?
+  {
+    BCEres = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+    for (int i = USR_SYMBOLS; i < NSYM; i++) {
+      if (symtab[i].u.printname == 0)
+        break;
+      char symval[1000] = "";
+      outputRedirectBuffer = symval;
+      remainingBytesInRedirect = 1000;
+      printline(get_binding(symbol(i)));
+      char symarg[1000] = "";
+      outputRedirectBuffer = symarg;
+      remainingBytesInRedirect = 1000;
+      print_arg_list(get_arglist(symbol(i)));
+      outputRedirectBuffer = NULL;
+      if(!strcmp(symarg,"()")) strcpy(symarg, (char*)"");
+      char line[3000] = "";
+      sprintf(line, "%s%s=%s", symtab[i].u.printname, symarg, symval); // symval includes a /n already
+      Bfile_WriteFile_OS(BCEres, line, strlen(line));
+    }
+    Bfile_CloseFile_OS(BCEres);
+    puts("Symbols dumped.");
+  } else {
+    puts("An error occurred.");
+  }
+  aborttimer = Timer_Install(0, check_execution_abort, 100);
+  if (aborttimer > 0) Timer_Start(aborttimer);
 }
 
 void check_execution_abort() {
