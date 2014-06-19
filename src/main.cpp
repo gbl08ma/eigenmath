@@ -33,6 +33,8 @@ static char expr[INPUTBUFLEN];
 void check_do_graph();
 void run_script(char* filename);
 void run_startup_script();
+void save_session();
+void restore_session();
 void check_execution_abort();
 void select_script_and_run();
 void select_strip_script();
@@ -59,6 +61,7 @@ main()
   DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
+  CallbackAtQuitMainFunction(save_session); // automatically save session when exiting
   set_rnd_seed(RTC_GetTicks());
   puts("Welcome to Eigenmath\nTo see more options, press\nShift then Menu.");
   run_startup_script();
@@ -77,6 +80,9 @@ main()
       eigenmathRanAtLeastOnce = 1;
       execution_in_progress = 0;
     }
+  } else {
+    // not in strip, restore last session
+    restore_session();
   }
   input_eval_loop(0);
 }
@@ -118,8 +124,6 @@ void input_eval_loop(int isRecording) {
       print_mem_info();
     } else if(strcmp(expr, "memgc") == 0) {
       gc();
-    } else if(strcmp(expr, "dumpsym") == 0) {
-      dump_eigenmath_symbols_smem();
     } else if(strcmp(expr, "record") == 0) {
       if(!isRecording) script_recorder();
       else {
@@ -328,6 +332,23 @@ void run_script(char* filename) {
 void run_startup_script() {
   run_script("\\\\fls0\\eigensup.txt");
 }
+
+void save_session() {
+  if(!eigenmathRanAtLeastOnce) return;
+  if (aborttimer > 0) {
+    Timer_Stop(aborttimer);
+    Timer_Deinstall(aborttimer);
+  }
+  save_console_state_smem();
+  dump_eigenmath_symbols_smem();
+
+  aborttimer = Timer_Install(0, check_execution_abort, 100);
+  if (aborttimer > 0) Timer_Start(aborttimer);
+}
+void restore_session() {
+  run_script("\\\\fls0\\eigensym.erd");
+  load_console_state_smem();
+}
 void select_script_and_run() {
   char filename[MAX_FILENAME_SIZE+1];
   if(fileBrowser(filename, (unsigned char*)"*.txt", "Scripts")) {
@@ -397,44 +418,64 @@ void script_recorder() {
 }
 
 void dump_eigenmath_symbols_smem() {
-  if(!eigenmathRanAtLeastOnce) return;
-  if (aborttimer > 0) {
-    Timer_Stop(aborttimer);
-    Timer_Deinstall(aborttimer);
-  }
+  // ensure all timers are stopped and uninstalled before calling this function!
   char filename[MAX_FILENAME_SIZE+1];
-  sprintf(filename, "\\\\fls0\\eigendump");
+  sprintf(filename, "\\\\fls0\\eigensym.erd"); // Eigenmath Restore Data
   unsigned short pFile[MAX_FILENAME_SIZE+1];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
   int size = 1;
   int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
-  if(BCEres >= 0) // Did it create?
-  {
-    BCEres = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-    for (int i = USR_SYMBOLS; i < NSYM; i++) {
-      if (symtab[i].u.printname == 0)
-        break;
-      char symval[1000] = "";
-      outputRedirectBuffer = symval;
-      remainingBytesInRedirect = 1000;
-      printline(get_binding(symbol(i)));
-      char symarg[1000] = "";
-      outputRedirectBuffer = symarg;
-      remainingBytesInRedirect = 1000;
-      print_arg_list(get_arglist(symbol(i)));
-      outputRedirectBuffer = NULL;
-      if(!strcmp(symarg,"()")) strcpy(symarg, (char*)"");
-      char line[3000] = "";
-      sprintf(line, "%s%s=%s", symtab[i].u.printname, symarg, symval); // symval includes a /n already
-      Bfile_WriteFile_OS(BCEres, line, strlen(line));
+  if(BCEres < 0) {
+    // an error ocurred when creating
+    // delete existing file
+    Bfile_DeleteEntry(pFile);
+    // .. and create it again
+    if(Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size) < 0) {
+      // error
+      return;
     }
-    Bfile_CloseFile_OS(BCEres);
-    puts("Symbols dumped.");
-  } else {
-    puts("An error occurred.");
   }
-  aborttimer = Timer_Install(0, check_execution_abort, 100);
-  if (aborttimer > 0) Timer_Start(aborttimer);
+  BCEres = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  if(BCEres < 0) {
+    // error
+    return;
+  }
+  char buffer[4000] = "";
+  for (int i = AUTOEXPAND; i < NSYM; i++) { // dump all symbols after AUTOEXPAND
+    if((i >= YYE && i <= SECRETX) || (i >= C1 && i <= C6)) continue; // do not dump special-purpose internal symbols
+    if (symtab[i].u.printname == 0)
+      break;
+    char symval[1000] = "";
+    outputRedirectBuffer = symval;
+    remainingBytesInRedirect = 1000;
+    printline(get_binding(symbol(i)));
+    char symarg[1000] = "";
+    outputRedirectBuffer = symarg;
+    remainingBytesInRedirect = 1000;
+    print_arg_list(get_arglist(symbol(i)));
+    outputRedirectBuffer = NULL;
+    if(!strcmp(symarg,"()")) strcpy(symarg, (char*)"");
+    int lb = strlen(buffer);
+    sprintf(buffer+lb, "%s%s=%s", symtab[i].u.printname, symarg, symval); // symval includes a /n already
+    lb = strlen(buffer);
+    if(lb > 1000) { // are there enough contents in the buffer to issue a write?
+      Bfile_WriteFile_OS(BCEres, buffer, lb);
+      strcpy(buffer, (char*)"");
+    }
+  }
+  // also save the last result
+  char symval[1000] = "";
+  outputRedirectBuffer = symval;
+  remainingBytesInRedirect = 1000;
+  printline(get_binding(symbol(LAST)));
+  outputRedirectBuffer = NULL;
+
+  strcat(buffer, (char*)"last=");
+  strcat(buffer, symval);
+  // write what hasn't been written yet
+  Bfile_WriteFile_OS(BCEres, buffer, strlen(buffer));
+  Bfile_CloseFile_OS(BCEres);
+  // done
 }
 
 void check_execution_abort() {

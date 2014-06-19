@@ -21,6 +21,7 @@ extern "C" {
 #include "defs.h"
 
 #include "graphicsProvider.hpp"
+#include "fileProvider.hpp"
 
 typedef unsigned int    uint;
 typedef unsigned char   uchar;
@@ -539,3 +540,57 @@ int dPrintf (const char * format,...)
   
   return length;
 } 
+
+void save_console_state_smem() {
+  // ensure all timers are stopped and uninstalled before calling this function!
+  int size = sizeof(line_row)*LINE_ROW_MAX + sizeof(int)*4;
+  char buffer[sizeof(int)*4];
+
+  memcpy(buffer, &line_index, sizeof(int));
+  memcpy(buffer+4, &line_x, sizeof(int));
+  memcpy(buffer+8, &line_start, sizeof(int));
+  memcpy(buffer+12, &line_count, sizeof(int));
+
+  char filename[MAX_FILENAME_SIZE+1];
+  sprintf(filename, "\\\\fls0\\eigencon.erd"); // Eigenmath Restore Data
+  unsigned short pFile[MAX_FILENAME_SIZE+1];
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
+  Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
+  // if an error ocurrs when creating (because file already exists)
+  // there's no need to delete and create again, because eigencon.erd always has the
+  // same size, so we can just open the existing file
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  if(hFile < 0) {
+    //puts("An error occurred.");
+    return;
+  }
+  Bfile_WriteFile_OS(hFile, buffer, sizeof(buffer));
+  Bfile_WriteFile_OS(hFile, line_buf, sizeof(line_row)*LINE_ROW_MAX);
+  Bfile_CloseFile_OS(hFile);
+}
+
+void load_console_state_smem() {
+  // ensure console memory has been initialized before calling this function!
+  char filename[MAX_FILENAME_SIZE+1];
+  sprintf(filename, "\\\\fls0\\eigencon.erd"); // Eigenmath Restore Data
+  unsigned short pFile[MAX_FILENAME_SIZE+1];
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  if(hFile < 0) {
+    //puts("An error occurred.");
+    return;
+  }
+  char buffer[sizeof(int)*4];
+  Bfile_ReadFile_OS(hFile, buffer, sizeof(buffer), 0);
+
+  memcpy(&line_index, buffer, sizeof(int));
+  memcpy(&line_x, buffer+4, sizeof(int));
+  memcpy(&line_start, buffer+8, sizeof(int));
+  memcpy(&line_count, buffer+12, sizeof(int));
+
+  memset(line_buf, sizeof(line_row)*LINE_ROW_MAX, 0);
+  Bfile_ReadFile_OS(hFile, line_buf, sizeof(line_row)*LINE_ROW_MAX, -1); // read remaining file contents into console scrollback buffer
+  Bfile_CloseFile_OS(hFile);
+  if(line_buf[line_index][0] == '\x1e') line_x = 0;
+  else dConsolePutChar('\n');
+}

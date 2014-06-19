@@ -46,4 +46,7 @@ void dPuts(const char *);
 #define putchar         dConsolePutChar
 #define gets            dGetLine
 
+void save_console_state_smem();
+void load_console_state_smem();
+
 #endif
