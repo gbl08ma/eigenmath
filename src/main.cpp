@@ -428,12 +428,12 @@ void dump_eigenmath_symbols_smem() {
   if(BCEres < 0) {
     // an error ocurred when creating
     // delete existing file
-    Bfile_DeleteEntry(pFile);
+    /*Bfile_DeleteEntry(pFile);
     // .. and create it again
     if(Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size) < 0) {
       // error
       return;
-    }
+    }*/
   }
   BCEres = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(BCEres < 0) {
@@ -463,17 +463,13 @@ void dump_eigenmath_symbols_smem() {
       strcpy(buffer, (char*)"");
     }
   }
-  // also save the last result
-  char symval[1000] = "";
-  outputRedirectBuffer = symval;
-  remainingBytesInRedirect = 1000;
-  printline(get_binding(symbol(LAST)));
-  outputRedirectBuffer = NULL;
-
-  strcat(buffer, (char*)"last=");
-  strcat(buffer, symval);
+  int len = strlen(buffer);
+  // make sure it is null-terminated:
+  // (there can be junk at the end of the file, because we're not recreating it clean every time)
+  buffer[len] = 0;
+  buffer[len+1] = 0;
   // write what hasn't been written yet
-  Bfile_WriteFile_OS(BCEres, buffer, strlen(buffer));
+  Bfile_WriteFile_OS(BCEres, buffer, strlen(buffer)+2); //make sure to write the two zeros
   Bfile_CloseFile_OS(BCEres);
   // done
 }
