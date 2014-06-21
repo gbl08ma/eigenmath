@@ -424,18 +424,11 @@ void dump_eigenmath_symbols_smem() {
   unsigned short pFile[MAX_FILENAME_SIZE+1];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
   int size = 1;
-  int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
-  if(BCEres < 0) {
-    // an error ocurred when creating
-    // delete existing file
-    /*Bfile_DeleteEntry(pFile);
-    // .. and create it again
-    if(Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size) < 0) {
-      // error
-      return;
-    }*/
-  }
-  BCEres = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
+  // even if it already exists, there's no problem,
+  // in the event that our file shrinks, we just let junk be at the end of
+  // the file (after two null bytes, of course).
+  int BCEres = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(BCEres < 0) {
     // error
     return;
