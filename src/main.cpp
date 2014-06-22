@@ -68,6 +68,7 @@ main()
   if (aborttimer > 0) { Timer_Start(aborttimer); }
   //in case we're running in a strip, check if this strip has a script to run.
   if(is_running_in_strip()) {
+    run_startup_script();
     int MCSsize;
     MCSGetDlen2(DIRNAME, SCRIPTFILE, &MCSsize);
     if (MCSsize > 0) {
@@ -82,8 +83,8 @@ main()
   } else {
     // not in strip, restore last session
     restore_session();
+    run_startup_script();
   }
-  run_startup_script();
   run_startup_script_again = 0;
   input_eval_loop(0);
 }
