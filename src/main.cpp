@@ -64,7 +64,6 @@ main()
   CallbackAtQuitMainFunction(save_session); // automatically save session when exiting
   set_rnd_seed(RTC_GetTicks());
   puts("Welcome to Eigenmath\nTo see more options, press\nShift then Menu.");
-  run_startup_script();
   aborttimer = Timer_Install(0, check_execution_abort, 100);
   if (aborttimer > 0) { Timer_Start(aborttimer); }
   //in case we're running in a strip, check if this strip has a script to run.
@@ -84,6 +83,8 @@ main()
     // not in strip, restore last session
     restore_session();
   }
+  run_startup_script();
+  run_startup_script_again = 0;
   input_eval_loop(0);
 }
 
