@@ -444,14 +444,20 @@ void dump_eigenmath_symbols_smem() {
     outputRedirectBuffer = symval;
     remainingBytesInRedirect = 1000;
     printline(get_binding(symbol(i)));
+    int svl = strlen(symval);
+    if(svl) symval[svl-1] = '\0'; // remove \n at end to make comparison with printname possible
     char symarg[1000] = "";
     outputRedirectBuffer = symarg;
     remainingBytesInRedirect = 1000;
     print_arg_list(get_arglist(symbol(i)));
     outputRedirectBuffer = NULL;
-    if(!strcmp(symarg,"()")) strcpy(symarg, (char*)"");
+    if(!strcmp(symarg,"()")) {
+      strcpy(symarg, (char*)"");
+      // avoid saving abc=abc, to avoid symbol table exhaustion
+      if(!strcmp(symval, symtab[i].u.printname)) continue;
+    }
     int lb = strlen(buffer);
-    sprintf(buffer+lb, "%s%s=%s", symtab[i].u.printname, symarg, symval); // symval includes a /n already
+    sprintf(buffer+lb, "%s%s=%s\n", symtab[i].u.printname, symarg, symval);
     lb = strlen(buffer);
     if(lb > 1000) { // are there enough contents in the buffer to issue a write?
       Bfile_WriteFile_OS(BCEres, buffer, lb);
