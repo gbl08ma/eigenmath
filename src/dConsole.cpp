@@ -22,6 +22,7 @@ extern "C" {
 
 #include "graphicsProvider.hpp"
 #include "fileProvider.hpp"
+#include "stringsProvider.hpp"
 
 typedef unsigned int    uint;
 typedef unsigned char   uchar;
@@ -557,8 +558,8 @@ void save_console_state_smem() {
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
   Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
   // if an error ocurrs when creating (because file already exists)
-  // there's no need to delete and create again, because eigencon.erd always has the
-  // same size, so we can just open the existing file
+  // there's no need to delete and create again, because there's no problem
+  // if there's junk at the end of the file.
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hFile < 0) {
     //puts("An error occurred.");
@@ -566,6 +567,16 @@ void save_console_state_smem() {
   }
   Bfile_WriteFile_OS(hFile, buffer, sizeof(buffer));
   Bfile_WriteFile_OS(hFile, line_buf, sizeof(line_row)*LINE_ROW_MAX);
+  char cmdhist[N*INPUTBUFLEN] = "";
+  get_cmd_history(cmdhist);
+  Bfile_WriteFile_OS(hFile, cmdhist, strlen(cmdhist));
+  // make sure file ends with zeros:
+  // (there can be junk at the end of the file):
+  buffer[0] = 0;
+  buffer[1] = 0;
+  buffer[2] = 0;
+  buffer[3] = 0;
+  Bfile_WriteFile_OS(hFile, buffer, 4);
   Bfile_CloseFile_OS(hFile);
 }
 
@@ -589,7 +600,21 @@ void load_console_state_smem() {
   memcpy(&line_count, buffer+12, sizeof(int));
 
   memset(line_buf, sizeof(line_row)*LINE_ROW_MAX, 0);
-  Bfile_ReadFile_OS(hFile, line_buf, sizeof(line_row)*LINE_ROW_MAX, -1); // read remaining file contents into console scrollback buffer
+  Bfile_ReadFile_OS(hFile, line_buf, sizeof(line_row)*LINE_ROW_MAX, -1); // read console scrollback buffer
+
+  // remaining contents (variable length) are the command history
+  char cmdhist[N*INPUTBUFLEN] = "";
+  Bfile_ReadFile_OS(hFile, cmdhist, N*INPUTBUFLEN, -1);
+
+  unsigned char* src = (unsigned char*)cmdhist;
+  unsigned char token[INPUTBUFLEN+1];
+  src = toksplit(src, '\n' , token, INPUTBUFLEN);
+  while (1) {
+    update_cmd_history((char*)token);
+    src = toksplit(src, '\n' , token, INPUTBUFLEN);
+    if(!token[0]) break;
+  }
+
   Bfile_CloseFile_OS(hFile);
   if(line_buf[line_index][0] == '\x1e') line_x = 0;
   else dConsolePutChar('\n');

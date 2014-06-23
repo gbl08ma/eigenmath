@@ -148,7 +148,7 @@ do_down_arrow(void)
 		update_curr_cmd("");
 }
 
-char *
+/*char *
 get_cmd_history(void)
 {
 	int k, n;
@@ -163,7 +163,7 @@ get_cmd_history(void)
 		k = (k + 1) % N;
 	}
 
-	s = (char *) history_malloc(/*n + 1*/);
+	s = (char *) history_malloc(/*n + 1*//*);
 
 	if (s == NULL)
 		return NULL;
@@ -183,4 +183,14 @@ get_cmd_history(void)
 	*t = 0;
 
 	return s;
+}*/
+
+void get_cmd_history(char* out) {
+	strcpy(out, (char*)"");
+	int k = j;
+	while (k != i) {
+		strcat(out, buf[k]);
+		strcat(out, (char*)"\n");
+		k = (k + 1) % N;
+	}
 }

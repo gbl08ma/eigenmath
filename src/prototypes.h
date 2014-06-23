@@ -477,7 +477,7 @@ void hilbert(void);
 void update_cmd_history(char *s);
 void do_up_arrow(void);
 void do_down_arrow(void);
-char * get_cmd_history(void);
+void get_cmd_history(char* out);
 
 // imag.cpp
 void eval_imag(void);
