@@ -31,10 +31,10 @@ int has_drawn_graph = 0;
 static char expr[INPUTBUFLEN];
 
 void check_do_graph();
-void run_script(char* filename);
+int run_script(char* filename);
 void run_startup_script();
 void save_session();
-void restore_session();
+int restore_session();
 void check_execution_abort();
 void select_script_and_run();
 void select_strip_script();
@@ -82,8 +82,7 @@ main()
     }
   } else {
     // not in strip, restore last session
-    restore_session();
-    run_startup_script();
+    if(!restore_session()) run_startup_script();
   }
   run_startup_script_again = 0;
   input_eval_loop(0);
@@ -303,7 +302,8 @@ void check_do_graph() {
   }
 }
 
-void run_script(char* filename) {
+int run_script(char* filename) {
+  // returns 1 if script was run, 0 otherwise
   unsigned short pFile[MAX_FILENAME_SIZE+1];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
@@ -318,7 +318,7 @@ void run_script(char* filename) {
     if ((unsigned int)size > MAX_TEXTVIEWER_FILESIZE) {
       Bfile_CloseFile_OS(hFile);
       puts("Stop: script too big");
-      return; //file too big, return
+      return 0; //file too big, return
     }
     unsigned char* asrc = (unsigned char*)alloca(size*sizeof(unsigned char)+5); // 5 more bytes to make sure it fits...
     memset(asrc, size+5, 0); //alloca does not clear the allocated space. Make sure the string is null-terminated this way.
@@ -329,7 +329,9 @@ void run_script(char* filename) {
     run((char*)asrc);
     eigenmathRanAtLeastOnce = 1;
     execution_in_progress = 0;
+    return 1;
   }
+  return 0;
 }
 void run_startup_script() {
   run_script("\\\\fls0\\eigensup.txt");
@@ -347,9 +349,11 @@ void save_session() {
   aborttimer = Timer_Install(0, check_execution_abort, 100);
   if (aborttimer > 0) Timer_Start(aborttimer);
 }
-void restore_session() {
-  run_script("\\\\fls0\\eigensym.erd");
+int restore_session() {
+  // 1 if session was restored, 0 otherwise
+  int r = run_script("\\\\fls0\\eigensym.erd");
   load_console_state_smem();
+  return r;
 }
 void select_script_and_run() {
   char filename[MAX_FILENAME_SIZE+1];
@@ -451,11 +455,9 @@ void dump_eigenmath_symbols_smem() {
     remainingBytesInRedirect = 1000;
     print_arg_list(get_arglist(symbol(i)));
     outputRedirectBuffer = NULL;
-    if(!strcmp(symarg,"()")) {
-      strcpy(symarg, (char*)"");
-      // avoid saving abc=abc, to avoid symbol table exhaustion
-      if(!strcmp(symval, symtab[i].u.printname)) continue;
-    }
+    // avoid saving abc=abc, to avoid symbol table exhaustion
+    if(!strcmp(symarg,"()") && !strcmp(symval, symtab[i].u.printname)) continue;
+    
     int lb = strlen(buffer);
     sprintf(buffer+lb, "%s%s=%s\n", symtab[i].u.printname, symarg, symval);
     lb = strlen(buffer);
