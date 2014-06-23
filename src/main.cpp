@@ -338,7 +338,7 @@ void run_startup_script() {
 }
 
 void save_session() {
-  if(!eigenmathRanAtLeastOnce) return;
+  if(!eigenmathRanAtLeastOnce || is_running_in_strip()) return;
   if (aborttimer > 0) {
     Timer_Stop(aborttimer);
     Timer_Deinstall(aborttimer);
@@ -346,8 +346,9 @@ void save_session() {
   save_console_state_smem();
   dump_eigenmath_symbols_smem();
 
-  aborttimer = Timer_Install(0, check_execution_abort, 100);
-  if (aborttimer > 0) Timer_Start(aborttimer);
+  // this is only called on exit, no need to reinstall the timer:
+  /*aborttimer = Timer_Install(0, check_execution_abort, 100);
+  if (aborttimer > 0) Timer_Start(aborttimer);*/
 }
 int restore_session() {
   // 1 if session was restored, 0 otherwise
@@ -457,7 +458,7 @@ void dump_eigenmath_symbols_smem() {
     outputRedirectBuffer = NULL;
     // avoid saving abc=abc, to avoid symbol table exhaustion
     if(!strcmp(symarg,"()") && !strcmp(symval, symtab[i].u.printname)) continue;
-    
+
     int lb = strlen(buffer);
     sprintf(buffer+lb, "%s%s=%s\n", symtab[i].u.printname, symarg, symval);
     lb = strlen(buffer);
@@ -515,14 +516,21 @@ int get_custom_fkey_label(int fkey) {
 }
 
 int is_running_in_strip() {
+  static int had_determined = -1;
+  if(had_determined != -1) return had_determined;
   // uses a hack to detect if we're running from an eActivity strip:
   // if the first pixel of the VRAM (first pixel of the status bar) is not white, then we are in a strip
   // (eActivity turns the statusbar background into a checkerbox when in a strip,
   // unless our code messes with the statusbar flags, which this add-in doesn't do.
   // the first pixel of the checkerboard is not white)
   DisplayStatusArea(); // otherwise, we don't know
-  if(Bdisp_GetPoint_VRAM( 0, 0 ) != COLOR_WHITE) return 1;
-  else return 0;
+  if(Bdisp_GetPoint_VRAM( 0, 0 ) != COLOR_WHITE) {
+    had_determined = 1;
+    return 1;
+  } else {
+    had_determined = 0;
+    return 0;
+  }
 }
 
 void
