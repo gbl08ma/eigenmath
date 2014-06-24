@@ -156,7 +156,8 @@ test_mprime(void)
 		n = mint(i);
 		t = mprime(n);
 		mfree(n);
-		if (i == primetab[k]) {
+		//if (i == primetab[k]) {
+		if (i == get_prime_number(k)) {
 			if (t == 0) {
 				sprintf(logbuf, "failed for prime number %d\n", i);
 				logout(logbuf);

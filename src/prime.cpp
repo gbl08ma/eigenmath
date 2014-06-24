@@ -26,6 +26,7 @@ prime(void)
 	n = pop_integer();
 	if (n < 1 || n > MAXPRIMETAB)
 		stop("prime: Argument out of range.");
-	n = primetab[n - 1];
+	//n = primetab[n - 1];
+  n = get_prime_number(n - 1);
 	push_integer(n);
 }

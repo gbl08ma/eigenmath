@@ -21,7 +21,7 @@
 #include "stdafx.h"
 #include "defs.h"
 
-#define YMAX 10000
+#define YMAX 1000
 struct glyph {
 	unsigned char c; int x, y;
 } chartab[YMAX];

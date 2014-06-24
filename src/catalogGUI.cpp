@@ -17,7 +17,7 @@
 #include "graphicsProvider.hpp"
 #include "textGUI.hpp"
 
-catalogFunc completeCat[CAT_COMPLETE_COUNT] = { // list of all functions (including some not in any category)
+const catalogFunc completeCat[CAT_COMPLETE_COUNT] = { // list of all functions (including some not in any category)
   {"abs(x)", "abs(", "Returns the absolute value or vector length of x. The mag function should be used for complex x.", CAT_CATEGORY_LINEARALG},
   {"adj(m)", "adj(", "Returns the adjunct of matrix m.", CAT_CATEGORY_LINEARALG},
   {"and(a,b,...)", "and(", "Returns the logical \"and\" of predicate expressions.", CAT_CATEGORY_PROG},

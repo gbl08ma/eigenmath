@@ -118,7 +118,8 @@ factor_small_number(void)
 
 	for (i = 0; i < MAXPRIMETAB; i++) {
 
-		d = primetab[i];
+		//d = primetab[i];
+		d = get_prime_number(i);
 
 		if (d > n / d)
 			break;

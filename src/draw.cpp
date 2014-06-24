@@ -33,16 +33,25 @@ static double ymin, ymax;
 
 #define YMAX 10000
 
-static struct {
+/*static struct {
 	int x, y;
 	double t;
-} draw_buf[YMAX];
+} draw_buf[YMAX];*/
+
+typedef struct {
+	int x, y;
+	double t;
+} dbuf_type;
+
+static dbuf_type* draw_buf;
 
 static int draw_count;
 
 void
 eval_draw(void)
 {
+	dbuf_type dbu[YMAX];
+	draw_buf = dbu;
 	F = cadr(p1);
 	T = caddr(p1);
 

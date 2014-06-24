@@ -488,6 +488,7 @@ void dConsolePutChar (char c)
   if(outputRedirectBuffer != NULL && remainingBytesInRedirect) {
     *outputRedirectBuffer = c;
     outputRedirectBuffer++;
+    *outputRedirectBuffer = '\0';
     remainingBytesInRedirect--;
     return; // mute real console
   }

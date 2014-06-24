@@ -763,6 +763,7 @@ void eval_prime(void);
 void prime(void);
 
 // primetab.cpp
+int get_prime_number(int i);
 
 // print.cpp
 void print(U *p);

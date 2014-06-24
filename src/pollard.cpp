@@ -73,7 +73,8 @@ try_kth_prime(int k)
 	int count;
 	unsigned int *d, *q, *r;
 
-	d = mint(primetab[k]);
+	//d = mint(primetab[k]);
+	d = mint(get_prime_number(k));
 
 	count = 0;
 

@@ -1,6 +1,4 @@
-#include "stdafx.h"
-
-int primetab[10000] = {
+static const int primetab[10000] = {
        2,       3,       5,       7,      11,      13,      17,      19,
       23,      29,      31,      37,      41,      43,      47,      53,
       59,      61,      67,      71,      73,      79,      83,      89,
@@ -1252,3 +1250,8 @@ int primetab[10000] = {
   104593,  104597,  104623,  104639,  104651,  104659,  104677,  104681,
   104683,  104693,  104701,  104707,  104711,  104717,  104723,  104729,
 };
+ 
+// by gbl08ma to work around a linking problem:
+int get_prime_number(int i) {
+  return primetab[i];
+}
