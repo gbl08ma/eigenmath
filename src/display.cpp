@@ -21,7 +21,7 @@
 #include "stdafx.h"
 #include "defs.h"
 
-#define YMAX 1000
+#define YMAX 400
 struct glyph {
 	unsigned char c; int x, y;
 } chartab[YMAX];
@@ -128,7 +128,7 @@ display(U *p)
 
 	get_size(0, yindex, &h, &w, &y);
 
-	if (w > 32 || h > 10) {
+	if (w > 32 || h > 9) {
 		printline(p);
 		restore();
 		return;
