@@ -411,7 +411,8 @@ emit_fraction(U *p, int d)
 			;
 		else {
 			if (count > 0)
-				__emit_char(' ');
+				//__emit_char(' ');
+				__emit_char(31); // show a little dot instead of a space. rest of the magic resides on PrintMiniFix
 			if (n == 1)
 				emit_expr(p2);
 			else
@@ -445,7 +446,8 @@ emit_fraction(U *p, int d)
 		p2 = car(p1);
 		if (isdenominator(p2)) {
 			if (count > 0)
-				__emit_char(' ');
+				//__emit_char(' ');
+				__emit_char(31); // show a little dot instead of a space. rest of the magic resides on PrintMiniFix
 			emit_denominator(p2, d);
 			count++;
 		}
