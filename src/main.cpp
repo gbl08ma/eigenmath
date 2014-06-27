@@ -22,7 +22,7 @@ extern "C" {
 extern int esc_flag;
 extern int run_startup_script_again;
 extern void set_rnd_seed(int);
-typedef char history_line[1001];
+typedef char history_line[INPUTBUFLEN+1];
 extern void initialize_history_heap(history_line* area);
 int execution_in_progress = 0;
 int custom_key_to_handle;

@@ -13,7 +13,7 @@ extern void update_curr_cmd(char *);
 static char *buf[N];
 static int i, j, k;
 
-typedef char history_line[1001];
+typedef char history_line[INPUTBUFLEN+1];
 history_line *history_buf;
 char is_index_busy[HISTORYHEAP_N];
 
@@ -148,7 +148,8 @@ do_down_arrow(void)
 		update_curr_cmd("");
 }
 
-/*char *
+#if 0
+char *
 get_cmd_history(void)
 {
 	int k, n;
@@ -163,7 +164,7 @@ get_cmd_history(void)
 		k = (k + 1) % N;
 	}
 
-	s = (char *) history_malloc(/*n + 1*//*);
+	s = (char *) history_malloc(/*n + 1*/);
 
 	if (s == NULL)
 		return NULL;
@@ -183,7 +184,8 @@ get_cmd_history(void)
 	*t = 0;
 
 	return s;
-}*/
+}
+#endif
 
 void get_cmd_history(char* out) {
 	strcpy(out, (char*)"");
