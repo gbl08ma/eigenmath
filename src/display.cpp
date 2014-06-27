@@ -891,9 +891,11 @@ dx++;
 w+=2;
 	emit_x = x;
 
-	for (i = 0; i < w; i++)
-		//__emit_char('-');
-                __emit_char(9);
+	for (i = 0; i < w; i++) {
+		if(i == 0) __emit_char(7);
+		else if (i == w-1) __emit_char(8);
+    else __emit_char(9);
+	}
 }
 
 static void

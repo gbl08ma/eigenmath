@@ -27,7 +27,22 @@ int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short col
 
   while ( Msg[ i ] )
   {
-    if( Msg[i] == 9) {
+    if( Msg[i] == 7) {
+      // fraction start
+      drawLine(x+5, y+24+7, x+11, y+24+7, color);
+      drawLine(x+5, y+24+8, x+11, y+24+8, color);
+      x+=12;
+      i++;
+      continue;
+    } else if( Msg[i] == 8) {
+      // fraction end
+      drawLine(x, y+24+7, x+11-5, y+24+7, color);
+      drawLine(x, y+24+8, x+11-5, y+24+8, color);
+      x+=12;
+      i++;
+      continue;
+    } else if( Msg[i] == 9) {
+      // fraction middle
       drawLine(x, y+24+7, x+11, y+24+7, color);
       drawLine(x, y+24+8, x+11, y+24+8, color);
       x+=12;
