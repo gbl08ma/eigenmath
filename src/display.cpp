@@ -1069,7 +1069,7 @@ print_it(void)
 
 static void fill_buf(void);
 
-static char buffer[10000];
+static char buffer[1000];
 
 char *
 getdisplaystr(void)
