@@ -440,7 +440,7 @@ void dump_eigenmath_symbols_smem() {
     // error
     return;
   }
-  char buffer[4000] = "";
+  char buffer[5000] = "";
   for (int i = AUTOEXPAND; i < NSYM; i++) { // dump all symbols after AUTOEXPAND
     if((i >= YYE && i <= SECRETX) || (i >= C1 && i <= C6)) continue; // do not dump special-purpose internal symbols
     if (symtab[i].u.printname == 0)
@@ -462,7 +462,7 @@ void dump_eigenmath_symbols_smem() {
     int lb = strlen(buffer);
     sprintf(buffer+lb, "%s%s=%s\n", symtab[i].u.printname, symarg, symval);
     lb = strlen(buffer);
-    if(lb > 1000) { // are there enough contents in the buffer to issue a write?
+    if(lb > 2000) { // are there enough contents in the buffer to issue a write?
       Bfile_WriteFile_OS(BCEres, buffer, lb);
       strcpy(buffer, (char*)"");
     }

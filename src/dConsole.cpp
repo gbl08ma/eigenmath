@@ -568,16 +568,16 @@ void save_console_state_smem() {
   }
   Bfile_WriteFile_OS(hFile, buffer, sizeof(buffer));
   Bfile_WriteFile_OS(hFile, line_buf, sizeof(line_row)*LINE_ROW_MAX);
-  char cmdhist[N*INPUTBUFLEN] = "";
+  char cmdhist[N*INPUTBUFLEN+4] = "";
   get_cmd_history(cmdhist);
-  Bfile_WriteFile_OS(hFile, cmdhist, strlen(cmdhist));
+  int len = strlen(cmdhist);
   // make sure file ends with zeros:
   // (there can be junk at the end of the file):
-  buffer[0] = 0;
-  buffer[1] = 0;
-  buffer[2] = 0;
-  buffer[3] = 0;
-  Bfile_WriteFile_OS(hFile, buffer, 4);
+  cmdhist[len] = 0;
+  cmdhist[len+1] = 0;
+  cmdhist[len+2] = 0;
+  cmdhist[len+3] = 0;
+  Bfile_WriteFile_OS(hFile, cmdhist, strlen(cmdhist)+4);
   Bfile_CloseFile_OS(hFile);
 }
 
