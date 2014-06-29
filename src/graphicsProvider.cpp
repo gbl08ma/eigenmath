@@ -127,6 +127,27 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
         i++;
         continue;
         break;
+      case 138:
+        // root top left
+        drawLine(x+9, y+24+7, x+11, y+24+7, color);
+        drawLine(x+8, y+24+8, x+11, y+24+8, color);
+        drawLine(x+8, y+24+8, x+8, y+24+16, color);
+        drawLine(x+9, y+24+7, x+9, y+24+13, color);
+        drawLine(x+7, y+24+14, x+7, y+24+16, color);
+        x+=12;
+        i++;
+        continue;
+        break;
+      case 139:
+        // root bottom left
+        drawLine(x+7, y+24, x+4, y+24+18, color);
+        drawLine(x+8, y+24, x+5, y+24+18, color);
+        drawLine(x+5, y+24+18, x+1, y+24+6, color);
+        drawLine(x+4, y+24+18, x, y+24+6, color);
+        x+=12;
+        i++;
+        continue;
+        break;
       case 30: {
         // getline start indicator
         int tx = x+2, ty=y;

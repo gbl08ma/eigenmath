@@ -34,6 +34,7 @@ static void emit_power(U *);
 static void emit_denominator(U *, int);
 static void emit_subexpr(U *);
 static void fixup_power(int, int);
+static void fixup_root(int, int); // by gbl08ma
 static void move(int, int, int, int);
 static void get_size(int, int, int *, int *, int *);
 static void emit_function(U *);
@@ -702,6 +703,35 @@ emit_power(U *p)
 		return;
 	}
 
+	// following "if" was added by gbl08ma to print roots in the "classic" way
+	// instead of printing them as a fraction (sqrt(x) became x^(1/2))
+	if(isfraction(caddr(p)) && isrational(caddr(p))) {
+		save();
+		push(caddr(p));
+		mp_numerator();
+		absval();
+		A = pop();
+		push(caddr(p));
+		mp_denominator();
+		B = pop();
+
+		if(isplusone(A) && isnum(B)) {
+			k1 = yindex;
+			if(!equaln(B, 2))
+				emit_number(B, 0);
+			k2 = yindex;
+			level++;
+			if (isfactor(cadr(p)))
+				emit_factor(cadr(p));
+			else
+				emit_expr(cadr(p));
+			level--;
+			fixup_root(k1, k2);
+			restore();
+			return;
+		}
+		restore();
+	}
 	k1 = yindex;
 	if (isfactor(cadr(p)))
 		emit_factor(cadr(p));
@@ -731,6 +761,36 @@ emit_denominator(U *p, int n)
 		else
 			emit_factor(cadr(p));
 		return;
+	}
+
+	// following "if" was added by gbl08ma to print roots in the "classic" way
+	// instead of printing them as a fraction (sqrt(x) became x^(1/2))
+	if(isfraction(caddr(p)) && isrational(caddr(p))) {
+		save();
+		push(caddr(p));
+		mp_numerator();
+		absval();
+		A = pop();
+		push(caddr(p));
+		mp_denominator();
+		B = pop();
+
+		if(isplusone(A) && isnum(B)) {
+			k1 = yindex;
+			if(!equaln(B, 2))
+				emit_number(B, 0);
+			k2 = yindex;
+			level++;
+			if (isfactor(cadr(p)))
+				emit_factor(cadr(p));
+			else
+				emit_expr(cadr(p));
+			level--;
+			fixup_root(k1, k2);
+			restore();
+			return;
+		}
+		restore();
 	}
 
 	k1 = yindex;
@@ -924,6 +984,34 @@ fixup_power(int k1, int k2)
 	dy += y1 - 1;
 
 	move(k2, yindex, 0, dy);
+}
+
+// k1 is the index, k2 is the radicand
+static void
+fixup_root(int k1, int k2)
+{
+	int dy;
+	int hIndex, wIndex, yIndex;
+	int hRadicand, wRadicand, yRadicand;
+
+	get_size(k1, k2, &hIndex, &wIndex, &yIndex);
+	get_size(k2, yindex, &hRadicand, &wRadicand, &yRadicand);
+
+	dy = -yRadicand - hRadicand + 1;
+
+	dy += yIndex - 1;
+
+	move(k1, k2, 0, dy);
+	move(k2, yindex, 1, 0);
+
+	emit_x -= wRadicand;
+	__emit_char(139);
+	emit_x += wRadicand;
+	__emit_char(138);
+	for(int i = 0; i < wRadicand; i++)
+		__emit_char(9);
+	move(yindex-wRadicand-1, yindex, -wRadicand-1, -1);
+	emit_x -= wRadicand+1;
 }
 
 static void
