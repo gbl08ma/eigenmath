@@ -60,46 +60,46 @@ static int yindex, level, emit_x;
 static int expr_level;
 int display_flag;
 
-/*#define NGREEK 34
+#define NGREEK 34
 
 static struct {
         char *s;
-        unsigned char* n;
+        unsigned char n;
 } greek[NGREEK] = {
-        {"Gamma",       (unsigned char*)"\xe5\x42"},
-        {"Delta",       (unsigned char*)"\xe5\x43"},
-        {"Theta",       (unsigned char*)"\xe5\x47"},
-        {"Lambda",      (unsigned char*)"\xe5\x4a"},
-        {"Xi",          (unsigned char*)"\xe5\x4d"},
-        {"Pi",          (unsigned char*)"\xe5\x4f"},
-        {"Sigma",       (unsigned char*)"\xe5\x51"},
-        {"Upsilon",     (unsigned char*)"\xe5\x54"},
-        {"Phi",         (unsigned char*)"\xe5\x55"},
-        {"Psi",         (unsigned char*)"\xe5\x57"},
-        {"Omega",       (unsigned char*)"\xe5\x58"},
-        {"alpha",       (unsigned char*)"\xe6\x40"},
-        {"beta",        (unsigned char*)"\xe6\x41"},
-        {"gamma",       (unsigned char*)"\xe6\x42"},
-        {"delta",       (unsigned char*)"\xe6\x43"},
-        {"epsilon",     (unsigned char*)"\xe6\x44"},
-        {"zeta",        (unsigned char*)"\xe6\x45"},
-        {"eta",         (unsigned char*)"\xe6\x46"},
-        {"theta",       (unsigned char*)"\xe6\x47"},
-        {"iota",        (unsigned char*)"\xe6\x48"},
-        {"kappa",       (unsigned char*)"\xe6\x49"},
-        {"lambda",      (unsigned char*)"\xe6\x4a"},
-        {"mu",          (unsigned char*)"\xe6\x4b"},
-        {"nu",          (unsigned char*)"\xe6\x4c"},
-        {"xi",          (unsigned char*)"\xe6\x4d"},
-        {"pi",          (unsigned char*)"\xe6\x4f"},
-        {"rho",         (unsigned char*)"\xe6\x50"},
-        {"sigma",       (unsigned char*)"\xe6\x51"},
-        {"tau",         (unsigned char*)"\xe6\x53"},
-        {"upsilon",     (unsigned char*)"\xe6\x54"},
-        {"phi",         (unsigned char*)"\xe6\x55"},
-        {"chi",         (unsigned char*)"\xe6\x56"},
-        {"psi",         (unsigned char*)"\xe6\x57"},
-        {"omega",       (unsigned char*)"\xe6\x58"},
+        {"Gamma",       1}, // "\xe5\x42"
+        {"Delta",       2}, // "\xe5\x43"
+        {"Theta",       3}, // "\xe5\x47"
+        {"Lambda",      4}, // "\xe5\x4a"
+        {"Xi",          5}, // "\xe5\x4d"
+        {"Pi",          6}, // "\xe5\x4f"
+        {"Sigma",       11}, // "\xe5\x51"
+        {"Upsilon",     12}, // "\xe5\x54"
+        {"Phi",         14}, // "\xe5\x55"
+        {"Psi",         15}, // "\xe5\x57"
+        {"Omega",       16}, // "\xe5\x58"
+        {"alpha",       17}, // "\xe6\x40"
+        {"beta",        18}, // "\xe6\x41"
+        {"gamma",       19}, // "\xe6\x42"
+        {"delta",       20}, // "\xe6\x43"
+        {"epsilon",     21}, // "\xe6\x44"
+        {"zeta",        22}, // "\xe6\x45"
+        {"eta",         23}, // "\xe6\x46"
+        {"theta",       24}, // "\xe6\x47"
+        {"iota",        25}, // "\xe6\x48"
+        {"kappa",       26}, // "\xe6\x49"
+        {"lambda",      27}, // "\xe6\x4a"
+        {"mu",          28}, // "\xe6\x4b"
+        {"nu",          29}, // "\xe6\x4c"
+        {"xi",          128}, // "\xe6\x4d"
+        {"pi",          129}, // "\xe6\x4f"
+        {"rho",         130}, // "\xe6\x50"
+        {"sigma",       131}, // "\xe6\x51"
+        {"tau",         132}, // "\xe6\x53"
+        {"upsilon",     133}, // "\xe6\x54"
+        {"phi",         134}, // "\xe6\x55"
+        {"chi",         135}, // "\xe6\x56"
+        {"psi",         136}, // "\xe6\x57"
+        {"omega",       137}, // "\xe6\x58"
 };
 
 static int
@@ -110,7 +110,7 @@ isgreek(char *s)
                 if (strncmp(greek[i].s, s, strlen(greek[i].s)) == 0)
                         return i;
         return -1;
-}*/
+}
 
 void
 display(U *p)
@@ -839,8 +839,15 @@ emit_symbol(U *p)
 	}
 
 	s = get_printname(p);
-	while (*s)
-		__emit_char(*s++);
+
+	while (*s) {
+		int n = isgreek(s);
+		if (n == -1)  __emit_char(*s++);
+		else {
+			__emit_char(greek[n].n);
+			s += strlen(greek[n].s);
+		}
+	}
 }
 
 static void

@@ -55,7 +55,7 @@ int bracket_level = 0;
 void print(unsigned char* msg) {
   int linestart = line_count-10+myconsolescroll;
   if(linestart < 0) linestart = 0;
-  if(myconsoley - linestart >= 0 && myconsoley - linestart < 10) PrintMiniFix( myconsolex*12, (myconsoley - linestart)*17, (char*)msg, 0, COLOR_BLACK, COLOR_WHITE );
+  if(myconsoley - linestart >= 0 && myconsoley - linestart < 10) PrintMiniFix( myconsolex*12, (myconsoley - linestart)*17, msg, 0, COLOR_BLACK, COLOR_WHITE );
   myconsolex = myconsolex + strlen((char*)msg);
 }
 

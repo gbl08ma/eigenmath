@@ -19,7 +19,68 @@ extern int enable_bracket_coloring;
 extern int last_bracket_color;
 extern int bracket_level;
 // the following routine is very heavily hacked, er, modified to accomodate this add-in's needs
-int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short color, const short bcolor )
+/*
+table of special symbols:
++---------+--------------------------------------+
+| Msg[i]  |           What gets drawn            |
++---------+--------------------------------------+
+| 1-6     | greek letters                        |
+| 7       | start of horizontal fraction divider |
+| 8       | end of horizontal fraction divider   |
+| 9       | middle segment of fraction divider   |
+| 11,12   | greek letters                        |
+| 14-29   | greek letters                        |
+| 30      | small blue arrow (command prompt)    |
+| 31      | small dot displayed on products      |
+| 128-137 | greek letters                        |
++---------+--------------------------------------+
+*/
+unsigned char *specialsym1[34] = {
+(unsigned char*)"\xe5\x42", //1
+(unsigned char*)"\xe5\x43", //2
+(unsigned char*)"\xe5\x47", //3
+(unsigned char*)"\xe5\x4a", //4
+(unsigned char*)"\xe5\x4d", //5
+(unsigned char*)"\xe5\x4f", //6
+(unsigned char*)"NONE", //7
+(unsigned char*)"NONE", //8
+(unsigned char*)"NONE", //9
+(unsigned char*)"NONE", //10
+(unsigned char*)"\xe5\x51", //11
+(unsigned char*)"\xe5\x54", //12
+(unsigned char*)"NONE", //13
+(unsigned char*)"\xe5\x55", //14
+(unsigned char*)"\xe5\x57", //15
+(unsigned char*)"\xe5\x58", //16
+(unsigned char*)"\xe6\x40", //17
+(unsigned char*)"\xe6\x41", //18
+(unsigned char*)"\xe6\x42", //19
+(unsigned char*)"\xe6\x43", //20
+(unsigned char*)"\xe6\x44",
+(unsigned char*)"\xe6\x45",
+(unsigned char*)"\xe6\x46",
+(unsigned char*)"\xe6\x47",
+(unsigned char*)"\xe6\x48", //25
+(unsigned char*)"\xe6\x49",
+(unsigned char*)"\xe6\x4a",
+(unsigned char*)"\xe6\x4b",
+(unsigned char*)"\xe6\x4c", //29
+};
+
+unsigned char *specialsym2[10] = {
+(unsigned char*)"\xe6\x4d", //128
+(unsigned char*)"\xe6\x4f", //129
+(unsigned char*)"\xe6\x50", //130
+(unsigned char*)"\xe6\x51",
+(unsigned char*)"\xe6\x53",
+(unsigned char*)"\xe6\x54",
+(unsigned char*)"\xe6\x55",
+(unsigned char*)"\xe6\x56",
+(unsigned char*)"\xe6\x57",
+(unsigned char*)"\xe6\x58", //137
+};
+
+int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const short color, const short bcolor )
 {
   int i = 0, dx;
   unsigned short width;
@@ -27,42 +88,66 @@ int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short col
 
   while ( Msg[ i ] )
   {
-    if( Msg[i] == 7) {
-      // fraction start
-      drawLine(x+5, y+24+7, x+11, y+24+7, color);
-      drawLine(x+5, y+24+8, x+11, y+24+8, color);
-      x+=12;
-      i++;
-      continue;
-    } else if( Msg[i] == 8) {
-      // fraction end
-      drawLine(x, y+24+7, x+11-5, y+24+7, color);
-      drawLine(x, y+24+8, x+11-5, y+24+8, color);
-      x+=12;
-      i++;
-      continue;
-    } else if( Msg[i] == 9) {
-      // fraction middle
-      drawLine(x, y+24+7, x+11, y+24+7, color);
-      drawLine(x, y+24+8, x+11, y+24+8, color);
-      x+=12;
-      i++;
-      continue;
-    } else if( Msg[i] == 30) {
-      // getline start indicator
+    if((Msg[i] >= 1 && Msg[i] <= 6) || (Msg[i] >= 11 && Msg[i] <= 12) || (Msg[i] >= 14 && Msg[i] <= 29)) {
       int tx = x+2, ty=y;
-      PrintMini(&tx, &ty, (unsigned char*)"\xe6\x9e", 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
+      PrintMini(&tx, &ty, specialsym1[Msg[i]-1], 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
       x+=12;
       i++;
       continue;
-    } else if( Msg[i] == 31) {
-      // small dot for multiply
+    }
+    if((Msg[i] >= 128 && Msg[i] <= 137)) {
       int tx = x+2, ty=y;
-      PrintMini(&tx, &ty, (unsigned char*)"\xe6\xaa", 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+      PrintMini(&tx, &ty, specialsym2[Msg[i]-128], 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
       x+=12;
       i++;
       continue;
-    } else p = GetMiniGlyphPtr( Msg[ i ], &width );
+    }
+    switch(Msg[i]) {
+      case 7:
+        // fraction start
+        drawLine(x+5, y+24+7, x+11, y+24+7, color);
+        drawLine(x+5, y+24+8, x+11, y+24+8, color);
+        x+=12;
+        i++;
+        continue;
+        break;
+      case 8:
+        // fraction end
+        drawLine(x, y+24+7, x+11-5, y+24+7, color);
+        drawLine(x, y+24+8, x+11-5, y+24+8, color);
+        x+=12;
+        i++;
+        continue;
+        break;
+      case 9:
+        // fraction middle
+        drawLine(x, y+24+7, x+11, y+24+7, color);
+        drawLine(x, y+24+8, x+11, y+24+8, color);
+        x+=12;
+        i++;
+        continue;
+        break;
+      case 30: {
+        // getline start indicator
+        int tx = x+2, ty=y;
+        PrintMini(&tx, &ty, (unsigned char*)"\xe6\x9e", 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
+        x+=12;
+        i++;
+        continue;
+        break;}
+      case 31: {
+        // small dot for multiply
+        int tx = x+2, ty=y;
+        PrintMini(&tx, &ty, (unsigned char*)"\xe6\xaa", 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+        x+=12;
+        i++;
+        continue;
+        break;}
+      default:
+        p = GetMiniGlyphPtr( Msg[ i ], &width );
+        break;
+    }
+    
     dx = ( 12 - width ) / 2;
     if ( dx > 0 )
     {
