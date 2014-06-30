@@ -696,9 +696,9 @@ emit_power(U *p)
 		k1 = yindex;
 		__emit_char('1');
 		k2 = yindex;
-		//level++;
+		level++;
 		emit_denominator(p, 1);
-		//level--;
+		level--;
 		fixup_fraction(x, k1, k2);
 		return;
 	}
@@ -720,12 +720,10 @@ emit_power(U *p)
 			if(!equaln(B, 2))
 				emit_number(B, 0);
 			k2 = yindex;
-			level++;
 			if (isfactor(cadr(p)))
 				emit_factor(cadr(p));
 			else
 				emit_expr(cadr(p));
-			level--;
 			fixup_root(k1, k2);
 			restore();
 			return;
@@ -780,12 +778,10 @@ emit_denominator(U *p, int n)
 			if(!equaln(B, 2))
 				emit_number(B, 0);
 			k2 = yindex;
-			level++;
 			if (isfactor(cadr(p)))
 				emit_factor(cadr(p));
 			else
 				emit_expr(cadr(p));
-			level--;
 			fixup_root(k1, k2);
 			restore();
 			return;
@@ -997,20 +993,24 @@ fixup_root(int k1, int k2)
 	get_size(k1, k2, &hIndex, &wIndex, &yIndex);
 	get_size(k2, yindex, &hRadicand, &wRadicand, &yRadicand);
 
-	dy = -yRadicand - hRadicand + 1;
-
-	dy += yIndex - 1;
+	dy = yRadicand - 1;
 
 	move(k1, k2, 0, dy);
 	move(k2, yindex, 1, 0);
 
 	emit_x -= wRadicand;
 	__emit_char(139);
+	move(yindex-1, yindex, 0, hRadicand+yRadicand-1);
+	for(int i = 0; i < hRadicand-1; i++) {
+		__emit_char(140);
+		move(yindex-1, yindex, -1, hRadicand+yRadicand-2-i);
+		emit_x--;
+	}
 	emit_x += wRadicand;
 	__emit_char(138);
 	for(int i = 0; i < wRadicand; i++)
 		__emit_char(9);
-	move(yindex-wRadicand-1, yindex, -wRadicand-1, -1);
+	move(yindex-wRadicand-1, yindex, -wRadicand-1, dy);
 	emit_x -= wRadicand+1;
 }
 

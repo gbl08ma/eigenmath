@@ -33,6 +33,9 @@ table of special symbols:
 | 30      | small blue arrow (command prompt)    |
 | 31      | small dot displayed on products      |
 | 128-137 | greek letters                        |
+| 138     | root top left corner                 |
+| 139     | root bottom "v"                      |
+| 140     | root middle segment                  |
 +---------+--------------------------------------+
 */
 unsigned char *specialsym1[34] = {
@@ -148,6 +151,13 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
         i++;
         continue;
         break;
+      case 140:
+        // root vertical middle
+        drawLine(x+7, y+24, x+7, y+24+18, color);
+        drawLine(x+8, y+24, x+8, y+24+18, color);
+        x+=12;
+        i++;
+        continue;
       case 30: {
         // getline start indicator
         int tx = x+2, ty=y;
