@@ -158,6 +158,60 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
         x+=12;
         i++;
         continue;
+      case 141:
+        // opening paren top
+        drawLine(x+4, y+24+5, x+4, y+24+18, color);
+        drawLine(x+5, y+24+3, x+5, y+24+18, color);
+        drawLine(x+6, y+24+1, x+6, y+24+4, color);
+        drawLine(x+7, y+24, x+7, y+24+2, color);
+        drawLine(x+8, y+24, x+8, y+24+1, color);
+        x+=12;
+        i++;
+        continue;
+      case 142:
+        // opening paren middle
+        drawLine(x+4, y+24, x+4, y+24+18, color);
+        drawLine(x+5, y+24, x+5, y+24+18, color);
+        x+=12;
+        i++;
+        continue;
+      case 143:
+        // opening paren bottom
+        drawLine(x+4, y+24, x+4, y+24+10, color);
+        drawLine(x+5, y+24, x+5, y+24+12, color);
+        drawLine(x+6, y+24+11, x+6, y+24+14, color);
+        drawLine(x+7, y+24+13, x+7, y+24+15, color);
+        drawLine(x+8, y+24+14, x+8, y+24+15, color);
+        x+=12;
+        i++;
+        continue;
+      case 144:
+        // closing paren top
+        drawLine(x+7, y+24+5, x+7, y+24+18, color);
+        drawLine(x+6, y+24+3, x+6, y+24+18, color);
+        drawLine(x+5, y+24+1, x+5, y+24+4, color);
+        drawLine(x+4, y+24, x+4, y+24+2, color);
+        drawLine(x+3, y+24, x+3, y+24+1, color);
+        x+=12;
+        i++;
+        continue;
+      case 145:
+        // closing paren middle
+        drawLine(x+6, y+24, x+6, y+24+18, color);
+        drawLine(x+7, y+24, x+7, y+24+18, color);
+        x+=12;
+        i++;
+        continue;
+      case 146:
+        // closing paren bottom
+        drawLine(x+7, y+24, x+7, y+24+10, color);
+        drawLine(x+6, y+24, x+6, y+24+12, color);
+        drawLine(x+5, y+24+11, x+5, y+24+14, color);
+        drawLine(x+4, y+24+13, x+4, y+24+15, color);
+        drawLine(x+3, y+24+14, x+3, y+24+15, color);
+        x+=12;
+        i++;
+        continue;
       case 30: {
         // getline start indicator
         int tx = x+2, ty=y;

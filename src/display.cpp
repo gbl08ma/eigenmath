@@ -301,6 +301,40 @@ count_denominators(U *p)
 	return count;
 }
 
+static void
+emit_lparen(int k1, int h1, int w1, int y1) { // by gbl08ma
+	move(k1, yindex, 1, 0);
+	if(h1 > 1) {
+		for(int i = 0; i < h1; i++) {
+			if(!i) __emit_char(143);
+			else if(i == h1-1) __emit_char(141);
+			else __emit_char(142);
+			move(yindex-1, yindex, -w1, h1+y1-1-i);
+			emit_x--;
+		}
+		emit_x++;
+	} else {
+		emit_x -= w1;
+		__emit_char('(');
+		emit_x += w1;
+	}
+}
+static void
+emit_rparen(int k1, int h1, int w1, int y1) { // by gbl08ma
+	if(h1 > 1) {
+		for(int i = 0; i < h1; i++) {
+			if(!i) __emit_char(146);
+			else if(i == h1-1) __emit_char(144);
+			else __emit_char(145);
+			move(yindex-1, yindex, 0, h1+y1-1-i);
+			emit_x--;
+		}
+		emit_x++;
+	} else {
+		__emit_char(')');
+	}
+}
+
 // n is the number of denominators, not counting a fraction like 1/2
 
 static void
@@ -323,9 +357,14 @@ emit_multiply(U *p, int n)
 		__emit_char('/');
 		// need grouping if more than one denominator
 		if (n > 1 || isfraction(cadr(p))) {
-			__emit_char('(');
+			int k1 = yindex;
+			int h1, w1, y1;
+
 			emit_denominators(p);
-			__emit_char(')');
+			get_size(k1, yindex, &h1, &w1, &y1);
+
+			emit_lparen(k1, h1, w1, y1);
+			emit_rparen(k1, h1, w1, y1);
 		} else
 			emit_denominators(p);
 	}
@@ -828,7 +867,10 @@ emit_function(U *p)
 		__emit_char('d');
 	else
 		emit_symbol(car(p));
-	__emit_char('(');
+
+	int k1 = yindex;
+	int h1, w1, y1;
+
 	p = cdr(p);
 	if (iscons(p)) {
 		emit_expr(car(p));
@@ -840,7 +882,10 @@ emit_function(U *p)
 			p = cdr(p);
 		}
 	}
-	__emit_char(')');
+	get_size(k1, yindex, &h1, &w1, &y1);
+
+	emit_lparen(k1, h1, w1, y1);
+	emit_rparen(k1, h1, w1, y1);
 }
 
 static void
@@ -879,9 +924,14 @@ emit_factorial_function(U *p)
 static void
 emit_subexpr(U *p)
 {
-	__emit_char('(');
+	int k1 = yindex;
+	int h1, w1, y1;
+
 	emit_expr(p);
-	__emit_char(')');
+	get_size(k1, yindex, &h1, &w1, &y1);
+
+	emit_lparen(k1, h1, w1, y1);
+	emit_rparen(k1, h1, w1, y1);
 }
 
 static void
