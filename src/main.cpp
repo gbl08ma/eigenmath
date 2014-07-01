@@ -337,7 +337,31 @@ void run_startup_script() {
   run_script("\\\\fls0\\eigensup.txt");
 }
 
+int get_set_session_setting(int value) {
+  // value is -1 to get only
+  // 0 to disable sesison save/load, 1 to enable
+  // if MCS file is present, disable session load/restore
+  if(value == -1) {
+    int size;
+    MCSGetDlen2((unsigned char*)"@EIGEN", (unsigned char*)"Session", &size);
+    if (!size) return 1;
+    else return 0;
+  } else if(value == 1) {
+    MCSDelVar2((unsigned char*)"@EIGEN", (unsigned char*)"Session");
+    return 1;
+  } else if(value == 0) {
+    MCS_CreateDirectory((unsigned char*)"@EIGEN");
+    unsigned char buffer[2];
+    buffer[0] = 1;
+    buffer[1] = 1;
+    MCSPutVar2((unsigned char*)"@EIGEN", (unsigned char*)"Session", 2, buffer);
+    return 0;
+  }
+  return -1;
+}
+
 void save_session() {
+  if(!get_set_session_setting(-1)) return;
   if(!eigenmathRanAtLeastOnce || is_running_in_strip()) return;
   if (aborttimer > 0) {
     Timer_Stop(aborttimer);
@@ -352,6 +376,7 @@ void save_session() {
 }
 int restore_session() {
   // 1 if session was restored, 0 otherwise
+  if(!get_set_session_setting(-1)) return 0;
   int r = run_script("\\\\fls0\\eigensym.erd");
   load_console_state_smem();
   return r;

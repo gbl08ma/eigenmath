@@ -130,6 +130,7 @@ extern int custom_key_to_handle;
 extern int custom_key_to_handle_modifier;
 int get_custom_key_handler_state();
 int is_running_in_strip();
+int get_set_session_setting(int value);
 
 void addStringToInput(char* dest, char* src, int* pos, int max, int* refresh) {
   int srclen = strlen(src);
@@ -356,15 +357,8 @@ int dGetLine (char * s,int max, int isRecording) {
       refresh = 1;
       dConsoleRedraw();
     } else if(key == KEY_CTRL_SETUP) {
-      MsgBoxPush(4);
       Menu smallmenu;
       MenuItem smallmenuitems[5];
-      smallmenu.numitems=0;
-      smallmenuitems[smallmenu.numitems++].text = (char*)"Function Catalog";
-      smallmenuitems[smallmenu.numitems++].text = (char*)"Load Script";
-      smallmenuitems[smallmenu.numitems++].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
-      if(is_running_in_strip()) smallmenuitems[smallmenu.numitems++].text = (char*)"Set Strip Script";
-      smallmenuitems[smallmenu.numitems++].text = (char*)"About Eigenmath";
       
       smallmenu.items=smallmenuitems;
       smallmenu.width=17;
@@ -372,32 +366,47 @@ int dGetLine (char * s,int max, int isRecording) {
       smallmenu.startX=3;
       smallmenu.startY=2;
       smallmenu.scrollbar=0;
-      int sres = doMenu(&smallmenu);
-      MsgBoxPop();
-      
-      if(sres == MENU_RETURN_SELECTION) {
-        if(smallmenu.selection == 1) {
-          // open functions catalog
-          char text[20];
-          if(showCatalog(text)) {
-            addStringToInput(s, text, &pos, max, &refresh);
-          } else refresh = 1;
-          dConsoleRedraw();
-        } else if(smallmenu.selection == 2) {
-          return 2;
-        } else if(smallmenu.selection == 3) {
-          strcpy(s, "record");
-          return 1;
-        } else if(smallmenu.selection == (is_running_in_strip() ? 4:0)) {
-          return 4;
-        } else if(smallmenu.selection == (is_running_in_strip() ? 5:4)) {
-          showAbout();
-          dConsoleRedraw();
-          refresh = 1;
+      while(1) {
+        smallmenu.numitems=0;
+        smallmenuitems[smallmenu.numitems++].text = (char*)"Function Catalog";
+        smallmenuitems[smallmenu.numitems++].text = (char*)"Load Script";
+        smallmenuitems[smallmenu.numitems++].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
+        if(is_running_in_strip()) smallmenuitems[smallmenu.numitems++].text = (char*)"Set Strip Script";
+        smallmenuitems[smallmenu.numitems].type = MENUITEM_CHECKBOX;
+        smallmenuitems[smallmenu.numitems].value = get_set_session_setting(-1);
+        smallmenuitems[smallmenu.numitems++].text = (char*)"Save Session";
+        smallmenuitems[smallmenu.numitems++].text = (char*)"About Eigenmath";
+        MsgBoxPush(4);
+        int sres = doMenu(&smallmenu);
+        MsgBoxPop();
+        
+        if(sres == MENU_RETURN_SELECTION) {
+          if(smallmenu.selection == 1) {
+            // open functions catalog
+            char text[20];
+            if(showCatalog(text)) {
+              addStringToInput(s, text, &pos, max, &refresh);
+            } else refresh = 1;
+            dConsoleRedraw();
+            break;
+          } else if(smallmenu.selection == 2) {
+            return 2;
+          } else if(smallmenu.selection == 3) {
+            strcpy(s, "record");
+            return 1;
+          } else if(smallmenu.selection == (is_running_in_strip() ? 4:0)) {
+            return 4;
+          } else if(smallmenu.selection == (is_running_in_strip() ? 5:4)) {
+            get_set_session_setting(!get_set_session_setting(-1));
+            continue;
+          } else if(smallmenu.selection == (is_running_in_strip() ? 6:5)) {
+            showAbout();
+          }
         }
+        refresh = 1;
+        dConsoleRedraw();
+        break;
       }
-      refresh = 1;
-      dConsoleRedraw();
     } else if (key==KEY_CTRL_CATALOG) {
       // open functions catalog
       char text[20];
