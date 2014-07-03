@@ -343,18 +343,18 @@ int get_set_session_setting(int value) {
   // if MCS file is present, disable session load/restore
   if(value == -1) {
     int size;
-    MCSGetDlen2((unsigned char*)"@EIGEN", (unsigned char*)"Session", &size);
+    MCSGetDlen2(DIRNAME, (unsigned char*)"Session", &size);
     if (!size) return 1;
     else return 0;
   } else if(value == 1) {
-    MCSDelVar2((unsigned char*)"@EIGEN", (unsigned char*)"Session");
+    MCSDelVar2(DIRNAME, (unsigned char*)"Session");
     return 1;
   } else if(value == 0) {
-    MCS_CreateDirectory((unsigned char*)"@EIGEN");
+    MCS_CreateDirectory(DIRNAME);
     unsigned char buffer[2];
     buffer[0] = 1;
     buffer[1] = 1;
-    MCSPutVar2((unsigned char*)"@EIGEN", (unsigned char*)"Session", 2, buffer);
+    MCSPutVar2(DIRNAME, (unsigned char*)"Session", 2, buffer);
     return 0;
   }
   return -1;
