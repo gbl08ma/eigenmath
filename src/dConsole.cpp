@@ -372,9 +372,11 @@ int dGetLine (char * s,int max, int isRecording) {
         smallmenuitems[smallmenu.numitems++].text = (char*)"Load Script";
         smallmenuitems[smallmenu.numitems++].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
         if(is_running_in_strip()) smallmenuitems[smallmenu.numitems++].text = (char*)"Set Strip Script";
-        smallmenuitems[smallmenu.numitems].type = MENUITEM_CHECKBOX;
-        smallmenuitems[smallmenu.numitems].value = get_set_session_setting(-1);
-        smallmenuitems[smallmenu.numitems++].text = (char*)"Save Session";
+        else {
+          smallmenuitems[smallmenu.numitems].type = MENUITEM_CHECKBOX;
+          smallmenuitems[smallmenu.numitems].value = get_set_session_setting(-1);
+          smallmenuitems[smallmenu.numitems++].text = (char*)"Save Session";
+        }
         smallmenuitems[smallmenu.numitems++].text = (char*)"About Eigenmath";
         MsgBoxPush(4);
         int sres = doMenu(&smallmenu);
@@ -394,12 +396,13 @@ int dGetLine (char * s,int max, int isRecording) {
           } else if(smallmenu.selection == 3) {
             strcpy(s, "record");
             return 1;
-          } else if(smallmenu.selection == (is_running_in_strip() ? 4:0)) {
-            return 4;
-          } else if(smallmenu.selection == (is_running_in_strip() ? 5:4)) {
-            get_set_session_setting(!get_set_session_setting(-1));
-            continue;
-          } else if(smallmenu.selection == (is_running_in_strip() ? 6:5)) {
+          } else if(smallmenu.selection == 4) {
+            if(is_running_in_strip()) return 4;
+            else {
+              get_set_session_setting(!get_set_session_setting(-1));
+              continue;
+            }
+          } else if(smallmenu.selection == 5) {
             showAbout();
           }
         }
