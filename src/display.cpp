@@ -1268,8 +1268,8 @@ struct elem {
 	int x, y, h, w, index, count;
 } elem[N];
 
-#define SPACE_BETWEEN_COLUMNS 3
-#define SPACE_BETWEEN_ROWS 1
+#define SPACE_BETWEEN_COLUMNS 2
+#define SPACE_BETWEEN_ROWS 0
 
 static void
 emit_tensor(U *p)
