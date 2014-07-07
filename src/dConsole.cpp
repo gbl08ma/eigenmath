@@ -332,15 +332,10 @@ int dGetLine (char * s,int max, int isRecording) {
             outputRedirectBuffer = NULL;
             if(!was_tty) run("tty=0");
             int len = strlen(buffer);
-            if(len) buffer[len-1] = '\0'; // remove newline at end
-            // string copying UI:
-            Bdisp_AllClr_VRAM();
-            DisplayStatusArea();
-            drawScreenTitle((char*)"Copy last result", (char*)"Shift+8 to start");
-            textInput input;
-            input.charlimit=INPUTBUFLEN;
-            input.buffer = (char*)buffer;
-            doTextInput(&input);
+            if(len) {
+              buffer[len-1] = '\0'; // remove newline at end
+              CLIP_Store((unsigned char*)buffer, len);
+            }
           } else AUX_DisplayErrorMessage( 0x15 );
         } else if(smallmenu.selection == 2) {
           Bdisp_AllClr_VRAM();
