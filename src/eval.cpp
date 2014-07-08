@@ -143,7 +143,9 @@ eval_cons(void)
 	case LAGUERRE:		eval_laguerre();	break;
 //	case LAPLACE:		eval_laplace();		break;
 	case LCM:		eval_lcm();		break;
+#ifdef HAS_LIMIT_SOLVER
 	case LIMIT:		eval_limit();		break; // from smib
+#endif
 	case LEADING:		eval_leading();		break;
 	case LEGENDRE:		eval_legendre();	break;
 	case LOG:		eval_log();		break;

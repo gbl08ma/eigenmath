@@ -133,7 +133,9 @@ enum {
 	LAGUERRE,
 //	LAPLACE,
 	LCM,
+#ifdef HAS_LIMIT_SOLVER
 	LIMIT, // from smib
+#endif
 	LEADING,
 	LEGENDRE,
 	LOG,

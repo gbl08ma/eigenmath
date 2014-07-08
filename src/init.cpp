@@ -110,7 +110,9 @@ init(void)
 	std_symbol("laguerre", LAGUERRE);
 //	std_symbol("laplace", LAPLACE);
 	std_symbol("lcm", LCM);
+#ifdef HAS_LIMIT_SOLVER
 	std_symbol("limit", LIMIT); // from smib
+#endif
 	std_symbol("leading", LEADING);
 	std_symbol("legendre", LEGENDRE);
 	std_symbol("log", LOG);

@@ -16,7 +16,7 @@
 
 #include "stdafx.h"
 #include "defs.h"
-
+#ifdef HAS_LIMIT_SOLVER
 void
 eval_limit(void)
 {
@@ -159,3 +159,4 @@ limit_other(void)
 	eval();
 }
  
+#endif

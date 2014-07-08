@@ -574,12 +574,14 @@ void yylcm(void);
 void test_lcm(void);
 
 // limit.cpp - from smib
+#ifdef HAS_LIMIT_SOLVER
 void eval_limit(void);
 void limit(void);
 void ylimit(void);
 void limit_infty(void);
 void limit_minfty(void);
 void limit_other(void);
+#endif
 
 // leading.cpp
 void eval_leading(void);
