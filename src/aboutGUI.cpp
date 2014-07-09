@@ -71,13 +71,13 @@ void showAbout() {
   elem[1].text = (char*)"At the time of this writing, official Eigenmath binaries are only available for Mac OS X through the Mac App Store.";
   
   elem[2].newLine = 1;
-  elem[2].text = (char*)"However, the project used to be open source and hosted at SourceForge. Eigenmath can no longer be found there, but the CVS repository is still online.";
+  elem[2].text = (char*)"The original developer has source code archives available at the original website, without specifying a license.";
   
   elem[3].newLine = 1;
-  elem[3].text = (char*)"A quick search in the Internet Archive lets one know that while on SourceForge, Eigenmath was licensed under the GNU GPL.";
-  
-  elem[4].newLine = 1;
-  elem[4].text = (char*)"The code used in this project is from the times when Eigenmath was hosted at SourceForge, and thus the code used here is licensed under the GNU GPL.";
+  elem[3].text = (char*)"However, the project used to be hosted at SourceForge and licensed under the GNU GPL.";
+  elem[3].spaceAtEnd = 1;
+
+  elem[4].text = (char*)"The code used in this port is from those times, and so this add-in is licensed under that license.";
   
   elem[5].newLine = 1;
   elem[5].lineSpacing = 8;
