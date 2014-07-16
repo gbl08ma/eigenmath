@@ -8,7 +8,6 @@ extern "C" {
 
 extern char *get_curr_cmd(void);
 extern void update_curr_cmd(char *);
-//extern char *get_cmd_str(int);
 
 static char *buf[N];
 static int i, j, k;
@@ -50,7 +49,7 @@ void history_free(char* index_addr) {
 }
 
 char* history_strdup(const char* s) {
-	char *d = history_malloc(/*strlen (s) + 1*/);
+	char *d = history_malloc();
   if (d == NULL) return NULL;
   strcpy (d,s);
   char bogus[1005];
@@ -147,45 +146,6 @@ do_down_arrow(void)
 	else
 		update_curr_cmd("");
 }
-
-#if 0
-char *
-get_cmd_history(void)
-{
-	int k, n;
-	char *s, *t;
-
-	// measure
-
-	n = 0;
-	k = j;
-	while (k != i) {
-		n += (int) strlen(buf[k]) + 2;
-		k = (k + 1) % N;
-	}
-
-	s = (char *) history_malloc(/*n + 1*/);
-
-	if (s == NULL)
-		return NULL;
-
-	// copy
-
-	t = s;
-	k = j;
-	while (k != i) {
-		strcpy(t, buf[k]);
-		k = (k + 1) % N;
-		t += strlen(t);
-		*t++ = '\r';
-		*t++ = '\n';
-	}
-
-	*t = 0;
-
-	return s;
-}
-#endif
 
 void get_cmd_history(char* out) {
 	strcpy(out, (char*)"");

@@ -608,7 +608,7 @@ get_curr_cmd(void)
   char *s;
 
   len=strlen(expr);
-  s = (char*)history_malloc(/*len+1*/);
+  s = (char*)history_malloc();
   strcpy(s, expr);
 
   // trim trailing spaces

@@ -569,10 +569,7 @@ void save_console_state_smem() {
   // there's no need to delete and create again, because there's no problem
   // if there's junk at the end of the file.
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-  if(hFile < 0) {
-    //puts("An error occurred.");
-    return;
-  }
+  if(hFile < 0) return;
   Bfile_WriteFile_OS(hFile, buffer, sizeof(buffer));
   Bfile_WriteFile_OS(hFile, line_buf, sizeof(line_row)*LINE_ROW_MAX);
   char cmdhist[N*INPUTBUFLEN+4] = "";
@@ -584,7 +581,7 @@ void save_console_state_smem() {
   cmdhist[len+1] = 0;
   cmdhist[len+2] = 0;
   cmdhist[len+3] = 0;
-  Bfile_WriteFile_OS(hFile, cmdhist, strlen(cmdhist)+4);
+  Bfile_WriteFile_OS(hFile, cmdhist, len+4);
   Bfile_CloseFile_OS(hFile);
 }
 
