@@ -275,7 +275,9 @@ int dGetLine (char * s,int max, int isRecording) {
     } else if (key==KEY_CTRL_FD) {
       addStringToInput(s, "float", &pos, max, &refresh); // no ( at the end because this is often used to manipulate the last result
     } else if (key==KEY_CHAR_STORE) {
-      addStringToInput(s, "!", &pos, max, &refresh);
+      if ((int)strlen(s)>=max) continue;
+      if(strlen(s)==0 && firstLoopRun) addStringToInput(s, "last!", &pos, max, &refresh); //start of line, append "last" as we're going to do a calculation on the previous value
+      else addStringToInput(s, "!", &pos, max, &refresh);
     } else if (key==KEY_CHAR_IMGNRY) {
       addStringToInput(s, "i", &pos, max, &refresh);
     } else if (key==KEY_CHAR_PI) {
