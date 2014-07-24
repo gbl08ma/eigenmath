@@ -337,6 +337,7 @@ int dGetLine (char * s,int max, int isRecording) {
             if(len) {
               buffer[len-1] = '\0'; // remove newline at end
               CLIP_Store((unsigned char*)buffer, len);
+              DefineStatusMessage((char*)"Last result copied to clipboard", 1, 0, 0);
             }
           } else AUX_DisplayErrorMessage( 0x15 );
         } else if(smallmenu.selection == 2) {
