@@ -364,18 +364,18 @@ int dGetLine (char * s,int max, int isRecording) {
       smallmenu.startX=3;
       smallmenu.startY=2;
       smallmenu.scrollbar=0;
+      smallmenu.numitems=5;
+      smallmenuitems[0].text = (char*)"Function Catalog";
+      smallmenuitems[1].text = (char*)"Load Script";
+      smallmenuitems[2].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
+      smallmenuitems[4].text = (char*)"About Eigenmath";
       while(1) {
-        smallmenu.numitems=0;
-        smallmenuitems[smallmenu.numitems++].text = (char*)"Function Catalog";
-        smallmenuitems[smallmenu.numitems++].text = (char*)"Load Script";
-        smallmenuitems[smallmenu.numitems++].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
-        if(is_running_in_strip()) smallmenuitems[smallmenu.numitems++].text = (char*)"Set Strip Script";
+        if(is_running_in_strip()) smallmenuitems[3].text = (char*)"Set Strip Script";
         else {
-          smallmenuitems[smallmenu.numitems].type = MENUITEM_CHECKBOX;
-          smallmenuitems[smallmenu.numitems].value = get_set_session_setting(-1);
-          smallmenuitems[smallmenu.numitems++].text = (char*)"Save Session";
+          smallmenuitems[3].type = MENUITEM_CHECKBOX;
+          smallmenuitems[3].value = get_set_session_setting(-1);
+          smallmenuitems[3].text = (char*)"Save Session";
         }
-        smallmenuitems[smallmenu.numitems++].text = (char*)"About Eigenmath";
         MsgBoxPush(4);
         int sres = doMenu(&smallmenu);
         MsgBoxPop();
