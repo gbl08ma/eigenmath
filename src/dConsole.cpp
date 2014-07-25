@@ -360,7 +360,7 @@ int dGetLine (char * s,int max, int isRecording) {
       
       smallmenu.items=smallmenuitems;
       smallmenu.width=17;
-      smallmenu.height=4;
+      smallmenu.height=5;
       smallmenu.startX=3;
       smallmenu.startY=2;
       smallmenu.scrollbar=0;
@@ -376,7 +376,7 @@ int dGetLine (char * s,int max, int isRecording) {
           smallmenuitems[3].value = get_set_session_setting(-1);
           smallmenuitems[3].text = (char*)"Save Session";
         }
-        MsgBoxPush(4);
+        MsgBoxPush(5);
         int sres = doMenu(&smallmenu);
         MsgBoxPop();
         
