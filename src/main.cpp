@@ -61,7 +61,7 @@ main()
   DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
-  CallbackAtQuitMainFunction(save_session); // automatically save session when exiting
+  SetQuitHandler(save_session); // automatically save session when exiting
   set_rnd_seed(RTC_GetTicks());
   puts("Welcome to Eigenmath\nTo see more options, press\nShift then Menu.");
   aborttimer = Timer_Install(0, check_execution_abort, 100);
