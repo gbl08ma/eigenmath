@@ -23,6 +23,7 @@ extern "C" {
 #include "graphicsProvider.hpp"
 #include "fileProvider.hpp"
 #include "stringsProvider.hpp"
+#include "constantsProvider.hpp"
 
 typedef unsigned int    uint;
 typedef unsigned char   uchar;
@@ -564,8 +565,12 @@ void save_console_state_smem() {
   memcpy(buffer+12, &line_count, sizeof(int));
 
   char filename[MAX_FILENAME_SIZE+1];
-  sprintf(filename, "\\\\fls0\\eigencon.erd"); // Eigenmath Restore Data
+  sprintf(filename, DATAFOLDER"\\eigencon.erd"); // Eigenmath Restore Data
   unsigned short pFile[MAX_FILENAME_SIZE+1];
+  // first create data folder
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)DATAFOLDER, strlen(DATAFOLDER)+1);
+  Bfile_CreateEntry_OS(pFile, CREATEMODE_FOLDER, 0);
+  // now create file
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
   Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
   // if an error ocurrs when creating (because file already exists)
@@ -591,7 +596,7 @@ void save_console_state_smem() {
 void load_console_state_smem() {
   // ensure console memory has been initialized before calling this function!
   char filename[MAX_FILENAME_SIZE+1];
-  sprintf(filename, "\\\\fls0\\eigencon.erd"); // Eigenmath Restore Data
+  sprintf(filename, DATAFOLDER"\\eigencon.erd"); // Eigenmath Restore Data
   unsigned short pFile[MAX_FILENAME_SIZE+1];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
