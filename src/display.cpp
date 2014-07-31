@@ -61,6 +61,9 @@ static int yindex, level, emit_x;
 static int expr_level;
 int display_flag;
 
+#define PRETTYPRINT_MAX_COL 32
+#define PRETTYPRINT_MAX_ROW 9
+
 #define NGREEK 34
 
 static struct {
@@ -129,7 +132,7 @@ display(U *p)
 
 	get_size(0, yindex, &h, &w, &y);
 
-	if (w > 32 || h > 9) {
+	if (w > PRETTYPRINT_MAX_COL || h > PRETTYPRINT_MAX_ROW) {
 		printline(p);
 		restore();
 		return;
@@ -1194,7 +1197,10 @@ print_it(void)
 	for (i = 0; i < yindex; i++) {
 
 		while (chartab[i].y > y) {
-			printchar('\n');
+			// x<PRETTYPRINT_MAX_COL check to avoid a double newline
+			// when the last character is in the last row of console
+			// (usually PRETTYPRINT_MAX_COL is the console width)
+			if(x<PRETTYPRINT_MAX_COL) printchar('\n');
 			x = 0;
 			y++;
 		}
