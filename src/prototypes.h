@@ -280,7 +280,7 @@ void display(U *p);
 void fixup_fraction(int x, int k1, int k2);
 void displaychar(int c);
 void emit_number(U *p, int emit_sign);
-char * getdisplaystr(void);
+//char * getdisplaystr(void);
 void test_display(void);
 
 // distill.cpp

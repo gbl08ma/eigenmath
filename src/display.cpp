@@ -1218,7 +1218,7 @@ print_it(void)
 	printchar('\n');
 }
 
-static void fill_buf(void);
+/*static void fill_buf(void);
 
 static char buffer[1000];
 
@@ -1266,7 +1266,7 @@ fill_buf(void)
 	*s++ = '\n';
 
 	*s++ = '\0';
-}
+}*/
 
 #define N 100
 
