@@ -99,8 +99,8 @@ yyfactorpoly(void)
 			push_integer(0);
 			B = pop();
 		} else if (get_factor() == 0) {
-			if (verbosing)
-				printf("no factor found\n");
+			/*if (verbosing)
+				printf("no factor found\n");*/
 			break;
 		}
 
@@ -111,11 +111,11 @@ yyfactorpoly(void)
 		add();
 		FACTOR = pop();
 
-		if (verbosing) {
+		/*if (verbosing) {
 			printf("success\nFACTOR=");
 			print(FACTOR);
 			printf("\n");
-		}
+		}*/
 
 		// factor out negative sign (not req'd because A > 1)
 #if 0
@@ -152,11 +152,11 @@ yyfactorpoly(void)
 	}
 	POLY = pop();
 
-	if (verbosing) {
+	/*if (verbosing) {
 		printf("POLY=");
 		print(POLY);
 		printf("\n");
-	}
+	}*/
 
 	// factor out negative sign
 
@@ -174,11 +174,11 @@ yyfactorpoly(void)
 	multiply_noexpand();
 	RESULT = pop();
 
-	if (verbosing) {
+	/*if (verbosing) {
 		printf("RESULT=");
 		print(RESULT);
 		printf("\n");
-	}
+	}*/
 
 	stack[h] = RESULT;
 
@@ -225,7 +225,7 @@ get_factor(void)
 	int i, j, h;
 	int a0, an, na0, nan;
 
-	if (verbosing) {
+	/*if (verbosing) {
 		push(zero);
 		for (i = 0; i <= expo; i++) {
 			push(polycoeff[i]);
@@ -239,7 +239,7 @@ get_factor(void)
 		printf("POLY=");
 		print(POLY);
 		printf("\n");
-	}
+	}*/
 
 	h = tos;
 
@@ -255,7 +255,7 @@ get_factor(void)
 	divisors_onstack();
 	na0 = tos - a0;
 
-	if (verbosing) {
+	/*if (verbosing) {
 		printf("divisors of base term");
 		for (i = 0; i < na0; i++) {
 			printf(", ");
@@ -268,7 +268,7 @@ get_factor(void)
 			print(stack[an + i]);
 		}
 		printf("\n");
-	}
+	}*/
 
 	// try roots
 
@@ -286,7 +286,7 @@ get_factor(void)
 
 			evalpoly();
 
-			if (verbosing) {
+			/*if (verbosing) {
 				printf("try A=");
 				print(A);
 				printf(", B=");
@@ -300,7 +300,7 @@ get_factor(void)
 				printf(")=");
 				print(Q);
 				printf("\n");
-			}
+			}*/
 
 			if (iszero(Q)) {
 				tos = h;
@@ -317,7 +317,7 @@ get_factor(void)
 
 			evalpoly();
 
-			if (verbosing) {
+			/*if (verbosing) {
 				printf("try A=");
 				print(A);
 				printf(", B=");
@@ -331,7 +331,7 @@ get_factor(void)
 				printf(")=");
 				print(Q);
 				printf("\n");
-			}
+			}*/
 
 			if (iszero(Q)) {
 				tos = h;

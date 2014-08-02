@@ -601,7 +601,6 @@ void load_console_state_smem() {
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hFile < 0) {
-    //puts("An error occurred.");
     return;
   }
   char buffer[sizeof(int)*4];

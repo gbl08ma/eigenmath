@@ -10,9 +10,11 @@ U *zero, *one, *imaginaryunit;
 U symtab[NSYM], *binding[NSYM], *arglist[NSYM];
 
 int expanding;
-int verbosing;
+//int verbosing;
 int esc_flag;
 int test_flag;
 int draw_flag;
 int trigmode;
+#if SELFTEST
 char logbuf[256];
+#endif

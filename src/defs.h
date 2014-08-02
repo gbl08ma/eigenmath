@@ -322,13 +322,15 @@ extern int expanding;
 extern int fmt_x;
 extern int fmt_index;
 extern int fmt_level;
-extern int verbosing;
+//extern int verbosing;
 //extern const int primetab[MAXPRIMETAB];
 extern int esc_flag;
 extern int draw_flag;
 extern int mtotal;
 extern int trigmode;
+#if SELFTEST
 extern char logbuf[];
+#endif
 extern char program_buf[];
 extern U symtab[];
 extern U *binding[];
