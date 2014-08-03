@@ -36,12 +36,12 @@ void dConsolePutChar (char c);
 
 int dGetLine (char * s,int max, int isRecording=0);
 
-int dPrintf (const char * format,...);
+//int dPrintf (const char * format,...);
 
 void dConsoleCls ();
 void dPuts(const char *);
 
-#define printf          dPrintf
+//#define printf          dPrintf
 #define puts            dPuts
 #define putchar         dConsolePutChar
 #define gets            dGetLine

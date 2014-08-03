@@ -539,7 +539,7 @@ void dPuts(const char * s)
   dConsolePutChar('\n');
 }
 
-int dPrintf (const char * format,...)
+/*int dPrintf (const char * format,...)
 {
   char    buf[256];
   int             length;
@@ -552,7 +552,7 @@ int dPrintf (const char * format,...)
   dConsolePut (buf);
   
   return length;
-} 
+}*/ 
 
 void save_console_state_smem() {
   // ensure all timers are stopped and uninstalled before calling this function!
