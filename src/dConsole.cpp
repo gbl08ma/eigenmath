@@ -103,27 +103,6 @@ void printCursor() {
   drawLine(x, y+14, x, y, COLOR_BLACK);
   drawLine(x+1, y+14, x+1, y, COLOR_BLACK); 
 }
-// inserts into subject at position pos. assumes subject has enough space!
-//append(s, (char*)"tan(", pos);
-void append(char* subject, const char* insert, int pos) {
-  //int totlen = strlen(subject)+strlen(insert);
-  //char* buf = (char*)alloca((totlen+5)*sizeof(char));
-  char buf[INPUTBUFLEN+5] = ""; //alloca would be the nice and flexible solution, but it contaminates the string even after a memset to zero!
-  //memset(buf, totlen+5, 0);
-  strcpy(buf, (char*)"");
-  if(pos==0) {
-    strcpy(buf, insert);
-    strcat(buf, subject);
-  } else if(pos==(int)strlen(subject)) {
-    strcat(subject, insert);
-    return;
-  } else {
-    strncpy(buf, subject, pos); // copy at most first pos characters
-    strcat(buf, insert); // copy all of insert[] at the end
-    strcat(buf, subject+pos); // copy the rest
-  }
-  strcpy(subject, buf);   // copy it back to subject
-}
 
 void do_up_arrow(void);
 void do_down_arrow(void);
@@ -133,10 +112,19 @@ int get_custom_key_handler_state();
 int is_running_in_strip();
 int get_set_session_setting(int value);
 
+// inserts into subject at position pos. assumes subject has enough space!
+//append(s, (char*)"tan(", pos);
+void append(char* subject, const char* insert, int pos, int inslen) {
+  char buf[INPUTBUFLEN+5];
+  strcpy(buf, subject+pos); // backup everything in the subject, after pos
+  strcpy(subject+pos, insert); // copy string to insert into subject at desired position
+  strcpy(subject+pos+inslen, buf); // restore backup at the end of the inserted string
+}
+
 void addStringToInput(char* dest, char* src, int* pos, int max, int* refresh) {
   int srclen = strlen(src);
   if ((int)strlen(dest)+srclen-1>=max) return;
-  append(dest, src, *pos);
+  append(dest, src, *pos, srclen);
   *pos+=srclen; *refresh = 1;
 }
 
@@ -451,12 +439,9 @@ int dGetLine (char * s,int max, int isRecording) {
       else pos++;
       refresh = 1;
     } else if ((c=dGetKeyChar(key))!=0) {
-      if ((int)strlen(s)>=max) continue;
-      char ns[2] = "";
+      char ns[2];
       ns[0] = c; ns[1]='\0';
-      append(s, ns, pos);
-      pos++;
-      refresh = 1;
+      addStringToInput(s, ns, &pos, max, &refresh);
     }
     else if (key==KEY_CTRL_DEL) {
       if (pos<=0) continue;
