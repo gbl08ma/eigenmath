@@ -549,14 +549,9 @@ void save_console_state_smem() {
   memcpy(buffer+8, &line_start, sizeof(int));
   memcpy(buffer+12, &line_count, sizeof(int));
 
-  char filename[MAX_FILENAME_SIZE+1];
-  sprintf(filename, DATAFOLDER"\\eigencon.erd"); // Eigenmath Restore Data
   unsigned short pFile[MAX_FILENAME_SIZE+1];
-  // first create data folder
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)DATAFOLDER, strlen(DATAFOLDER)+1);
-  Bfile_CreateEntry_OS(pFile, CREATEMODE_FOLDER, 0);
-  // now create file
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
+  // create file in data folder (assumes folder already exists)
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)CONSOLESTATEFILE, strlen(CONSOLESTATEFILE)+1);
   Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
   // if an error ocurrs when creating (because file already exists)
   // there's no need to delete and create again, because there's no problem

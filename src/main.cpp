@@ -359,6 +359,12 @@ int get_set_session_setting(int value) {
   return -1;
 }
 
+void create_data_folder() {
+  unsigned short pFile[MAX_FILENAME_SIZE+1];
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)DATAFOLDER, strlen(DATAFOLDER)+1);
+  Bfile_CreateEntry_OS(pFile, CREATEMODE_FOLDER, 0);
+}
+
 void save_session() {
   if(!get_set_session_setting(-1)) return;
   if(!eigenmathRanAtLeastOnce || is_running_in_strip()) return;
@@ -366,17 +372,16 @@ void save_session() {
     Timer_Stop(aborttimer);
     Timer_Deinstall(aborttimer);
   }
+  create_data_folder();
   save_console_state_smem();
   dump_eigenmath_symbols_smem();
 
-  // this is only called on exit, no need to reinstall the timer:
-  /*aborttimer = Timer_Install(0, check_execution_abort, 100);
-  if (aborttimer > 0) Timer_Start(aborttimer);*/
+  // this is only called on exit, no need to reinstall the check_execution_abort timer.
 }
 int restore_session() {
   // 1 if session was restored, 0 otherwise
   if(!get_set_session_setting(-1)) return 0;
-  int r = run_script(DATAFOLDER"\\eigensym.erd");
+  int r = run_script(SYMBOLSSTATEFILE);
   load_console_state_smem();
   return r;
 }
@@ -450,14 +455,9 @@ void script_recorder() {
 
 void dump_eigenmath_symbols_smem() {
   // ensure all timers are stopped and uninstalled before calling this function!
-  char filename[MAX_FILENAME_SIZE+1];
-  sprintf(filename, DATAFOLDER"\\eigensym.erd"); // Eigenmath Restore Data
   unsigned short pFile[MAX_FILENAME_SIZE+1];
-  // first create data folder
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)DATAFOLDER, strlen(DATAFOLDER)+1);
-  Bfile_CreateEntry_OS(pFile, CREATEMODE_FOLDER, 0);
-  // now create data file
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
+  // create file in data folder (assumes data folder already exists)
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)SYMBOLSSTATEFILE, strlen(SYMBOLSSTATEFILE)+1);
   int size = 1;
   Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
   // even if it already exists, there's no problem,
