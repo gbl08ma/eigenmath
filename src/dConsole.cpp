@@ -131,12 +131,13 @@ void addStringToInput(char* dest, char* src, int* pos, int max, int* refresh) {
 int eigenmathRanAtLeastOnce = 0;
 int dGetLine (char * s,int max, int isRecording) {
   int pos = strlen(s);
+  int start = 0;
   int refresh = 1;
   int x,y,l,width;
   int key;
   char c;
 
-  l = strlen (line_buf[line_index]);
+  l = strlen(line_buf[line_index]);
 
   if (l>=LINE_COL_MAX) {
     dConsolePut("\n");
@@ -149,6 +150,12 @@ int dGetLine (char * s,int max, int isRecording) {
   int firstLoopRun = 1;
   int isscrolling = 0;
   while (1) {
+    if(pos-1<start) {
+      do start--; while (pos-1<start);
+      if (start<0) start = 0;
+    } else if(pos>start+width-1) {
+      do start++; while (pos>start+width-1);
+    }
     if(isscrolling) {
       DefineStatusMessage((char*)"Scrolling enabled (up/down)", 1, 0, 0);
       DisplayStatusArea();
@@ -160,13 +167,13 @@ int dGetLine (char * s,int max, int isRecording) {
       }
       last_bracket_color = COLOR_BLUE;
       bracket_level = 0;
-      if (pos<width-1) {
+      if (start==0) {
         enable_bracket_coloring = 1;
         locate(x,y);          print((uchar*)s);
         enable_bracket_coloring = 0;
         locate(x+pos,y);      printCursor();
       } else {
-        for(int i = 0; i < pos-width+1; i++) {
+        for(int i = 0; i < start; i++) {
           if(s[i] == '(') {
             bracket_level++;
             last_bracket_color = getNextColorInSequence(last_bracket_color);
@@ -176,9 +183,9 @@ int dGetLine (char * s,int max, int isRecording) {
           }
         }
         enable_bracket_coloring = 1;
-        locate(x,y);          print((uchar*)s+pos-width+1);
+        locate(x,y);          print((uchar*)s+start);
         enable_bracket_coloring = 0;
-        locate(x+width-1,y);  printCursor(); //cursor
+        locate(pos-start+2,y);  printCursor(); //cursor
       }
       refresh = 0;
     }
@@ -339,6 +346,7 @@ int dGetLine (char * s,int max, int isRecording) {
           input.cursor = pos;
           doTextInput(&input);
           pos=input.cursor;
+          start = 0; // force recalculation
         }
       }
       refresh = 1;
@@ -413,6 +421,7 @@ int dGetLine (char * s,int max, int isRecording) {
         // go up in command history
         do_up_arrow();
         pos=strlen(s);
+        start = 0; // force recalculation
       }
       refresh = 1;
     } else if (key==KEY_CTRL_DOWN) {
@@ -424,6 +433,7 @@ int dGetLine (char * s,int max, int isRecording) {
       } else {
         do_down_arrow();
         pos=strlen(s);
+        start = 0; // force recalculation
       }
       refresh = 1;
     } else if (key==KEY_CTRL_PAGEUP || key==KEY_CTRL_PAGEDOWN) {
