@@ -220,6 +220,14 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
         i++;
         continue;
         break;}
+      case 147: {
+        // getline start indicator, on a partial command
+        int tx = x+2, ty=y;
+        PrintMini(&tx, &ty, (unsigned char*)"\xe6\x9F", 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
+        x+=12;
+        i++;
+        continue;
+        break;}
       case 31: {
         // small dot for multiply
         int tx = x+2, ty=y;

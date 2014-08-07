@@ -469,6 +469,7 @@ int dGetLine (char * s,int max, int isRecording) {
       refresh = 1;
     }
     else if (key==KEY_CTRL_EXE) return 1;
+    else if (key==KEY_CHAR_CR) return 5;
     else if (key!=KEY_CTRL_SHIFT && key!=KEY_CTRL_ALPHA && get_custom_key_handler_state()==1) {
       custom_key_to_handle = key; custom_key_to_handle_modifier = keyflag; return 3;
     }

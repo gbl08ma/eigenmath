@@ -90,11 +90,12 @@ main()
 void input_eval_loop(int isRecording) {
   char** recHistory = NULL; int curRecHistEntry = 0;
   if(isRecording) recHistory = (char**)alloca(200); // space for 200 pointers to history entries
+  int exproffset = 0;
   while (1) {
     DefineStatusMessage((char*)(isRecording ? "Recording ('record' to stop)" : ""), 1, 0, 0);
-    strcpy(expr, (char*)"");
-    dConsolePutChar('\x1e');
-    int res = gets(expr,INPUTBUFLEN, isRecording); // isRecording is provided for UI changes, no behavior changes.
+    strcpy(expr+exproffset, (char*)"");
+    dConsolePutChar((exproffset ? 147 : '\x1e'));
+    int res = gets(expr+exproffset,INPUTBUFLEN-exproffset, isRecording); // isRecording is provided for UI changes, no behavior changes.
     if(res == 2) {
       dConsolePutChar('\n');
       select_script_and_run();
@@ -116,8 +117,14 @@ void input_eval_loop(int isRecording) {
       select_strip_script();
       continue;
     }
-    puts(expr);
-    update_cmd_history(expr);
+    puts(expr+exproffset);
+    update_cmd_history(expr+exproffset);
+    if(res == 5) {
+      // partial command entered.
+      exproffset += strlen(expr+exproffset);
+      continue;
+    }
+    exproffset = 0;
     if(strcmp(expr, "testmode") == 0) {
       TestMode(1);
     } else if(strcmp(expr, "meminfo") == 0) {
