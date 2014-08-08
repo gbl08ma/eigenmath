@@ -36,6 +36,13 @@ table of special symbols:
 | 138     | root top left corner                 |
 | 139     | root bottom "v"                      |
 | 140     | root middle segment                  |
+| 141     | opening bracket top                  |
+| 142     | opening bracket middle               |
+| 143     | opening bracket bottom               |
+| 144     | closing bracket top                  |
+| 145     | closing bracket middle               |
+| 146     | closing bracket bottom               |
+| 147     | blue no-fill arrow (partial command) |
 +---------+--------------------------------------+
 */
 unsigned char *specialsym1[34] = {
