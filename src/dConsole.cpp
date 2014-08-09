@@ -187,6 +187,19 @@ int dGetLine (char * s,int max, int isRecording) {
         enable_bracket_coloring = 0;
         locate(pos-start+2,y);  printCursor(); //cursor
       }
+      if(!isscrolling) {
+        int linestart = line_count-10+myconsolescroll;
+        if(linestart < 0) linestart = 0;
+        int py = (y-linestart-1)*17;
+        if(start) {
+          int px = 12;
+          PrintMini(&px, &py, (unsigned char*)"\xe6\x9a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_MAGENTA, COLOR_WHITE, 1, 0);
+        }
+        if((int)strlen(s+start)>width) {
+          int px = 31*12;
+          PrintMini(&px, &py, (unsigned char*)"\xe6\x9b", 0x02, 0xFFFFFFFF, 0, 0, COLOR_MAGENTA, COLOR_WHITE, 1, 0);
+        }
+      }
       refresh = 0;
     }
     int keyflag = GetSetupSetting( (unsigned int)0x14);
