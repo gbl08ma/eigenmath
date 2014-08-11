@@ -29,7 +29,6 @@ int fileBrowser(char* filename, unsigned char* filter, char* title) {
 }
 
 int fileBrowserSub(char* browserbasepath, char* filename, unsigned char* filter, char* title) {
-  int inscreen = 1;
   Menu menu;
   MenuItemIcon icontable[12];
   buildIconTable(icontable);
@@ -80,7 +79,7 @@ int fileBrowserSub(char* browserbasepath, char* filename, unsigned char* filter,
   menu.scrollout=1;
   menu.nodatamsg = (char*)"No Data";
   menu.title = title;
-  while(inscreen) {
+  while(1) {
     Bdisp_AllClr_VRAM();
     itoa(smemfree, (unsigned char*)titleBuffer);
     LocalizeMessage1( 340, titleBufferBuf ); //"bytes free"
