@@ -475,38 +475,40 @@ void dump_eigenmath_symbols_smem() {
     // error
     return;
   }
-  char buffer[5000] = "";
+  char buffer[5000];
+  int lb = 0;
   for (int i = AUTOEXPAND; i < NSYM; i++) { // dump all symbols after AUTOEXPAND
     if((i >= YYE && i <= SECRETX) || (i >= C1 && i <= C6)) continue; // do not dump special-purpose internal symbols
     if (symtab[i].u.printname == 0)
       break;
-    char symval[1000] = "";
+    char symval[1000];
+    symval[0]=0;
     outputRedirectBuffer = symval;
     remainingBytesInRedirect = 1000;
     printline(get_binding(symbol(i)));
-    int svl = strlen(symval);
-    if(svl) symval[svl-1] = '\0'; // remove \n at end to make comparison with printname possible
-    char symarg[1000] = "";
+    int svl = 1000 - remainingBytesInRedirect;
+    if(svl) symval[svl-1] = 0; // remove \n at end to make comparison with printname possible
+    char symarg[1000];
     outputRedirectBuffer = symarg;
     remainingBytesInRedirect = 1000;
     print_arg_list(get_arglist(symbol(i)));
     outputRedirectBuffer = NULL;
     // avoid saving abc=abc, to avoid symbol table exhaustion
-    if(!strcmp(symarg,"()") && !strcmp(symval, symtab[i].u.printname)) continue;
+    // in this situation, remainingBytesInRedirect==998 has the same effect as !strcmp(symarg,"()"),
+    // because if symarg is only two chars long, then they must be the ().
+    if(remainingBytesInRedirect==998 && !strcmp(symval, symtab[i].u.printname)) continue;
 
-    int lb = strlen(buffer);
-    sprintf(buffer+lb, "%s%s=%s\n", symtab[i].u.printname, symarg, symval);
-    lb = strlen(buffer);
+    lb += sprintf(buffer+lb, "%s%s=%s\n", symtab[i].u.printname, symarg, symval);
     if(lb > 2000) { // are there enough contents in the buffer to issue a write?
       Bfile_WriteFile_OS(BCEres, buffer, lb);
-      strcpy(buffer, (char*)"");
+      buffer[0]=0;
+      lb = 0;
     }
   }
-  int len = strlen(buffer);
   // make sure it is null-terminated:
   // (there can be junk at the end of the file, because we're not recreating it clean every time)
-  buffer[len] = 0;
-  buffer[len+1] = 0;
+  buffer[lb] = 0;
+  buffer[lb+1] = 0;
   // write what hasn't been written yet
   Bfile_WriteFile_OS(BCEres, buffer, strlen(buffer)+2); //make sure to write the two zeros
   Bfile_CloseFile_OS(BCEres);
