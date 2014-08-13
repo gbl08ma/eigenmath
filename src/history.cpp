@@ -148,7 +148,7 @@ do_down_arrow(void)
 }
 
 void get_cmd_history(char* out) {
-	strcpy(out, (char*)"");
+	*out=0;
 	int k = j;
 	while (k != i) {
 		strcat(out, buf[k]);

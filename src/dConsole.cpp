@@ -584,7 +584,7 @@ void save_console_state_smem() {
   if(hFile < 0) return;
   Bfile_WriteFile_OS(hFile, buffer, sizeof(buffer));
   Bfile_WriteFile_OS(hFile, line_buf, sizeof(line_row)*LINE_ROW_MAX);
-  char cmdhist[N*INPUTBUFLEN+4] = "";
+  char cmdhist[N*INPUTBUFLEN+4];
   get_cmd_history(cmdhist);
   int len = strlen(cmdhist);
   // make sure file ends with zeros:
