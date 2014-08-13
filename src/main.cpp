@@ -86,11 +86,11 @@ main()
   run_startup_script_again = 0;
   input_eval_loop(0);
 }
-
+static int exproffset = 0;
 void input_eval_loop(int isRecording) {
   char** recHistory = NULL; int curRecHistEntry = 0;
   if(isRecording) recHistory = (char**)alloca(200); // space for 200 pointers to history entries
-  int exproffset = 0;
+  exproffset = 0;
   while (1) {
     DefineStatusMessage((char*)(isRecording ? "Recording ('record' to stop)" : ""), 1, 0, 0);
     strcpy(expr+exproffset, (char*)"");
@@ -619,9 +619,9 @@ get_curr_cmd(void)
   int i, len;
   char *s;
 
-  len=strlen(expr);
+  len=strlen(expr+exproffset);
   s = (char*)history_malloc();
-  strcpy(s, expr);
+  strcpy(s, expr+exproffset);
 
   // trim trailing spaces
 
@@ -635,5 +635,5 @@ get_curr_cmd(void)
 void
 update_curr_cmd(char *s)
 {
-  strcpy(expr, s);
+  strncpy(expr+exproffset, s, INPUTBUFLEN-exproffset);
 }
