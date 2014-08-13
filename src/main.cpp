@@ -57,6 +57,7 @@ main()
   initialize_history_heap(history_buf);
   Bdisp_AllClr_VRAM();
   Bdisp_EnableColor(1);
+  EnableStatusArea(0);
   DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
