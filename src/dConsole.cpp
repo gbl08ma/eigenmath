@@ -39,6 +39,8 @@ int myconsolex = 0;
 int myconsoley = 0;
 int myconsolescroll = 0;
 
+int visible_lines = 10;
+
 char* outputRedirectBuffer = NULL; // if not null, console output will be redirected to the buffer this char* points to.
 int remainingBytesInRedirect = 0; // bytes remaining in the redirect buffer, respect to avoid overflows
 
@@ -54,9 +56,9 @@ int enable_bracket_coloring = 0;
 int last_bracket_color = COLOR_BLUE;
 int bracket_level = 0;
 void print(unsigned char* msg) {
-  int linestart = line_count-10+myconsolescroll;
+  int linestart = line_count-visible_lines+myconsolescroll;
   if(linestart < 0) linestart = 0;
-  if(myconsoley - linestart >= 0 && myconsoley - linestart < 10) PrintMiniFix( myconsolex*12, (myconsoley - linestart)*17, msg, 0, COLOR_BLACK, COLOR_WHITE );
+  if(myconsoley - linestart >= 0 && myconsoley - linestart < visible_lines) PrintMiniFix( myconsolex*12, (myconsoley - linestart)*17, msg, (visible_lines == 12 ? 0x40 : 0), COLOR_BLACK, COLOR_WHITE, (visible_lines == 12 ? 1 : 0));
   myconsolex = myconsolex + strlen((char*)msg);
 }
 
@@ -95,10 +97,10 @@ void dConsoleCls ()
 
 void printCursor() {
   int x = myconsolex*12;
-  int linestart = line_count-10+myconsolescroll;
+  int linestart = line_count-visible_lines+myconsolescroll;
   if(linestart < 0) linestart = 0;
-  if(!(myconsoley - linestart >= 0 && myconsoley - linestart < 10)) return;
-  int y = (myconsoley-linestart)*17+24;
+  if(!(myconsoley - linestart >= 0 && myconsoley - linestart < visible_lines)) return;
+  int y = (myconsoley-linestart)*17+(visible_lines == 12 ? 0 : 24);
   // vertical cursor...
   drawLine(x, y+14, x, y, COLOR_BLACK);
   drawLine(x+1, y+14, x+1, y, COLOR_BLACK); 
@@ -161,8 +163,7 @@ int dGetLine (char * s,int max, int isRecording) {
       DisplayStatusArea();
     }
     if (refresh) {
-      int i;
-      for (i=x;i<=LINE_COL_MAX;++i) {
+      for (int i=x;i<=LINE_COL_MAX;++i) {
         locate(i,y); print((uchar*)" ");
       }
       last_bracket_color = COLOR_BLUE;
@@ -173,7 +174,7 @@ int dGetLine (char * s,int max, int isRecording) {
         enable_bracket_coloring = 0;
         locate(x+pos,y);      printCursor();
       } else {
-        for(int i = 0; i < start; i++) {
+        for(int i = 0; i < start; ++i) {
           if(s[i] == '(') {
             bracket_level++;
             last_bracket_color = getNextColorInSequence(last_bracket_color);
@@ -188,7 +189,7 @@ int dGetLine (char * s,int max, int isRecording) {
         locate(pos-start+2,y);  printCursor(); //cursor
       }
       if(!isscrolling) {
-        int linestart = line_count-10+myconsolescroll;
+        int linestart = line_count-visible_lines+myconsolescroll;
         if(linestart < 0) linestart = 0;
         int py = (y-linestart-1)*17;
         if(start) {
@@ -205,7 +206,7 @@ int dGetLine (char * s,int max, int isRecording) {
     int keyflag = GetSetupSetting( (unsigned int)0x14);
     DirectDrawRectangle(LCD_WIDTH_PX+6, 24, LCD_WIDTH_PX+6+5, 210, COLOR_WHITE); // clear scroll indicator
     if(isscrolling) {
-      int starty = (line_count == 0 ? 0 : ((line_count+myconsolescroll-(line_count < 10 ? line_count : 10))*162)/(line_count < 10 ? line_count : line_count-10));
+      int starty = (line_count == 0 ? 0 : ((line_count+myconsolescroll-(line_count < visible_lines ? line_count : visible_lines))*162)/(line_count < visible_lines ? line_count : line_count-visible_lines));
       DirectDrawRectangle(LCD_WIDTH_PX+6, 24+starty, LCD_WIDTH_PX+6+5, 24+starty+8, COLOR_BLACK);
     }
     GetKey(&key);
@@ -428,7 +429,7 @@ int dGetLine (char * s,int max, int isRecording) {
     } else if (key==KEY_CTRL_UP) {
       if(isscrolling) {
         myconsolescroll--;
-        if(line_count-10+myconsolescroll < 0) myconsolescroll++;
+        if(line_count-visible_lines+myconsolescroll < 0) myconsolescroll++;
         dConsoleRedraw();
       } else {
         // go up in command history
@@ -493,15 +494,15 @@ int dGetLine (char * s,int max, int isRecording) {
 
 int get_custom_fkey_label(int key);
 void dConsoleRedraw() {
-  Bdisp_AllClr_VRAM();
-  drawFkeyLabels(get_custom_fkey_label(0), get_custom_fkey_label(1), get_custom_fkey_label(2), get_custom_fkey_label(3), 0x0307, get_custom_fkey_label(5)); // Catalog, LOAD, user-defined, user-defined,  A<>a, user-defined
+  drawFkeyLabels(get_custom_fkey_label(0), get_custom_fkey_label(1), get_custom_fkey_label(2), get_custom_fkey_label(3), 0x0307, get_custom_fkey_label(5));
+  // ^ user-defined, user-defined, user-defined, user-defined,  A<>a, user-defined
 
-  drawRectangle(0, 9*17+24, LCD_WIDTH_PX, 18, COLOR_WHITE);
-  for(int i=0,j=line_start;i<line_count;++i) {
-    locate(1,i+1);print((uchar*)line_buf[j]);
+  drawRectangle(0, 0, LCD_WIDTH_PX, 24+17*visible_lines+1, COLOR_WHITE);
+  for(int i=1,j=line_start; i<=line_count; ++i) {
+    locate(1,i); print((uchar*)line_buf[j]);
     if (++j>=LINE_ROW_MAX) j = 0;
   }
-  DisplayStatusArea();
+  if(visible_lines != 12) DisplayStatusArea();
 }
 void dConsolePutChar (char c)
 {

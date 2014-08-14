@@ -126,13 +126,16 @@ void input_eval_loop(int isRecording) {
       continue;
     }
     exproffset = 0;
+#ifdef ENABLE_DEBUG
     if(strcmp(expr, "testmode") == 0) {
       TestMode(1);
     } else if(strcmp(expr, "meminfo") == 0) {
       print_mem_info();
     } else if(strcmp(expr, "memgc") == 0) {
       gc();
-    } else if(strcmp(expr, "record") == 0) {
+    } else
+#endif
+    if(strcmp(expr, "record") == 0) {
       if(!isRecording) script_recorder();
       else {
         // create and save a script. this must be done here, because we used alloca

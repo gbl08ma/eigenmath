@@ -90,8 +90,9 @@ unsigned char *specialsym2[10] = {
 (unsigned char*)"\xe6\x58", //137
 };
 
-int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const short color, const short bcolor )
+int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const short color, const short bcolor, int overstatus)
 {
+  int statusjump = (overstatus? 0 : 24);
   int i = 0, dx;
   unsigned short width;
   void*p;
@@ -100,14 +101,14 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
   {
     if((Msg[i] >= 1 && Msg[i] <= 6) || (Msg[i] >= 11 && Msg[i] <= 12) || (Msg[i] >= 14 && Msg[i] <= 29)) {
       int tx = x+2, ty=y;
-      PrintMini(&tx, &ty, specialsym1[Msg[i]-1], 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+      PrintMini(&tx, &ty, specialsym1[Msg[i]-1], flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
       x+=12;
       i++;
       continue;
     }
     if((Msg[i] >= 128 && Msg[i] <= 137)) {
       int tx = x+2, ty=y;
-      PrintMini(&tx, &ty, specialsym2[Msg[i]-128], 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+      PrintMini(&tx, &ty, specialsym2[Msg[i]-128], flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
       x+=12;
       i++;
       continue;
@@ -115,114 +116,114 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
     switch(Msg[i]) {
       case 7:
         // fraction start
-        drawLine(x+5, y+24+7, x+11, y+24+7, color);
-        drawLine(x+5, y+24+8, x+11, y+24+8, color);
+        drawLine(x+5, y+statusjump+7, x+11, y+statusjump+7, color);
+        drawLine(x+5, y+statusjump+8, x+11, y+statusjump+8, color);
         x+=12;
         i++;
         continue;
         break;
       case 8:
         // fraction end
-        drawLine(x, y+24+7, x+11-5, y+24+7, color);
-        drawLine(x, y+24+8, x+11-5, y+24+8, color);
+        drawLine(x, y+statusjump+7, x+11-5, y+statusjump+7, color);
+        drawLine(x, y+statusjump+8, x+11-5, y+statusjump+8, color);
         x+=12;
         i++;
         continue;
         break;
       case 9:
         // fraction middle
-        drawLine(x, y+24+7, x+11, y+24+7, color);
-        drawLine(x, y+24+8, x+11, y+24+8, color);
+        drawLine(x, y+statusjump+7, x+11, y+statusjump+7, color);
+        drawLine(x, y+statusjump+8, x+11, y+statusjump+8, color);
         x+=12;
         i++;
         continue;
         break;
       case 138:
         // root top left
-        drawLine(x+9, y+24+7, x+11, y+24+7, color);
-        drawLine(x+8, y+24+8, x+11, y+24+8, color);
-        drawLine(x+8, y+24+8, x+8, y+24+16, color);
-        drawLine(x+9, y+24+7, x+9, y+24+13, color);
-        drawLine(x+7, y+24+14, x+7, y+24+16, color);
+        drawLine(x+9, y+statusjump+7, x+11, y+statusjump+7, color);
+        drawLine(x+8, y+statusjump+8, x+11, y+statusjump+8, color);
+        drawLine(x+8, y+statusjump+8, x+8, y+statusjump+16, color);
+        drawLine(x+9, y+statusjump+7, x+9, y+statusjump+13, color);
+        drawLine(x+7, y+statusjump+14, x+7, y+statusjump+16, color);
         x+=12;
         i++;
         continue;
         break;
       case 139:
         // root bottom left
-        drawLine(x+7, y+24, x+4, y+24+18, color);
-        drawLine(x+8, y+24, x+5, y+24+18, color);
-        drawLine(x+5, y+24+18, x+1, y+24+6, color);
-        drawLine(x+4, y+24+18, x, y+24+6, color);
+        drawLine(x+7, y+statusjump, x+4, y+statusjump+18, color);
+        drawLine(x+8, y+statusjump, x+5, y+statusjump+18, color);
+        drawLine(x+5, y+statusjump+18, x+1, y+statusjump+6, color);
+        drawLine(x+4, y+statusjump+18, x, y+statusjump+6, color);
         x+=12;
         i++;
         continue;
         break;
       case 140:
         // root vertical middle
-        drawLine(x+7, y+24, x+7, y+24+18, color);
-        drawLine(x+8, y+24, x+8, y+24+18, color);
+        drawLine(x+7, y+statusjump, x+7, y+statusjump+18, color);
+        drawLine(x+8, y+statusjump, x+8, y+statusjump+18, color);
         x+=12;
         i++;
         continue;
       case 141:
         // opening paren top
-        drawLine(x+4, y+24+5, x+4, y+24+18, color);
-        drawLine(x+5, y+24+3, x+5, y+24+18, color);
-        drawLine(x+6, y+24+1, x+6, y+24+4, color);
-        drawLine(x+7, y+24, x+7, y+24+2, color);
-        drawLine(x+8, y+24, x+8, y+24+1, color);
+        drawLine(x+4, y+statusjump+5, x+4, y+statusjump+18, color);
+        drawLine(x+5, y+statusjump+3, x+5, y+statusjump+18, color);
+        drawLine(x+6, y+statusjump+1, x+6, y+statusjump+4, color);
+        drawLine(x+7, y+statusjump, x+7, y+statusjump+2, color);
+        drawLine(x+8, y+statusjump, x+8, y+statusjump+1, color);
         x+=12;
         i++;
         continue;
       case 142:
         // opening paren middle
-        drawLine(x+4, y+24, x+4, y+24+18, color);
-        drawLine(x+5, y+24, x+5, y+24+18, color);
+        drawLine(x+4, y+statusjump, x+4, y+statusjump+18, color);
+        drawLine(x+5, y+statusjump, x+5, y+statusjump+18, color);
         x+=12;
         i++;
         continue;
       case 143:
         // opening paren bottom
-        drawLine(x+4, y+24, x+4, y+24+10, color);
-        drawLine(x+5, y+24, x+5, y+24+12, color);
-        drawLine(x+6, y+24+11, x+6, y+24+14, color);
-        drawLine(x+7, y+24+13, x+7, y+24+15, color);
-        drawLine(x+8, y+24+14, x+8, y+24+15, color);
+        drawLine(x+4, y+statusjump, x+4, y+statusjump+10, color);
+        drawLine(x+5, y+statusjump, x+5, y+statusjump+12, color);
+        drawLine(x+6, y+statusjump+11, x+6, y+statusjump+14, color);
+        drawLine(x+7, y+statusjump+13, x+7, y+statusjump+15, color);
+        drawLine(x+8, y+statusjump+14, x+8, y+statusjump+15, color);
         x+=12;
         i++;
         continue;
       case 144:
         // closing paren top
-        drawLine(x+7, y+24+5, x+7, y+24+18, color);
-        drawLine(x+6, y+24+3, x+6, y+24+18, color);
-        drawLine(x+5, y+24+1, x+5, y+24+4, color);
-        drawLine(x+4, y+24, x+4, y+24+2, color);
-        drawLine(x+3, y+24, x+3, y+24+1, color);
+        drawLine(x+7, y+statusjump+5, x+7, y+statusjump+18, color);
+        drawLine(x+6, y+statusjump+3, x+6, y+statusjump+18, color);
+        drawLine(x+5, y+statusjump+1, x+5, y+statusjump+4, color);
+        drawLine(x+4, y+statusjump, x+4, y+statusjump+2, color);
+        drawLine(x+3, y+statusjump, x+3, y+statusjump+1, color);
         x+=12;
         i++;
         continue;
       case 145:
         // closing paren middle
-        drawLine(x+6, y+24, x+6, y+24+18, color);
-        drawLine(x+7, y+24, x+7, y+24+18, color);
+        drawLine(x+6, y+statusjump, x+6, y+statusjump+18, color);
+        drawLine(x+7, y+statusjump, x+7, y+statusjump+18, color);
         x+=12;
         i++;
         continue;
       case 146:
         // closing paren bottom
-        drawLine(x+7, y+24, x+7, y+24+10, color);
-        drawLine(x+6, y+24, x+6, y+24+12, color);
-        drawLine(x+5, y+24+11, x+5, y+24+14, color);
-        drawLine(x+4, y+24+13, x+4, y+24+15, color);
-        drawLine(x+3, y+24+14, x+3, y+24+15, color);
+        drawLine(x+7, y+statusjump, x+7, y+statusjump+10, color);
+        drawLine(x+6, y+statusjump, x+6, y+statusjump+12, color);
+        drawLine(x+5, y+statusjump+11, x+5, y+statusjump+14, color);
+        drawLine(x+4, y+statusjump+13, x+4, y+statusjump+15, color);
+        drawLine(x+3, y+statusjump+14, x+3, y+statusjump+15, color);
         x+=12;
         i++;
         continue;
       case 30: {
         // getline start indicator
         int tx = x+2, ty=y;
-        PrintMini(&tx, &ty, (unsigned char*)"\xe6\x9e", 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
+        PrintMini(&tx, &ty, (unsigned char*)"\xe6\x9e", flags, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
         x+=12;
         i++;
         continue;
@@ -230,7 +231,7 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
       case 147: {
         // getline start indicator, on a partial command
         int tx = x+2, ty=y;
-        PrintMini(&tx, &ty, (unsigned char*)"\xe6\x9F", 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
+        PrintMini(&tx, &ty, (unsigned char*)"\xe6\x9F", flags, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
         x+=12;
         i++;
         continue;
@@ -238,7 +239,7 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
       case 31: {
         // small dot for multiply
         int tx = x+2, ty=y;
-        PrintMini(&tx, &ty, (unsigned char*)"\xe6\xaa", 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+        PrintMini(&tx, &ty, (unsigned char*)"\xe6\xaa", flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
         x+=12;
         i++;
         continue;
