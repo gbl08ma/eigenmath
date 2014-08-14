@@ -47,7 +47,7 @@ In addition to this, there are also some features exclusive to this port, some o
   
 ## Installation instructions
 
-To install, connect the Prizm calculator to the computer with a miniUSB<->USB cable. On the calculator, press F1 when a pop-up appears on the screen. Wait for the USB connection to be established. When it's finished, your Prizm will appear on your computer as if it were a pendisk.
+To install, connect the Prizm calculator to the computer with a miniUSB<->USB cable. On the calculator, press [F1] when a pop-up appears on the screen. Wait for the USB connection to be established. When it's finished, your Prizm will appear on your computer as if it were a pendisk.
 
 Copy "eigenmath.g3a" to the root folder of the "pendisk" (i.e., out of any folders but inside the pendisk; if necessary, overwrite the existing file).
 
@@ -76,7 +76,7 @@ You can use Eigenmath as a simple calculator - type 2+3 then press [EXE], the re
 
 ![Basic operation](/docs/usage2.png?raw=true)
 
-The output will be pretty-printed whenever applicable, however, command input takes place in a single line, not pretty-printed. This means that if you want to calculate the square root of 7, you can either type sqrt(7) character by character, or use the square root key as a shortcut for typing sqrt(, after which you'll only need to press [7], [)] and [EXE]:
+The output will be pretty-printed whenever applicable, however, command input takes place in a single line, not pretty-printed. If you want to calculate the square root of 7, you can either type `sqrt(7)` character by character, or use the square root key as a shortcut for typing `sqrt(`, after which you'll only need to press [7], [)] and [EXE]:
 
 ![Basic operation](/docs/usage3.png?raw=true)
 
@@ -124,11 +124,11 @@ Before, we said that variables are interpreted symbolically, but you can still a
 
 ![Assigning values to variables and resetting variables](/docs/usage9.png?raw=true)
 
-In the example above, we start by assigning a value of 34 to the variable a, then calculate using that value. The "quote" command returns the unevaluated meaning of a variable, and can be used for more than clearing symbols:
+In the example above, we start by assigning a value of 34 to the variable `a`, then calculate using that value. The `quote` command returns the unevaluated meaning of a variable, and can be used for more than clearing symbols:
 
 ![Assigning values to variables and resetting variables](/docs/usage10.png?raw=true)
 
-As you see, in this case the quote command makes the value of C be retrieved whenever CplusFive is evaluated. Had we just said that `CplusFive = C + 5`, CplusFive wouldn't have updated when C changed.
+As you see, in this case the quote command makes the value of C be retrieved whenever CplusFive is evaluated. Had we just said that `CplusFive = C + 5`, CplusFive wouldn't have changed value when C changed.
 
 You can also define custom functions, that return values and take a number of arguments. Custom functions can be chained and mixed with built-in functions.
 
@@ -191,7 +191,7 @@ You can choose to see all commands, or a specific category. After selecting an o
 
 Press [EXIT] to close this screen and go back to the command list. To switch categories, press [EXIT] once, and then again to exit without inserting a function.
 
-Note: menus on Eigenmath, including the catalog menus, don't support jumping to a certain letter by pressing the respective keyboard key. There's, however, other way to quickly navigate menus: the keys [1] through [0] select options 1 to 10, and the keys above, from [xOt] to [->], select a handful of other options.
+Note: menus on Eigenmath, including the catalog menus, don't support jumping to a certain letter by pressing the respective keyboard key. There's, however, other way to quickly navigate menus: the keys [1] through [0] select options 1 to 10, and the keys above, from [xOt] to [->], select options 11 to 22.
 If you want to quickly insert, for example, `rationalize(`, press, from the console, the following key sequence:
 
 [Shift], [4], [9], [a b/c]
@@ -206,13 +206,13 @@ To demonstrate the feature, start by executing `draw(x^2-2)`. After a waiting pe
 
 ![Graph screen](/docs/usage17a.png?raw=true)
 
-You can use the "replay" directional keys to move the graph in any direction, as you would do on the built-in "Graph" mode. Use the + and - keys to zoom in and out (again, as on the "Graph" mode).
+You can use the "replay" directional keys to move the graph in any direction, as you would do on the built-in "Graph" mode. Use the [+] and [-] keys to zoom in and out (again, as on the "Graph" mode).
 
-As explained in the Eigenmath manual, the view window can be adjusted numerically by setting the symbols xrange, yrange and trange, but you can also choose from three presets by pressing, on the graph screen, F3 followed by a key from F1 to F3.
+As explained in the Eigenmath manual, the view window can be adjusted numerically by setting the symbols `xrange`, `yrange` and `trange`, but you can also choose from three presets by pressing, on the graph screen, [F3] followed by [F1], [F2] or [F3].
 
-To exit the graph screen, just press EXIT, and you should be back in the console.
+To exit the graph screen, just press [EXIT], and you should be back in the console.
 
-As with most commands, executing `draw` with no arguments draws the previous result. If the previous result is not drawable in the real plane (for example, if it contains complex numbers or is otherwise hard to map to a real plot), the graph screen will still display, but nothing will be drawn on it.
+In conformity with most commands, executing `draw` with no arguments draws the previous result. If the previous result is not drawable in the real plane (for example, if it contains complex numbers or is otherwise hard to map to a real plot), the graph screen will still display, but nothing will be drawn on it.
 
 Feel free to try the more complex `draw` examples from the Eigenmath manual!
 
@@ -225,7 +225,7 @@ Each expression will be drawn in a different color.
 
 ### Aborting execution
 
-Certain expressions and scripts (which we'll explain later) can take a long time to execute. If a computation is taking more time than what we're willing to wait, press AC/On to break execution (as with most calculations throughout the OS).
+Certain expressions and scripts (which we'll explain later) can take a long time to execute. If a computation is taking more time than what we're willing to wait, press [AC/ON] to break execution.
 
 Stopping may not be instant, but after some time you'll see something like this:
 
@@ -243,11 +243,11 @@ This can be useful for quickly changing the view window, without having to wait 
 
 Because it's easier to explain the scripting feature when we actually have some script to execute, let's start by explaining how to create a script.
 
-On the console, start by pressing Shift+Menu and selecting "Record Script", or type `record` (in lower-case) and press [EXE].
+On the console, start by pressing [Shift] then [Menu] and selecting "Record Script", or type `record` (in lower-case) and press [EXE].
 
 ![Script recording](/docs/usage18.png?raw=true)
 
-Now every command typed, including ones with syntax errors, will be recorded, up to a maximum of 200 commands. Commands are executed as usually.
+Now every command typed will be recorded, including those with syntax errors, up to a maximum of 200 commands. Commands are executed as usually.
 
 To demonstrate the feature, let's type the following three commands:
 
@@ -259,9 +259,9 @@ Finally, execute `record` again or press [Shift] then [Menu] and select "Stop Re
 
 ![Specifying a script name](/docs/usage19.png?raw=true)
 
-Don't forget to press EXE. The script will be created in the storage memory with the name "test.txt".
+Don't forget to press [EXE]. The script will be created in the storage memory with the name "test.txt".
 
-To better demonstrate the scripting feature, you should execute `clear` now. Press Shift+Menu and select "Load Script". A file browser for the storage memory will appear, select test.txt - this is the script we just created. This is what you'll see:
+To better demonstrate the scripting feature, you should execute `clear` now. Press [Shift] then [Menu] and select "Load Script". A file browser for the storage memory will appear, select test.txt - this is the script we just created. This is what you'll see:
 
 ![Script executed](/docs/usage20.png?raw=true)
 
@@ -273,18 +273,18 @@ You can rename and organize your scripts in the Storage Memory by connecting the
 
 ### Startup script and key customization
 
-You can specify a script to be run whenever Eigenmath is open and there's no session saved, or when "clear" is executed. This is good for specifying custom functions and constants.
+You can specify a script to be run whenever Eigenmath is open and there's no session saved, or when `clear` is executed. This is good for specifying custom functions and constants.
 
 Let's say you want to have a custom function always available, that returns the logarithm of a number in a certain base. You'd normally define such a function by executing something along these lines:
 
   - `logab(a,b)=log(b)/log(a)`
   
-Now, how can we make logab always available, even after `clear`ing? It's simple, just put it in the startup script:
+Now, how can we make `logab` always available, even after `clear`ing? It's simple, just put it in the startup script:
 
   - Connect the calculator to the computer (or use an add-in like Utilities) and create the folder "@EIGEN" (without the quotes), if it doesn't exist already.
-  - Create, or copy into that folder, a file called "eigensup.txt" (without the quotes). For the purposes of this demonstration, that text file should contain "logab(a,b)=log(b)/log(a)" (without the quotes).
+  - Create, or copy into that folder, a file called "eigensup.txt" (without the quotes). For the purposes of this demonstration, that text file should contain `logab(a,b)=log(b)/log(a)`.
   - Save the file, safely disconnect the calculator (or leave the add-in you used to create the folder) and open Eigenmath.
-  - Execute "logab(20,4)". Your logab function was defined already!
+  - Execute `logab(20,4)`. Your logab function should work as expected!
   
 Add more things to the startup script, by putting the expressions you'd like to execute automatically each in their line, as with a normal script.
 
@@ -293,7 +293,7 @@ You can also set actions for keys which usually do nothing, so that they directl
   - The function `prizmUIkeyHandler(k,s)` must be defined. k will receive a code for the key pressed, and s will receive the keyboard modifier code (Shift, Alpha, etc.). You can see the codes by defining this function to print the codes, or by not defining it (and whenever the UI executes it, it will be printed on the screen together with the codes).
   - Optionally, you can set labels for the function keys (except [F5]), by setting the variables `prizmUIfkey1label`, `prizmUIfkey2label`, `prizmUIfkey3label`, `prizmUIfkey4label` and `prizmUIfkey6label` to the code of the label you want to show (a positive integer). You can find the codes by trial-and-error, or by using an add-in like INSIGHT.
   
-The suggested eigensup.txt assigns, for example, the [F3] key to the "clear" command and the F6 key to the "draw" command.
+The suggested eigensup.txt assigns, for example, the [F3] key to the "clear" command and the [F6] key to the "draw" command.
 
 ### Usage as a eActivity strip
 
@@ -326,6 +326,35 @@ As explained on the screen that appears when selecting a strip script, the scrip
 Press [Shift] then [Menu], and uncheck the "Save Session" option. You can enable it back at any point in the future.
 
 Session persistence (or its setting) is not available when running as a eActivity strip.
+
+### Non-standard commands and symbols; differences from standard builds
+
+Besides the `record` command (which is not really a "core" command, but a console-specific command, which means it doesn't work inside a script, for example), this port of Eigenmath includes two simple additional commands which do nothing but return a integer value:
+  - `random`: returns a pseudo-random integer between 0 and 2^31-1 (2147483647);
+  - `finetiming`: returns a signed integer directly from a Prizm's register at 0xA44D00D8, which, according to Simon Lothar, counts about 50000 times per second, or 20µS per tick. Useful to determining how much time expressions take to compute.
+
+This port also checks the values of some user symbols, all starting with `prizmUI`, to change the UI look and behavior:
+  - `prizmUIhandleKeys`
+  - `prizmUIfkey1label`
+  - `prizmUIfkey2label`
+  - `prizmUIfkey3label`
+  - `prizmUIfkey4label`
+  - `prizmUIfkey6label`
+  - `prizmUIkeyHandler` (is called by the UI under certain circumstances)
+  
+Additionally, the following symbols, present in other Eigenmath builds, are modified by the UI under certain circumstances:
+  - `xrange`
+  - `yrange`
+
+Output is pretty-printed when possible:
+  - fractions;
+  - roots (that is, anything with exponent `1/n` where n is an integer >= 1);
+  - exponents;
+  - parentheses (made tall enough to accomodate the content).
+
+A couple of memory leaks in the Eigenmath core were fixed with the help of the original author, George Weigt.
+
+There should be no other differences, regarding the Eigenmath core, between this port and the command-line version of Eigenmath last available on SourceForge.
 
 ## Checking for updates
 This Eigenmath port, like most software, receives updates from time to time. You should check for updates to this add-in periodically, to ensure you have the greatest feature pack and the most stable version. To check for new versions, you should visit the following page:
