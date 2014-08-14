@@ -7,7 +7,7 @@ This is a port of the [Eigenmath math engine](http://gweigt.net/eigenmath-index.
 All of the functionality of the command-line version of Eigenmath is available on this port, with limitations consistent with the technical limits of the Casio Prizm platform. This means certain commands are going to take longer to execute, and certain ones won't complete due to lack of memory (640K ought to be enough for anybody, as if it's 1981 again).
 
 Some features from the graphical versions and ports of Eigenmath are also available, with different UI (adequate to the platform), including:
-  - Graphic plotting (zoom in and out, move left/right/up/down as with the OS);
+  - Graph plotting (zoom in and out, move left/right/up/down as with the OS);
   
   - Script execution and creation ("recording");
   
