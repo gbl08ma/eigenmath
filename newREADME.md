@@ -11,6 +11,8 @@ Some features from the graphical versions and ports of Eigenmath are also availa
   
   - Script execution and creation ("recording");
   
+  - Ability to stop command execution;
+  
   - Function catalog (with help for each function).
   
 In addition to this, there are also some features exclusive to this port, some of which only make sense to include with the Prizm platform:
@@ -47,7 +49,14 @@ In addition to this, there are also some features exclusive to this port, some o
 
 To install, connect the Prizm calculator to the computer with a miniUSB<->USB cable. On the calculator, press F1 when a pop-up appears on the screen. Wait for the USB connection to be established. When it's finished, your Prizm will appear on your computer as if it were a pendisk.
 
-Copy "eigenmath.g3a" to the root folder of the "pendisk" (i.e., out of any folders but inside the pendisk; if necessary, overwrite the existing file) and safely remove it. Wait for the calculator to finish "updating the Main Memory". When it does, you should notice a new Main Menu item, called "Eigenmath".
+Copy "eigenmath.g3a" to the root folder of the "pendisk" (i.e., out of any folders but inside the pendisk; if necessary, overwrite the existing file).
+
+If you also have a "eigensup.txt" file  - this is the "startup script" we'll explain in detail, later - you can copy it too, but to a different folder:
+
+ - On the "pendisk", create the folder "@EIGEN" (must be all-caps);
+ - Copy the "eigensup.txt" file to that folder you created.
+
+Wait for the calculator to finish "updating the Main Memory". When it does, you should notice a new Main Menu item, called "Eigenmath".
 
 The first time you run Eigenmath you'll be shown a welcome message. See Usage instructions.
   
@@ -172,6 +181,40 @@ You can choose to see all commands, or a specific category. After selecting an o
 
 Press EXIT to close this screen and go back to the command list. To switch categories, press EXIT once, and then again to exit without inserting a function.
 
+### Graph plotting
+
+If you have used Eigenmath before, telling you that the "draw" command is supported should be enough to get you going. If not, then you should read the [relevant Eigenmath manual section](http://gweigt.net/Eigenmath.html#x1-90001.7).
+
+To demonstrate the feature, start by executing "draw(x^2-2)" (without the quotes). After a waiting period, the graph for the expression y=x^2-2 should appear:
+
+![Graph screen](/docs/usage17a.png?raw=true)
+
+You can use the "replay" directional keys to move the graph in any direction, as you would do on the built-in "Graph" mode. Use the + and - keys to zoom in and out (again, as on the "Graph" mode).
+
+As explained in the Eigenmath manual, the view window can be adjusted numerically by setting the symbols xrange, yrange and trange, but you can also choose from three presets by pressing, on the graph screen, F3 followed by a key from F1 to F3.
+
+To exit the graph screen, just press EXIT, and you should be back in the console.
+
+As with most commands, executing "draw" with no arguments draws the previous result. If the previous result is not drawable in the real plane (for example, if it contains complex numbers or is otherwise hard to map to a real plot), the graph screen will still display, but nothing will be drawn on it.
+
+Feel free to try the more complex "draw" examples from the Eigenmath manual!
+
+### Aborting execution
+
+Certain expressions and scripts (which we'll explain later) can take a long time to execute. If a computation is taking more time than what we're willing to wait, press AC/On to break execution (as with most calculations throughout the OS).
+
+Stopping may not be instant, but after some time you'll see something like this:
+
+![Stopping execution](/docs/usage17b.png?raw=true)
+
+"Stop: esc key" and "Stop: escape key stop" are two messages that mean the same thing: execution was aborted by the user. Which one appears depends on what Eigenmath is doing at the time.
+
+The AC/On key can also be used to stop the drawing of graphs, with the advantage that the graph still gets displayed, in an incomplete form (usually a low-density points cloud):
+
+![Stopping graph plotting](/docs/usage17c.png?raw=true)
+
+This can be useful for quickly changing the view window, without having to wait for each change to be completely drawn.
+
 ### Script running and recording
 
 Because it's easier to explain the scripting feature when we actually have some script to execute, let's start by explaining how to create a script.
@@ -202,11 +245,63 @@ See how every command we typed when recording got executed? Also note how the co
 
 ![Symbol set by the script](/docs/usage21.png?raw=true)
 
-You can rename and organize your scripts in the Storage Memory by connecting the calculator to the computer via USB, or by using an add-in with a file manager, such as Utilities.
+You can rename and organize your scripts in the Storage Memory by connecting the calculator to the computer via USB, or by using an add-in with a file manager, such as Utilities. Scripts can also be written and edited on a computer, and some of the Eigenmath scripts you find on the Internet will run just fine (the problems with those that don't, will be slowness or lack of memory).
+
+### Startup script and key customization
+
+You can specify a script to be run whenever Eigenmath is open and there's no session saved, or when "clear" is executed. This is good for specifying custom functions and constants.
+
+Let's say you want to have a custom function always available, that returns the logarithm of a number in a certain base. You'd normally define such a function by executing something along these lines:
+
+  - logab(a,b)=log(b)/log(a) 
+  
+Now, how can we make logab always available, even after "clear"ing? It's simple, just put it in the startup script:
+
+  - Connect the calculator to the computer (or use an add-in like Utilities) and create the folder "@EIGEN" (without the quotes), if it doesn't exist already.
+  - Create, or copy into that folder, a file called "eigensup.txt" (without the quotes). For the purposes of this demonstration, that text file should contain "logab(a,b)=log(b)/log(a)" (without the quotes).
+  - Save the file, safely disconnect the calculator (or leave the add-in you used to create the folder) and open Eigenmath.
+  - Execute "logab(20,4)". Your logab function was defined already!
+  
+Add more things to the startup script, by putting the expressions you'd like to execute automatically each in their line, as with a normal script.
+
+You can also set actions for keys which usually do nothing, so that they directly execute some Eigenmath expression. Look at the [suggested eigensup.txt script](https://github.com/gbl08ma/eigenmath/blob/master/eigensup.txt) to see how it's done. Basically, the following must be done (you can execute this step by step on the console, and see things change):
+  - The variable "prizmUIhandleKeys" must be set to 1;
+  - The function "prizmUIkeyHandler(k,s)" must be defined. k will receive a code for the key pressed, and s will receive the keyboard modifier code (Shift, Alpha, etc.). You can see the codes by defining this function to print the codes, or by not defining it (and whenever the UI executes it, it will be printed on the screen together with the codes).
+  - Optionally, you can set labels for the function keys (except F5), by setting the variables prizmUIfkey1label, prizmUIfkey2label, prizmUIfkey3label, prizmUIfkey4label and prizmUIfkey6label to the code (a positive integer) of the label you want to show. You can find the codes by trial-and-error, or by using an add-in like INSIGHT.
+  
+The suggested eigensup.txt assigns, among other things, the F3 key to the "clear" command and the F6 key to the "draw" command.
 
 ### Usage as a eActivity strip
 
+Eigenmath can be launched from the Main Menu, or as an eActivity strip. Strips are things you can insert into eActivity documents and which allow for launching functions external to eActivity, including some add-ins.
+
+You can insert strips into a eActivity document by pressing F2 (STRIP) when editing the document. To open a strip, press EXE while it is selected. To switch between the eActivity document and the open strip, press Shift and then the "store" (arrow) key above AC/On.
+
+![Examples of strips](/docs/usage22.png?raw=true)
+
+When you open a Eigenmath strip, you'll be presented the same screen as when running the add-in for the first time, or when session persistence is disabled. This is because session persistence doesn't work on strips.
+
+You can use Eigenmath as usual, but once you leave the add-in (by selecting another strip, or by closing the eActivity) everything you do will be forgotten. The only persistent thing in the Eigenmath strip is the "strip script", which is a script that can be linked with the strip and will run every time it is opened.
+
+Let's say we want to run the script we created in the previous section, test.txt, every time the strip is open. Open the Eigenmath strip, press Shift then Menu, select "Set Strip Script", read the message and select the script we created.
+
+![Setting a script for the strip](/docs/usage23.png?raw=true)
+
+If all went well, the message "Script set successfully" will be displayed.
+
+Now, let's test our setup. Press Shift and the arrow key above AC/On, select our Eigenmath strip, and press EXE (this will restart the strip):
+
+![Success!](/docs/usage24.png?raw=true)
+
+And there it is, our script ran. You can now use Eigenmath as usual and play around with the script result through any symbols it may have set, as if you had run the script manually.
+
+As explained on the screen that appears when selecting a strip script, the script is stored inside the eActivity (more precisely, inside the strip), which means that it will work on any calculator, even if the script is not present in the storage memory. You should keep this in mind, because if you edit the script in the storage memory, changes will not apply to the scripts inside the strips! You'll need to update them individually on a per-strip basis, doing as you normally would to select a strip script.
+
 ### Disabling session persistence
+
+Press Shift then Menu, and uncheck the "Save Session" option. You can enable it back at any point in the future.
+
+Session persistence (or its setting) is not available when running as a eActivity strip.
 
 ## Checking for updates
 This Eigenmath port, like most software, receives updates from time to time. You should check for updates to this add-in periodically, to ensure you have the greatest feature pack and the most stable version. To check for new versions, you should visit the following page:
