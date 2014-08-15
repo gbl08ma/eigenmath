@@ -15,11 +15,13 @@
 #include "defs.h"
 extern "C" {
 #include "dConsole.h"
+#include "memmgr.h"
 }
 #include "fileGUI.hpp"
 #include "textGUI.hpp"
 #include "graphicsProvider.hpp"
 #include "constantsProvider.hpp"
+
 extern int esc_flag;
 extern int run_startup_script_again;
 extern void set_rnd_seed(int);
@@ -53,6 +55,7 @@ main()
 {
   line_row line_buf[LINE_ROW_MAX];
   initializeConsoleMemory(line_buf);
+  memmgr_init(); // initialize special heap for atoms (alloc.cpp)
   history_line history_buf[HISTORYHEAP_N]; // so this goes on the stack and not on the static ram
   initialize_history_heap(history_buf);
   Bdisp_AllClr_VRAM();

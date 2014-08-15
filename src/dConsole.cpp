@@ -562,7 +562,7 @@ void dPuts(const char * s)
   dConsolePut (buf);
   
   return length;
-}*/ 
+}*/
 
 void save_console_state_smem() {
   // ensure all timers are stopped and uninstalled before calling this function!

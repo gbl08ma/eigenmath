@@ -1,11 +1,14 @@
 #include "stdafx.h"
 #include "defs.h"
+extern "C" {
+	#include "memmgr.h"
+}
 
 // up to 100 blocks of 100,000 atoms (old)
-// up to 1000 blocks of 100 atoms
+// up to 100 blocks of 200 atoms. do not change the 200 value, because the heap-on-stack (memmgr.h) is configured to work in blocks of 2400 bytes (200*12)
 
 #define M 100
-#define N 100
+#define N 200
 
 U *mem[M];
 int mcount;
@@ -159,7 +162,7 @@ alloc_mem(void)
 	U *p;
 	if (mcount == M)
 		return;
-	p = (U *) malloc(N * sizeof (struct U));
+	p = (U *) memmgr_alloc(N * sizeof (struct U));
 	if (p == NULL)
 		return;
 	mem[mcount++] = p;
