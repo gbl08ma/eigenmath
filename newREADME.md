@@ -63,6 +63,14 @@ The first time you run Eigenmath you'll be shown a welcome message. See Usage in
 ## Usage instructions
 Please see this wiki page: https://github.com/gbl08ma/eigenmath/wiki/Usage-instructions
 
+## Compilation instructions
+
+Assuming you are using a setup similar to PrizmSDK, cloning this repository and doing "make" should be enough. If not, you'll need to edit the makefile to point it the correct locations for includes and linker scripts.
+
+It needs to link against libfxcg, "libceigen" which is just the libc (or better, the libc wannabe we have available for the Prizm) patched to the point where math functions work, libm which is a libm which works well enough, and "libfromcasio" which is a binary blob containing things ported from the Casio fx-9860G SDK, and is necessary for setjmp/longjmp (it is provided in this repo for convenience, but you can certainly get rid of it, by providing your own setjmp/longjmp).
+
+The Makefile assumes you have a special build of mkg3a with support for eActivity strip creation. If this isn't the case, remove the `-s` and `-i mon:../monoicon.eActIcon` flags from `MKG3AFLAGS` (of course, the resulting g3a will not support running as an eActivity strip).
+
 ## Checking for updates
 This Eigenmath port, like most software, receives updates from time to time. You should check for updates to this add-in periodically, to ensure you have the greatest feature pack and the most stable version. To check for new versions, you should visit the following page:
 
