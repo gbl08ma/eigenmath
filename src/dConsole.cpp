@@ -334,16 +334,12 @@ int dGetLine (char * s,int max, int isRecording) {
       if(sres == MENU_RETURN_SELECTION) {
         if(smallmenu.selection == 1) {
           if(eigenmathRanAtLeastOnce) {
-            int was_tty = 0;
-            if (equaln(get_binding(symbol(TTY)), 1)) was_tty = 1;
-            else run("tty=1");
             char buffer[INPUTBUFLEN] = "";
             outputRedirectBuffer = buffer;
             remainingBytesInRedirect = INPUTBUFLEN-1;
-            run("eval(last)");
+            printline(get_binding(symbol(LAST)));
             outputRedirectBuffer = NULL;
-            if(!was_tty) run("tty=0");
-            int len = strlen(buffer);
+            int len = INPUTBUFLEN-1-remainingBytesInRedirect;
             if(len) {
               buffer[len-1] = '\0'; // remove newline at end
               CLIP_Store((unsigned char*)buffer, len);
