@@ -63,6 +63,10 @@ The first time you run Eigenmath you'll be shown a welcome message. See Usage in
 ## Usage instructions
 Please see this wiki page: https://github.com/gbl08ma/eigenmath/wiki/Usage-instructions
 
+## Differences from vanilla Eigenmath
+
+Please see the following wiki page: https://github.com/gbl08ma/eigenmath/wiki/Differences-from-vanilla-Eigenmath
+
 ## Compilation instructions
 
 Assuming you are using a setup similar to PrizmSDK, cloning this repository and doing "make" should be enough. If not, you'll need to edit the makefile to point it the correct locations for includes and linker scripts.
