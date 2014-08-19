@@ -106,7 +106,7 @@ void input_eval_loop(int isRecording) {
       continue;
     } else if(res == 3) {
       dConsolePutChar('\n');
-      char buf[100] = "";
+      char buf[100];
       sprintf(buf, "prizmUIkeyHandler(%d,%d)", custom_key_to_handle, custom_key_to_handle_modifier);
       strcpy(expr, (char*)buf);
       execution_in_progress = 1;

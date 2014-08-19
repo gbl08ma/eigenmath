@@ -25,7 +25,7 @@ void showAbout() {
  //y increment between each line: 17; between paragraphs: 20
  int textX = 0;
  int textY = 5;
- char verBuffer[100] = "";
+ char verBuffer[100];
  getVersion(verBuffer);
  PrintMini(&textX, &textY, (unsigned char*)"Version ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_WHITE, 1, 0);
  PrintMini(&textX, &textY, (unsigned char*)verBuffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_WHITE, 1, 0);

@@ -334,7 +334,7 @@ int dGetLine (char * s,int max, int isRecording) {
       if(sres == MENU_RETURN_SELECTION) {
         if(smallmenu.selection == 1) {
           if(eigenmathRanAtLeastOnce) {
-            char buffer[INPUTBUFLEN] = "";
+            char buffer[INPUTBUFLEN];
             outputRedirectBuffer = buffer;
             remainingBytesInRedirect = INPUTBUFLEN-1;
             printline(get_binding(symbol(LAST)));
