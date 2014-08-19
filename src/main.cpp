@@ -97,26 +97,28 @@ void input_eval_loop(int isRecording) {
   exproffset = 0;
   while (1) {
     DefineStatusMessage((char*)(isRecording ? "Recording ('record' to stop)" : ""), 1, 0, 0);
+    has_drawn_graph = 0;
     strcpy(expr+exproffset, (char*)"");
     dConsolePutChar((exproffset ? 147 : '\x1e'));
     int res = gets(expr+exproffset,INPUTBUFLEN-exproffset, isRecording); // isRecording is provided for UI changes, no behavior changes.
     if(res == 2) {
+      exproffset = 0;
       dConsolePutChar('\n');
       select_script_and_run();
       continue;
     } else if(res == 3) {
+      exproffset = 0;
       dConsolePutChar('\n');
-      char buf[100];
-      sprintf(buf, "prizmUIkeyHandler(%d,%d)", custom_key_to_handle, custom_key_to_handle_modifier);
-      strcpy(expr, (char*)buf);
+      sprintf(expr, "prizmUIkeyHandler(%d,%d)", custom_key_to_handle, custom_key_to_handle_modifier);
       execution_in_progress = 1;
-      run(buf);
+      run(expr);
       eigenmathRanAtLeastOnce = 1;
       execution_in_progress = 0;
       check_do_graph();
       if(run_startup_script_again) { run_startup_script_again = 0; run_startup_script(); }
       continue;
     } else if(res == 4) {
+      exproffset = 0;
       dConsolePutChar('\n');
       select_strip_script();
       continue;
@@ -282,7 +284,7 @@ void check_do_graph() {
         } else if(key == KEY_CTRL_F3) {
           fkeymenu = 1;
           key = 0;
-        } else if(key == KEY_CTRL_EXIT || key==KEY_CTRL_F6) break;
+        } else if(key == KEY_CTRL_EXIT || key==KEY_CTRL_F6) return;
       }
       if(fkeymenu == 1) {
         if(key == KEY_CTRL_F1) {
