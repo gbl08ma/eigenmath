@@ -66,7 +66,7 @@ int display_flag;
 
 #define NGREEK 34
 
-static struct {
+static const struct {
         char *s;
         unsigned char n;
 } greek[NGREEK] = {

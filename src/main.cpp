@@ -238,7 +238,7 @@ void check_do_graph() {
             xmax += xrange * 0.15;
           }
           // easier than having to set the symbols in the complicated eigenmath system:
-          static char command[100];
+          char command[100];
           sprintf(command, "xrange=(%g,%g)", xmin, xmax);
           execution_in_progress = 1;
           has_drawn_graph = 0;
@@ -254,7 +254,7 @@ void check_do_graph() {
             ymax += yrange * 0.15;
           }
           // easier than having to set the symbols in the complicated eigenmath system:
-          static char command[100];
+          char command[100];
           sprintf(command, "yrange=(%g,%g)", ymin, ymax);
           execution_in_progress = 1;
           has_drawn_graph = 0;
@@ -276,7 +276,7 @@ void check_do_graph() {
             ymax = ymax * 4.0/3.0;
           }
           // easier than having to set the symbols in the complicated eigenmath system:
-          static char command[100];
+          char command[100];
           sprintf(command, "yrange=(%g,%g)", ymin, ymax);
           execution_in_progress = 1;
           run(command);
@@ -298,7 +298,7 @@ void check_do_graph() {
           key = KEY_CTRL_EXIT; // redraw and close menu
         } else if(key == KEY_CTRL_F2) {
           execution_in_progress = 1;
-          static char command[100];
+          char command[100];
           sprintf(command, "xrange=(%g,%g)", -3.0*M_PI, 3.0*M_PI);
           run(command);
           run("yrange=(-1.6, 1.6)");
@@ -340,7 +340,7 @@ int run_script(char* filename) {
       return 0; //file too big, return
     }
     unsigned char* asrc = (unsigned char*)alloca(size*sizeof(unsigned char)+5); // 5 more bytes to make sure it fits...
-    memset(asrc, size+5, 0); //alloca does not clear the allocated space. Make sure the string is null-terminated this way.
+    memset(asrc, 0, size+5); //alloca does not clear the allocated space. Make sure the string is null-terminated this way.
     int rsize = Bfile_ReadFile_OS(hFile, asrc, size, 0);
     Bfile_CloseFile_OS(hFile); //we got file contents, close it
     asrc[rsize]='\0';
@@ -445,7 +445,6 @@ void select_strip_script() {
       if((int)filesize < MCSfreespace - 50) { // 50 bytes for any headers and the like
         // fits, copy selected script to MCS
         unsigned char* scontents = (unsigned char*)alloca(filesize);
-        memset(scontents, filesize, 0);
         int rsize = Bfile_ReadFile_OS(hFile, scontents, filesize, 0);
         scontents[rsize]='\0';
         // script is now in buffer scontents
@@ -466,7 +465,6 @@ void select_strip_script() {
   }
   puts("There was a problem setting the script for this strip.");
 }
-char curRecordingBuffer[MAX_TEXTVIEWER_FILESIZE+5];
 
 void script_recorder() {
   puts("Recording started: every\ncommand you enter from now on\nwill be recorded, so that you\ncan create a script.\nWhen you're done recording,\ncall \"record\" again.");

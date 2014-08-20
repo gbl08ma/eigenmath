@@ -45,20 +45,20 @@ table of special symbols:
 | 147     | blue no-fill arrow (partial command) |
 +---------+--------------------------------------+
 */
-unsigned char *specialsym1[34] = {
+static const unsigned char *specialsym1[34] = {
 (unsigned char*)"\xe5\x42", //1
 (unsigned char*)"\xe5\x43", //2
 (unsigned char*)"\xe5\x47", //3
 (unsigned char*)"\xe5\x4a", //4
 (unsigned char*)"\xe5\x4d", //5
 (unsigned char*)"\xe5\x4f", //6
-(unsigned char*)"NONE", //7
-(unsigned char*)"NONE", //8
-(unsigned char*)"NONE", //9
-(unsigned char*)"NONE", //10
+(unsigned char*)"", //7
+(unsigned char*)"", //8
+(unsigned char*)"", //9
+(unsigned char*)"", //10
 (unsigned char*)"\xe5\x51", //11
 (unsigned char*)"\xe5\x54", //12
-(unsigned char*)"NONE", //13
+(unsigned char*)"", //13
 (unsigned char*)"\xe5\x55", //14
 (unsigned char*)"\xe5\x57", //15
 (unsigned char*)"\xe5\x58", //16
@@ -77,7 +77,7 @@ unsigned char *specialsym1[34] = {
 (unsigned char*)"\xe6\x4c", //29
 };
 
-unsigned char *specialsym2[10] = {
+static const unsigned char *specialsym2[10] = {
 (unsigned char*)"\xe6\x4d", //128
 (unsigned char*)"\xe6\x4f", //129
 (unsigned char*)"\xe6\x50", //130
@@ -101,14 +101,14 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
   {
     if((Msg[i] >= 1 && Msg[i] <= 6) || (Msg[i] >= 11 && Msg[i] <= 12) || (Msg[i] >= 14 && Msg[i] <= 29)) {
       int tx = x+2, ty=y;
-      PrintMini(&tx, &ty, specialsym1[Msg[i]-1], flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+      PrintMini(&tx, &ty, (unsigned char*)specialsym1[Msg[i]-1], flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
       x+=12;
       i++;
       continue;
     }
     if((Msg[i] >= 128 && Msg[i] <= 137)) {
       int tx = x+2, ty=y;
-      PrintMini(&tx, &ty, specialsym2[Msg[i]-128], flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+      PrintMini(&tx, &ty, (unsigned char*)specialsym2[Msg[i]-128], flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
       x+=12;
       i++;
       continue;

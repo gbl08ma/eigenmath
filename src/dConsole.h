@@ -1,7 +1,7 @@
 #ifndef DCONSOLE_H
 #define DCONSOLE_H
 #define INPUTBUFLEN 500
-#define LINE_ROW_MAX    /*10*/ 200
+#define LINE_ROW_MAX    200 // virtual console size (for console scrollback)
 #define LINE_COL_MAX    32
 //command history numbers:
 #define N 41

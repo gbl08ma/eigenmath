@@ -3,10 +3,6 @@
 #include "stdafx.h"
 #include "defs.h"
 
-int out_index, out_length;
-char *out_str;
-static int char_count, last_char;
-
 char *power_str = "^";
 
 void
@@ -467,8 +463,6 @@ print_str(char *s)
 void
 print_char(int c)
 {
-	last_char = c;
-	char_count++;
 //	if (display_flag == 1)
 //		displaychar(c);
 //	else

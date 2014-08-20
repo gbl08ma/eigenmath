@@ -612,7 +612,6 @@ void load_console_state_smem() {
   memcpy(&line_start, buffer+8, sizeof(int));
   memcpy(&line_count, buffer+12, sizeof(int));
 
-  memset(line_buf, sizeof(line_row)*LINE_ROW_MAX, 0);
   Bfile_ReadFile_OS(hFile, line_buf, sizeof(line_row)*LINE_ROW_MAX, -1); // read console scrollback buffer
 
   // remaining contents (variable length) are the command history
