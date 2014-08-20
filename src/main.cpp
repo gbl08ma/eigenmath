@@ -564,19 +564,18 @@ int get_custom_fkey_label(int fkey) {
 int is_running_in_strip() {
   static int had_determined = -1;
   if(had_determined != -1) return had_determined;
-  // uses a hack to detect if we're running from an eActivity strip:
-  // if the first pixel of the VRAM (first pixel of the status bar) is not white, then we are in a strip
-  // (eActivity turns the statusbar background into a checkerbox when in a strip,
-  // unless our code messes with the statusbar flags, which this add-in doesn't do.
-  // the first pixel of the checkerboard is not white)
-  DisplayStatusArea(); // otherwise, we don't know
-  if(Bdisp_GetPoint_VRAM( 0, 0 ) != COLOR_WHITE) {
-    had_determined = 1;
-    return 1;
-  } else {
-    had_determined = 0;
-    return 0;
-  }
+  /* Simon Lothar says:
+   ** If I run INSIGHT from out of an EACT-strip, there are three variables (EACT1, EDIT_PAC and PACKDUMY)
+   ** in the main memory directory @EACT.
+   ** If I run INSIGHT from out of the MAIN MENU, the main memory directory @EACT is empty.
+   * This code checks the presence of EACT1 to detect whether the add-in is running as a strip.
+   * Checking whether the first pixel of the status area is green would also work, but I think this is a
+   * cleaner solution.
+   */
+  int size;
+  MCSGetDlen2((unsigned char*)"@EACT", (unsigned char*)"EACT1", &size);
+  had_determined = !!size;
+  return !!size;
 }
 
 void
