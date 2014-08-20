@@ -176,14 +176,18 @@ void input_eval_loop(int isRecording) {
         if(BCEres >= 0) // Did it create?
         {
           BCEres = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-          for(int i=0; i <= maxHistory; i++) {
-            char* buf = (char*)alloca(strlen(recHistory[i])+5);
-            strcpy(buf, recHistory[i]);
-            strcat(buf, (char*)"\n");
-            Bfile_WriteFile_OS(BCEres, buf, strlen(recHistory[i])+1);
+          if(BCEres >= 0) {
+            for(int i=0; i <= maxHistory; i++) {
+              char buf[strlen(recHistory[i])+5];
+              strcpy(buf, recHistory[i]);
+              strcat(buf, (char*)"\n");
+              Bfile_WriteFile_OS(BCEres, buf, strlen(recHistory[i])+1);
+            }
+            Bfile_CloseFile_OS(BCEres);
+            puts("Script created.");
+          } else {
+            puts("An error occurred when creating the script for recording.");
           }
-          Bfile_CloseFile_OS(BCEres);
-          puts("Script created.");
         } else {
           puts("An error occurred when creating the script for recording.");
         }
