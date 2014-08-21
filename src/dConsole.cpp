@@ -160,7 +160,7 @@ int dGetLine (char * s,int max, int isRecording) {
       do start++; while (pos>start+width-1);
     }
     if(isscrolling) {
-      DefineStatusMessage((char*)"Scrolling enabled (up/down)", 1, 0, 0);
+      DefineStatusMessage((char*)"\xE5\xEA/\xE5\xEB to scroll, other key to go back", 1, 0, 0);
       DisplayStatusArea();
     }
     if (refresh) {
