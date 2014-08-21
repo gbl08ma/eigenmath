@@ -108,7 +108,7 @@ const catalogFunc completeCat[CAT_COMPLETE_COUNT] = { // list of all functions (
   {"simplify(x)", "simplify(", "Returns x in a simpler form.", CAT_CATEGORY_OTHER},
   {"sin(x)", "sin(", "Returns the sine of x.", CAT_CATEGORY_TRIG},
   {"sinh(x)", "sinh(", "Returns the hyperbolic sine of x.", CAT_CATEGORY_TRIG},
-  {"sqrt(x)", "sqrt(", "Returns the square root of x.", CAT_CATEGORY_TRIG},
+  {"sqrt(x)", "sqrt(", "Returns the square root of x.", CAT_CATEGORY_OTHER},
   {"stop()", "stop()", "In a script, it does what it says.", CAT_CATEGORY_PROG},
   {"subst(a,b,c)", "subst(", "Substitutes a for b in c and returns the result.", CAT_CATEGORY_OTHER},
   {"sum(i,j,k,f)", "sum(", "Returns the summation of expression f where i is the index, j is the lower bound and k is the upper bound.", CAT_CATEGORY_PROG},
