@@ -113,6 +113,7 @@ extern int custom_key_to_handle_modifier;
 int get_custom_key_handler_state();
 int is_running_in_strip();
 int get_set_session_setting(int value);
+void create_data_folder();
 
 // inserts into subject at position pos. assumes subject has enough space!
 //append(s, (char*)"tan(", pos);
@@ -571,14 +572,19 @@ void save_console_state_smem() {
   memcpy(buffer+12, &line_count, sizeof(int));
 
   unsigned short pFile[MAX_FILENAME_SIZE+1];
-  // create file in data folder (assumes folder already exists)
   Bfile_StrToName_ncpy(pFile, (unsigned char*)CONSOLESTATEFILE, strlen(CONSOLESTATEFILE)+1);
-  Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
-  // if an error ocurrs when creating (because file already exists)
+
   // there's no need to delete and create again, because there's no problem
   // if there's junk at the end of the file.
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-  if(hFile < 0) return;
+  if(hFile < 0) {
+    // could not open file. file might not exist yet, or the data folder might not exist at all.
+    // try creating both and try opening again
+    create_data_folder();
+    Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
+    hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+    if(hFile < 0) return; // if it still fails, there's nothing we can do
+  }
   Bfile_WriteFile_OS(hFile, buffer, sizeof(buffer));
   Bfile_WriteFile_OS(hFile, line_buf, sizeof(line_row)*LINE_ROW_MAX);
   char cmdhist[N*INPUTBUFLEN+4];

@@ -392,8 +392,7 @@ void save_session() {
     Timer_Stop(aborttimer);
     Timer_Deinstall(aborttimer);
   }
-  create_data_folder();
-  save_console_state_smem();
+  save_console_state_smem(); // call before dump_eigenmath_symbols_smem(), because this calls create_data_folder if necessary!
   dump_eigenmath_symbols_smem();
 
   // this is only called on exit, no need to reinstall the check_execution_abort timer.
@@ -476,15 +475,18 @@ void dump_eigenmath_symbols_smem() {
   unsigned short pFile[MAX_FILENAME_SIZE+1];
   // create file in data folder (assumes data folder already exists)
   Bfile_StrToName_ncpy(pFile, (unsigned char*)SYMBOLSSTATEFILE, strlen(SYMBOLSSTATEFILE)+1);
-  int size = 1;
-  Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
   // even if it already exists, there's no problem,
   // in the event that our file shrinks, we just let junk be at the end of
   // the file (after two null bytes, of course).
-  int BCEres = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-  if(BCEres < 0) {
-    // error
-    return;
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  if(hFile < 0) {
+    // error. file does not exist yet. try creating it
+    // (data folder should exist already, as save_console_state_smem() should have been called before this function)
+    int size = 1;
+    Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
+    // now try opening
+    hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+    if(hFile < 0) return; // if it still fails, there's nothing we can do
   }
   char buffer[5000];
   int lb = 0;
@@ -511,7 +513,7 @@ void dump_eigenmath_symbols_smem() {
 
     lb += sprintf(buffer+lb, "%s%s=%s\n", symtab[i].u.printname, symarg, symval);
     if(lb > 2000) { // are there enough contents in the buffer to issue a write?
-      Bfile_WriteFile_OS(BCEres, buffer, lb);
+      Bfile_WriteFile_OS(hFile, buffer, lb);
       buffer[0]=0;
       lb = 0;
     }
@@ -521,8 +523,8 @@ void dump_eigenmath_symbols_smem() {
   buffer[lb] = 0;
   buffer[lb+1] = 0;
   // write what hasn't been written yet
-  Bfile_WriteFile_OS(BCEres, buffer, strlen(buffer)+2); //make sure to write the two zeros
-  Bfile_CloseFile_OS(BCEres);
+  Bfile_WriteFile_OS(hFile, buffer, strlen(buffer)+2); //make sure to write the two zeros
+  Bfile_CloseFile_OS(hFile);
   // done
 }
 
