@@ -150,7 +150,8 @@ void input_eval_loop(int isRecording) {
           return;
         }
         dConsolePut("Recording stopped.\nType a name for the script, or\nleave empty to discard.\n:");
-        char inputname[MAX_FILENAME_SIZE+1] = "";
+        char inputname[MAX_FILENAME_SIZE+1];
+        inputname[0] = 0;
         gets(inputname,MAX_FILENAME_SIZE-50);
         puts(inputname);
         if(!strlen(inputname)) {
