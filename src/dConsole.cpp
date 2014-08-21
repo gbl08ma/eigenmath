@@ -72,6 +72,8 @@ char dGetKeyChar (uint key)
           return key;
   else if (key>=' ' && key<='~')
           return key;
+  else if (key==0xAB) // ! when typed on emulator
+          return '!';
   switch(key)
   {
     case KEY_CHAR_PLUS:
