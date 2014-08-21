@@ -494,12 +494,12 @@ void dump_eigenmath_symbols_smem() {
     if((i >= YYE && i <= SECRETX) || (i >= C1 && i <= C6)) continue; // do not dump special-purpose internal symbols
     if (symtab[i].u.printname == 0)
       break;
-    char symval[1000];
+    char symval[2000];
     symval[0]=0;
     outputRedirectBuffer = symval;
-    remainingBytesInRedirect = 1000;
+    remainingBytesInRedirect = 2000;
     printline(get_binding(symbol(i)));
-    int svl = 1000 - remainingBytesInRedirect;
+    int svl = 2000 - remainingBytesInRedirect;
     if(svl) symval[svl-1] = 0; // remove \n at end to make comparison with printname possible
     char symarg[1000];
     outputRedirectBuffer = symarg;
