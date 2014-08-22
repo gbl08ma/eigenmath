@@ -10,13 +10,13 @@
 #define RANDOM (4.0 * (double) rand() / (double) RAND_MAX - 2.0)
 
 static struct {
-	double r, i;
+	volatile double r, i;
 } a, b, x, y, fa, fb, dx, df, c[YMAX];
 
 void
 eval_nroots(void)
 {
-	int h, i, k, n;
+	volatile int h, i, k, n;
 
 	push(cadr(p1));
 	eval();
@@ -110,7 +110,7 @@ void
 monic(int n)
 {
 	int k;
-	double t;
+	volatile double t;
 	y = c[n - 1];
 	t = y.r * y.r + y.i * y.i;
 	for (k = 0; k < n - 1; k++) {
@@ -126,8 +126,8 @@ monic(int n)
 void
 findroot(int n)
 {
-	int j, k;
-	double t;
+	volatile int j, k;
+	volatile double t;
 
 	if (ABS(c[0]) < DELTA) {
 		a.r = 0.0;
@@ -197,8 +197,8 @@ findroot(int n)
 void
 compute_fa(int n)
 {
-	int k;
-	double t;
+	volatile int k;
+	volatile double t;
 
 	// x = a
 
