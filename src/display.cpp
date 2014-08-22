@@ -703,9 +703,15 @@ emit_power(U *p)
 	int k1, k2, x;
 
 	if (cadr(p) == symbol(E)) {
-		__emit_str("exp(");
+		__emit_str("exp");
+		int k1 = yindex;
+		int h1, w1, y1;
+
 		emit_expr(caddr(p));
-		__emit_char(')');
+		get_size(k1, yindex, &h1, &w1, &y1);
+
+		emit_lparen(k1, h1, w1, y1);
+		emit_rparen(k1, h1, w1, y1);
 		return;
 	}
 
