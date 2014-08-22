@@ -24,11 +24,6 @@ prizmUIkeyHandler(k,s)=(test(
   k=149,log10(last), 
   k=181,10^last, 
   k=155,last^(-1), 
---print(k,s))) 
-nil)) 
+nil))
 prizmUIfkey3label=329
 prizmUIfkey6label=563
--- for gbl08ma only:
-clr()=clear
-cls()=clear
-print("startup script ran")

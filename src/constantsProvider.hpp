@@ -26,7 +26,7 @@
 #define SELFFILE (char*)"eigenmath.g3a"
 #endif
 
-
+/*
 #ifndef ENABLE_DEBUG
 #define ENABLE_DEBUG 1
-#endif
+#endif*/
