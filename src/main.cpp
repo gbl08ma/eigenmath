@@ -95,32 +95,37 @@ void input_eval_loop(int isRecording) {
   char** recHistory = NULL; int curRecHistEntry = 0;
   if(isRecording) recHistory = (char**)alloca(200); // space for 200 pointers to history entries
   exproffset = 0;
+  int nodel = 0;
   while (1) {
     DefineStatusMessage((char*)(isRecording ? "Recording ('record' to stop)" : ""), 1, 0, 0);
     has_drawn_graph = 0;
-    strcpy(expr+exproffset, (char*)"");
+    if(!nodel) strcpy(expr+exproffset, (char*)"");
+    else nodel = 0;
     dConsolePutChar((exproffset ? 147 : '\x1e'));
     int res = gets(expr+exproffset,INPUTBUFLEN-exproffset, isRecording, !!exproffset); // isRecording is provided for UI changes, no behavior changes.
     if(res == 2) {
       exproffset = 0;
       dConsolePutChar('\n');
       select_script_and_run();
+      nodel = 1;
       continue;
     } else if(res == 3) {
-      exproffset = 0;
       dConsolePutChar('\n');
-      sprintf(expr, "prizmUIkeyHandler(%d,%d)", custom_key_to_handle, custom_key_to_handle_modifier);
+      char buf[100];
+      sprintf(buf, "prizmUIkeyHandler(%d,%d)", custom_key_to_handle, custom_key_to_handle_modifier);
       execution_in_progress = 1;
-      run(expr);
+      run(buf);
       eigenmathRanAtLeastOnce = 1;
       execution_in_progress = 0;
       check_do_graph();
       if(run_startup_script_again) { run_startup_script_again = 0; run_startup_script(); }
+      nodel = 1;
       continue;
     } else if(res == 4) {
       exproffset = 0;
       dConsolePutChar('\n');
       select_strip_script();
+      nodel = 1;
       continue;
     } else if(res == 6) {
       // AC partial input
