@@ -100,7 +100,7 @@ void input_eval_loop(int isRecording) {
     has_drawn_graph = 0;
     strcpy(expr+exproffset, (char*)"");
     dConsolePutChar((exproffset ? 147 : '\x1e'));
-    int res = gets(expr+exproffset,INPUTBUFLEN-exproffset, isRecording); // isRecording is provided for UI changes, no behavior changes.
+    int res = gets(expr+exproffset,INPUTBUFLEN-exproffset, isRecording, !!exproffset); // isRecording is provided for UI changes, no behavior changes.
     if(res == 2) {
       exproffset = 0;
       dConsolePutChar('\n');
@@ -121,6 +121,11 @@ void input_eval_loop(int isRecording) {
       exproffset = 0;
       dConsolePutChar('\n');
       select_strip_script();
+      continue;
+    } else if(res == 6) {
+      // AC partial input
+      exproffset = 0;
+      dConsolePutChar('\n');
       continue;
     }
     puts(expr+exproffset);

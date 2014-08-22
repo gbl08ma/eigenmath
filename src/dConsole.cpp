@@ -134,7 +134,7 @@ void addStringToInput(char* dest, char* src, int* pos, int max, int* refresh) {
 }
 
 int eigenmathRanAtLeastOnce = 0;
-int dGetLine (char * s,int max, int isRecording) {
+int dGetLine (char * s,int max, int isRecording, int ml) {
   int pos = strlen(s);
   int start = 0;
   int refresh = 1;
@@ -377,7 +377,8 @@ int dGetLine (char * s,int max, int isRecording) {
       smallmenu.numitems=5;
       smallmenuitems[0].text = (char*)"Function Catalog";
       smallmenuitems[1].text = (char*)"Load Script";
-      smallmenuitems[2].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
+      if(ml) smallmenuitems[2].text = (char*)"Clear Whole Input";
+      else smallmenuitems[2].text = (char*)(isRecording ? "Stop Recording" : "Record Script");
       smallmenuitems[4].text = (char*)"About Eigenmath";
       while(1) {
         if(is_running_in_strip()) smallmenuitems[3].text = (char*)"Set Strip Script";
@@ -402,6 +403,7 @@ int dGetLine (char * s,int max, int isRecording) {
           } else if(smallmenu.selection == 2) {
             return 2;
           } else if(smallmenu.selection == 3) {
+            if(ml) return 6;
             strcpy(s, "record");
             return 1;
           } else if(smallmenu.selection == 4) {
