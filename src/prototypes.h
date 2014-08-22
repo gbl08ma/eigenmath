@@ -1015,4 +1015,5 @@ void test_zero(void);
 
 // random.cpp - by gbl08ma
 void eval_random(void);
+int rand_int(void);
 void randomnum(void);

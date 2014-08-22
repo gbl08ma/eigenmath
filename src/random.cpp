@@ -15,10 +15,8 @@ void set_rnd_seed(int new_seed)
     rnd_seed = new_seed;
 }
 
-void randomnum(void)
+int rand_int(void)
 {
-  save();
-  
   int k1;
   int ix = rnd_seed;
 
@@ -27,8 +25,14 @@ void randomnum(void)
   if (ix < 0)
       ix += 2147483647;
   rnd_seed = ix;
+  return rnd_seed;
+}
 
-  push_integer(rnd_seed);
+void randomnum(void)
+{
+  save();
+
+  push_integer(rand_int());
 
   restore();
 }
