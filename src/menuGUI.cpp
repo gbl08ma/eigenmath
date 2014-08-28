@@ -15,6 +15,8 @@
 #include "menuGUI.hpp"
 #include "graphicsProvider.hpp"
 
+typedef scrollbar TScrollbar;
+
 int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what user did. selection is on menu->selection. menu->selection starts at 1!
   int itemsStartY=menu->startY; // char Y where to start drawing the menu items. Having a title increases this by one
   int itemsHeight=menu->height;

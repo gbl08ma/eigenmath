@@ -16,6 +16,8 @@
 #include "stringsProvider.hpp"
 #include "graphicsProvider.hpp"
 
+typedef scrollbar TScrollbar;
+
 int doTextArea(textArea* text) {
   int scroll = 0;
   int isFirstDraw = 1;

@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <alloca.h>
 
 #include "defs.h"
 extern "C" {
@@ -178,7 +179,7 @@ void input_eval_loop(int isRecording) {
         unsigned short pFile[MAX_FILENAME_SIZE+1];
         Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
         // calculate size
-        int size = 0;
+        size_t size = 0;
         int maxHistory = curRecHistEntry - 1; //because we ++'ed at the end of last addition
         for(int i=0; i <= maxHistory; i++) {
           size = size + strlen(recHistory[i]) + 1; // 1 byte for \n. we will use unix line termination
@@ -493,7 +494,7 @@ void dump_eigenmath_symbols_smem() {
   if(hFile < 0) {
     // error. file does not exist yet. try creating it
     // (data folder should exist already, as save_console_state_smem() should have been called before this function)
-    int size = 1;
+    size_t size = 1;
     Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
     // now try opening
     hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle

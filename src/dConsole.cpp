@@ -567,7 +567,7 @@ void dPuts(const char * s)
 
 void save_console_state_smem() {
   // ensure all timers are stopped and uninstalled before calling this function!
-  int size = sizeof(line_row)*LINE_ROW_MAX + sizeof(int)*4;
+  size_t size = sizeof(line_row)*LINE_ROW_MAX + sizeof(int)*4;
   char buffer[sizeof(int)*4];
 
   memcpy(buffer, &line_index, sizeof(int));
