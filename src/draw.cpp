@@ -618,13 +618,13 @@ emit_xscale_f(int xx, char *s)
         int w, x, y;
         y = 0;
         w = 0;
-        PrintMiniMini( &w, &y, (unsigned char*)s, 0, TEXT_COLOR_BLACK, 1 ); // get width
+        PrintMiniMini( &w, &y, (char*)s, 0, TEXT_COLOR_BLACK, 1 ); // get width
 
         x = XOFF + xx;
         if(x >= DIMX) x = x-w;
         y = YOFF + yzero - 24+2;
 
-        PrintMiniMini( &x, &y, (unsigned char*)s, 0, TEXT_COLOR_BLACK, 0 );
+        PrintMiniMini( &x, &y, (char*)s, 0, TEXT_COLOR_BLACK, 0 );
 }
 
 static void emit_yscale_f(int, char *);
@@ -646,13 +646,13 @@ emit_yscale_f(int yy, char *s)
 
         y = 0;
         w = 0;
-        PrintMiniMini( &w, &y, (unsigned char*)s, 0, TEXT_COLOR_BLACK, 1 ); // get width
+        PrintMiniMini( &w, &y, (char*)s, 0, TEXT_COLOR_BLACK, 1 ); // get width
 
         x = xzero - w;
         y = YOFF + yy;
         if(y >= DIMY) y = y-9;
         y -= 24;
-        PrintMiniMini( &x, &y, (unsigned char*)s, 0, TEXT_COLOR_BLACK, 0 );
+        PrintMiniMini( &x, &y, (char*)s, 0, TEXT_COLOR_BLACK, 0 );
 }
 /*
 #define XOFF 0

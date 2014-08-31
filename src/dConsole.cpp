@@ -197,11 +197,11 @@ int dGetLine (char * s,int max, int isRecording, int ml) {
         int py = (y-linestart-1)*17;
         if(start) {
           int px = 12;
-          PrintMini(&px, &py, (unsigned char*)"\xe6\x9a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_MAGENTA, COLOR_WHITE, 1, 0);
+          PrintMini(&px, &py, (char*)"\xe6\x9a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_MAGENTA, COLOR_WHITE, 1, 0);
         }
         if((int)strlen(s+start)>width) {
           int px = 31*12;
-          PrintMini(&px, &py, (unsigned char*)"\xe6\x9b", 0x02, 0xFFFFFFFF, 0, 0, COLOR_MAGENTA, COLOR_WHITE, 1, 0);
+          PrintMini(&px, &py, (char*)"\xe6\x9b", 0x02, 0xFFFFFFFF, 0, 0, COLOR_MAGENTA, COLOR_WHITE, 1, 0);
         }
       }
       refresh = 0;
@@ -576,7 +576,7 @@ void save_console_state_smem() {
   memcpy(buffer+12, &line_count, sizeof(int));
 
   unsigned short pFile[MAX_FILENAME_SIZE+1];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)CONSOLESTATEFILE, strlen(CONSOLESTATEFILE)+1);
+  Bfile_StrToName_ncpy(pFile, CONSOLESTATEFILE, strlen(CONSOLESTATEFILE)+1);
 
   // there's no need to delete and create again, because there's no problem
   // if there's junk at the end of the file.
@@ -609,7 +609,7 @@ void load_console_state_smem() {
   char filename[MAX_FILENAME_SIZE+1];
   sprintf(filename, DATAFOLDER"\\eigencon.erd"); // Eigenmath Restore Data
   unsigned short pFile[MAX_FILENAME_SIZE+1];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
+  Bfile_StrToName_ncpy(pFile, filename, strlen(filename)+1);
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hFile < 0) {
     return;

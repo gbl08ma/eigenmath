@@ -17,7 +17,7 @@
 #include "fileProvider.hpp" 
 #include "fileGUI.hpp"
 
-int fileBrowser(char* filename, unsigned char* filter, char* title) {
+int fileBrowser(char* filename, char* filter, char* title) {
   // returns 1 when user selects a file, 0 when aborts (exit)
   int res = 1;
   char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";  
@@ -29,7 +29,7 @@ int fileBrowser(char* filename, unsigned char* filter, char* title) {
   return 0;
 }
 
-int fileBrowserSub(char* browserbasepath, char* filename, unsigned char* filter, char* title) {
+int fileBrowserSub(char* browserbasepath, char* filename, char* filter, char* title) {
   Menu menu;
   MenuItemIcon icontable[12];
   buildIconTable(icontable);
@@ -60,7 +60,7 @@ int fileBrowserSub(char* browserbasepath, char* filename, unsigned char* filter,
   while(1) {
     int temptextX=7*18+10; // px length of menu title + 10, like menuGUI goes.
     int temptextY=0;
-    PrintMini(&temptextX, &temptextY, (unsigned char*)friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); // fake draw
+    PrintMini(&temptextX, &temptextY, friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); // fake draw
     if(temptextX>LCD_WIDTH_PX-6) {
       char newfriendlypath[MAX_FILENAME_SIZE];
       shortenDisplayPath(friendlypath, newfriendlypath, (jump4 ? 4 : 1));

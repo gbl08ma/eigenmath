@@ -177,7 +177,7 @@ void input_eval_loop(int isRecording) {
         char filename[MAX_FILENAME_SIZE+1];
         sprintf(filename, "\\\\fls0\\%s.txt", inputname);
         unsigned short pFile[MAX_FILENAME_SIZE+1];
-        Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
+        Bfile_StrToName_ncpy(pFile, filename, strlen(filename)+1);
         // calculate size
         size_t size = 0;
         int maxHistory = curRecHistEntry - 1; //because we ++'ed at the end of last addition
@@ -336,7 +336,7 @@ void check_do_graph() {
 int run_script(char* filename) {
   // returns 1 if script was run, 0 otherwise
   unsigned short pFile[MAX_FILENAME_SIZE+1];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+  Bfile_StrToName_ncpy(pFile, filename, strlen(filename)+1); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   
   // Check for file existence
@@ -393,7 +393,7 @@ int get_set_session_setting(int value) {
 
 void create_data_folder() {
   unsigned short pFile[MAX_FILENAME_SIZE+1];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)DATAFOLDER, strlen(DATAFOLDER)+1);
+  Bfile_StrToName_ncpy(pFile, DATAFOLDER, strlen(DATAFOLDER)+1);
   Bfile_CreateEntry_OS(pFile, CREATEMODE_FOLDER, 0);
 }
 
@@ -418,7 +418,7 @@ int restore_session() {
 }
 void select_script_and_run() {
   char filename[MAX_FILENAME_SIZE+1];
-  if(fileBrowser(filename, (unsigned char*)"*.txt", "Scripts")) {
+  if(fileBrowser(filename, (char*)"*.txt", "Scripts")) {
     run_script(filename);
   }
 }
@@ -441,11 +441,11 @@ void select_strip_script() {
   doTextArea(&text);
   
   char filename[MAX_FILENAME_SIZE+1];
-  if(fileBrowser(filename, (unsigned char*)"*.txt", "Scripts")) {
+  if(fileBrowser(filename, (char*)"*.txt", "Scripts")) {
     // get the size of the selected script on SMEM.
     // get free size on the "MCS" of the strip we're running on and see if the script fits
     unsigned short pFile[MAX_FILENAME_SIZE+1];
-    Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+    Bfile_StrToName_ncpy(pFile, filename, strlen(filename)+1); 
     int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
     if(hFile >= 0) // Check if it opened
     { //opened
@@ -486,7 +486,7 @@ void dump_eigenmath_symbols_smem() {
   // ensure all timers are stopped and uninstalled before calling this function!
   unsigned short pFile[MAX_FILENAME_SIZE+1];
   // create file in data folder (assumes data folder already exists)
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)SYMBOLSSTATEFILE, strlen(SYMBOLSSTATEFILE)+1);
+  Bfile_StrToName_ncpy(pFile, SYMBOLSSTATEFILE, strlen(SYMBOLSSTATEFILE)+1);
   // even if it already exists, there's no problem,
   // in the event that our file shrinks, we just let junk be at the end of
   // the file (after two null bytes, of course).

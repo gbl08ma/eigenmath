@@ -16,8 +16,8 @@
 
 #include "fileProvider.hpp"
 
-int fileBrowser(char* filename, unsigned char* filter, char* title);
-int fileBrowserSub(char* browserbasepath, char* filename, unsigned char* filter, char* title);
+int fileBrowser(char* filename, char* filter, char* title);
+int fileBrowserSub(char* browserbasepath, char* filename, char* filter, char* title);
 void shortenDisplayPath(char* longpath, char* shortpath, int jump=1);
 void buildIconTable(MenuItemIcon* icontable);
 

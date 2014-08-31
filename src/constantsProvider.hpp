@@ -15,11 +15,11 @@
 #endif
 
 #ifndef CONSOLESTATEFILE
-#define CONSOLESTATEFILE DATAFOLDER"\\eigencon.erd"
+#define CONSOLESTATEFILE (char*)DATAFOLDER"\\eigencon.erd"
 #endif
 
 #ifndef SYMBOLSSTATEFILE
-#define SYMBOLSSTATEFILE DATAFOLDER"\\eigensym.erd"
+#define SYMBOLSSTATEFILE (char*)DATAFOLDER"\\eigensym.erd"
 #endif
 
 #ifndef SELFFILE

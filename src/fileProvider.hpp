@@ -41,7 +41,7 @@ typedef struct
 #define GETFILES_SUCCESS 0
 #define GETFILES_MAX_FILES_REACHED 1
 
-int GetFiles(File* files, MenuItem* menuitems, char* basepath, int* count, unsigned char* filter);
+int GetFiles(File* files, MenuItem* menuitems, char* basepath, int* count, char* filter);
 void nameFromFilename(char* filename, char* name);
 
 #define FILE_ICON_FOLDER 0

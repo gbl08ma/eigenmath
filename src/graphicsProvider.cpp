@@ -45,49 +45,49 @@ table of special symbols:
 | 147     | blue no-fill arrow (partial command) |
 +---------+--------------------------------------+
 */
-static const unsigned char *specialsym1[34] = {
-(unsigned char*)"\xe5\x42", //1
-(unsigned char*)"\xe5\x43", //2
-(unsigned char*)"\xe5\x47", //3
-(unsigned char*)"\xe5\x4a", //4
-(unsigned char*)"\xe5\x4d", //5
-(unsigned char*)"\xe5\x4f", //6
-(unsigned char*)"", //7
-(unsigned char*)"", //8
-(unsigned char*)"", //9
-(unsigned char*)"", //10
-(unsigned char*)"\xe5\x51", //11
-(unsigned char*)"\xe5\x54", //12
-(unsigned char*)"", //13
-(unsigned char*)"\xe5\x55", //14
-(unsigned char*)"\xe5\x57", //15
-(unsigned char*)"\xe5\x58", //16
-(unsigned char*)"\xe6\x40", //17
-(unsigned char*)"\xe6\x41", //18
-(unsigned char*)"\xe6\x42", //19
-(unsigned char*)"\xe6\x43", //20
-(unsigned char*)"\xe6\x44",
-(unsigned char*)"\xe6\x45",
-(unsigned char*)"\xe6\x46",
-(unsigned char*)"\xe6\x47",
-(unsigned char*)"\xe6\x48", //25
-(unsigned char*)"\xe6\x49",
-(unsigned char*)"\xe6\x4a",
-(unsigned char*)"\xe6\x4b",
-(unsigned char*)"\xe6\x4c", //29
+static const char *specialsym1[34] = {
+(char*)"\xe5\x42", //1
+(char*)"\xe5\x43", //2
+(char*)"\xe5\x47", //3
+(char*)"\xe5\x4a", //4
+(char*)"\xe5\x4d", //5
+(char*)"\xe5\x4f", //6
+(char*)"", //7
+(char*)"", //8
+(char*)"", //9
+(char*)"", //10
+(char*)"\xe5\x51", //11
+(char*)"\xe5\x54", //12
+(char*)"", //13
+(char*)"\xe5\x55", //14
+(char*)"\xe5\x57", //15
+(char*)"\xe5\x58", //16
+(char*)"\xe6\x40", //17
+(char*)"\xe6\x41", //18
+(char*)"\xe6\x42", //19
+(char*)"\xe6\x43", //20
+(char*)"\xe6\x44",
+(char*)"\xe6\x45",
+(char*)"\xe6\x46",
+(char*)"\xe6\x47",
+(char*)"\xe6\x48", //25
+(char*)"\xe6\x49",
+(char*)"\xe6\x4a",
+(char*)"\xe6\x4b",
+(char*)"\xe6\x4c", //29
 };
 
-static const unsigned char *specialsym2[10] = {
-(unsigned char*)"\xe6\x4d", //128
-(unsigned char*)"\xe6\x4f", //129
-(unsigned char*)"\xe6\x50", //130
-(unsigned char*)"\xe6\x51",
-(unsigned char*)"\xe6\x53",
-(unsigned char*)"\xe6\x54",
-(unsigned char*)"\xe6\x55",
-(unsigned char*)"\xe6\x56",
-(unsigned char*)"\xe6\x57",
-(unsigned char*)"\xe6\x58", //137
+static const char *specialsym2[10] = {
+(char*)"\xe6\x4d", //128
+(char*)"\xe6\x4f", //129
+(char*)"\xe6\x50", //130
+(char*)"\xe6\x51",
+(char*)"\xe6\x53",
+(char*)"\xe6\x54",
+(char*)"\xe6\x55",
+(char*)"\xe6\x56",
+(char*)"\xe6\x57",
+(char*)"\xe6\x58", //137
 };
 
 int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const short color, const short bcolor, int overstatus)
@@ -101,14 +101,14 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
   {
     if((Msg[i] >= 1 && Msg[i] <= 6) || (Msg[i] >= 11 && Msg[i] <= 12) || (Msg[i] >= 14 && Msg[i] <= 29)) {
       int tx = x+2, ty=y;
-      PrintMini(&tx, &ty, (unsigned char*)specialsym1[Msg[i]-1], flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+      PrintMini(&tx, &ty, specialsym1[Msg[i]-1], flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
       x+=12;
       i++;
       continue;
     }
     if((Msg[i] >= 128 && Msg[i] <= 137)) {
       int tx = x+2, ty=y;
-      PrintMini(&tx, &ty, (unsigned char*)specialsym2[Msg[i]-128], flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+      PrintMini(&tx, &ty, specialsym2[Msg[i]-128], flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
       x+=12;
       i++;
       continue;
@@ -223,7 +223,7 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
       case 30: {
         // getline start indicator
         int tx = x+2, ty=y;
-        PrintMini(&tx, &ty, (unsigned char*)"\xe6\x9e", flags, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
+        PrintMini(&tx, &ty, (char*)"\xe6\x9e", flags, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
         x+=12;
         i++;
         continue;
@@ -231,7 +231,7 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
       case 147: {
         // getline start indicator, on a partial command
         int tx = x+2, ty=y;
-        PrintMini(&tx, &ty, (unsigned char*)"\xe6\x9F", flags, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
+        PrintMini(&tx, &ty, (char*)"\xe6\x9F", flags, 0xFFFFFFFF, 0, 0, COLOR_BLUE, bcolor, 1, 0);
         x+=12;
         i++;
         continue;
@@ -239,7 +239,7 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
       case 31: {
         // small dot for multiply
         int tx = x+2, ty=y;
-        PrintMini(&tx, &ty, (unsigned char*)"\xe6\xaa", flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+        PrintMini(&tx, &ty, (char*)"\xe6\xaa", flags, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
         x+=12;
         i++;
         continue;
@@ -463,8 +463,8 @@ void progressMessage(char* message, int cur, int total) {
   Bdisp_PutDisp_DD();
 }*/
 
-void printCentered(unsigned char* text, int y, int FGC, int BGC) {
-  int len = strlen((char*)text);
+void printCentered(char* text, int y, int FGC, int BGC) {
+  int len = strlen(text);
   int x = LCD_WIDTH_PX/2-(len*18)/2;
   int cur = 0;
   while(cur<len) {
