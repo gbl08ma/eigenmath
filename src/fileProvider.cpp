@@ -95,7 +95,7 @@ int GetFiles(File* files, MenuItem* menuitems, char* basepath, int* count, char*
       }
       *count=*count+1;
     }
-    if (*count-1==MAX_ITEMS_IN_DIR) {
+    if (*count==MAX_ITEMS_IN_DIR) {
       Bfile_FindClose(findhandle);
       if(files != NULL && menuitems != NULL) insertSortFileMenuArray(files, menuitems, *count);
       return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
