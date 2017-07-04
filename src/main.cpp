@@ -51,6 +51,7 @@ extern int eigenmathRanAtLeastOnce;
 
 extern char* outputRedirectBuffer;
 extern int remainingBytesInRedirect;
+extern color_t* VRAM_base;
 int
 main()
 {
@@ -65,6 +66,7 @@ main()
   DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
+  VRAM_base = (color_t*)GetVRAMAddress();
   SetQuitHandler(save_session); // automatically save session when exiting
   set_rnd_seed(RTC_GetTicks());
   puts("Welcome to Eigenmath\nTo see more options, press\nShift then Menu.");

@@ -14,6 +14,8 @@
 
 #include "graphicsProvider.hpp"
 
+color_t* VRAM_base;
+
 const short empty[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 extern int enable_bracket_coloring;
 extern int last_bracket_color;
@@ -281,13 +283,13 @@ int PrintMiniFix( int x, int y, const unsigned char*Msg, const int flags, const 
 
 //draws a point of color color at (x0, y0) 
 void plot(int x0, int y0,unsigned short color) {
-  unsigned short* VRAM = (unsigned short*)0xA8000000;
+  unsigned short* VRAM = (unsigned short*)VRAM_base;
   VRAM += (y0*LCD_WIDTH_PX + x0);
   *VRAM=color;
 }
 
 void drawRectangle(int x, int y, int width, int height, unsigned short color){
-  unsigned short*VRAM = (unsigned short*)0xA8000000;
+  unsigned short*VRAM = (unsigned short*)VRAM_base;
   VRAM+=(y*384)+x;
   while(height--){
     int i=width;
@@ -335,30 +337,9 @@ void drawLine(int x1, int y1, int x2, int y2, int color) {
         } 
     } 
 }
-//ReplaceColor By Kerm:
-/*void VRAMReplaceColorInRect(int x, int y, int width, int height, color_t color_old, color_t color_new) { 
-   //color_t* VRAM = GetVRAMAddress();
-   color_t* VRAM = (color_t*)0xA8000000; 
-   VRAM += (y*LCD_WIDTH_PX)+x; 
-   for(int j=0; j<height; VRAM += (LCD_WIDTH_PX-width), j++) { 
-      for(int i=0; i<width; VRAM++, i++) { 
-         if (*VRAM == color_old) *VRAM = color_new; 
-      } 
-   } 
-} */
-/*void CopySprite(const void* datar, int x, int y, int width, int height) { 
-   color_t*data = (color_t*) datar; 
-   color_t* VRAM = (color_t*)0xA8000000; 
-   VRAM += LCD_WIDTH_PX*y + x; 
-   for(int j=y; j<y+height; j++) { 
-      for(int i=x; i<x+width; i++) { 
-         *(VRAM++) = *(data++); 
-     } 
-     VRAM += LCD_WIDTH_PX-width; 
-   } 
-}*/
+
 void CopySpriteMasked(unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor) {
-  unsigned short* VRAM = (unsigned short*)0xA8000000; 
+  unsigned short* VRAM = (unsigned short*)VRAM_base; 
   VRAM += (LCD_WIDTH_PX*y + x); 
   while(height--) {
     int i=width;
@@ -373,27 +354,6 @@ void CopySpriteMasked(unsigned short* data, int x, int y, int width, int height,
     VRAM += (LCD_WIDTH_PX-width);
   }
 }
-/*void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, unsigned int bitwidth) {
-   color_t* VRAM = (color_t*)0xA8000000;
-   VRAM += (LCD_WIDTH_PX*y + x);
-   int offset = 0;
-   unsigned char buf = 0;
-   for(int j=y; j<y+height; j++) {
-      int availbits = 0;
-      for(int i=x; i<x+width;  i++) {
-         if (!availbits) {
-            buf = data[offset++];
-            availbits = 8;
-         }
-         color_t thisthis = ((color_t)buf>>(8-bitwidth));
-         *VRAM = palette[(color_t)thisthis];
-         VRAM++;
-         buf<<=bitwidth;
-         availbits-=bitwidth;
-      }
-      VRAM += (LCD_WIDTH_PX-width);
-   }
-}*/
 //the following does not update the screen automatically; it will draw the tny.im logo starting at screen coordinates x,y
 //the tny.im logo is great enough not to require any sprites! yay!
 //w:138
@@ -431,37 +391,6 @@ void drawtnyimLogo(int x, int y) {
   for(i=0;i<7*4;i+=4)
     drawRectangle(x+logoO[i], y+logoO[i+1], logoO[i+2], logoO[i+3], TNYIM_ORANGE);
 }
-
-/*int textColorToFullColor(int textcolor) {
-  switch(textcolor) {
-    case TEXT_COLOR_BLACK: return COLOR_BLACK;
-    case TEXT_COLOR_BLUE: return COLOR_BLUE;
-    case TEXT_COLOR_GREEN: return COLOR_GREEN;
-    case TEXT_COLOR_CYAN: return COLOR_CYAN;
-    case TEXT_COLOR_RED: return COLOR_RED;
-    case TEXT_COLOR_PURPLE: return COLOR_PURPLE;
-    case TEXT_COLOR_YELLOW: return COLOR_YELLOW;
-    case TEXT_COLOR_WHITE: return COLOR_LIGHTGRAY;
-    default: return COLOR_BLACK;
-  }
-}
-
-void progressMessage(char* message, int cur, int total) {
-  char buffer[30] = "";
-  char buffer2[5] = "";
-  strcpy(buffer, "  ");
-  strcat(buffer, message);
-  strcat(buffer, " (");
-  itoa(cur, (unsigned char*)buffer2);
-  strcat(buffer, buffer2);
-  strcat(buffer, "/");
-  itoa(total, (unsigned char*)buffer2);
-  strcat(buffer, buffer2);
-  strcat(buffer, ")");
-  PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  PrintXY(1,8,(char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  Bdisp_PutDisp_DD();
-}*/
 
 void printCentered(char* text, int y, int FGC, int BGC) {
   int len = strlen(text);
