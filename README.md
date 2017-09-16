@@ -107,7 +107,7 @@ This Eigenmath port is the result of over one year of research, work and extensi
 We hope you enjoy using this Eigenmath port as much as we did developing it. And if this add-in ever becomes useful, you just found a secret feature ;)
 
 ---
-Copyright (C) 2004-2013 George Weigt (http://gweigt.net/)
+Copyright (C) 2004-2013 George Weigt
 
 Copyright (C) 2013-2014 Gabriel Maia (gbl08ma) and the tny. internet media group
 
